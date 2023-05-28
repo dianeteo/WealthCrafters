@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'bottom',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   popup: {
     backgroundColor: 'white',

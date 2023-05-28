@@ -8,6 +8,7 @@ import FinancialPlanner from "./screens/FinancialPlanner";
 import FinancialLiteracy from "./screens/FinancialLiteracy";
 import InvestmentSimulator from './screens/InvestmentSimulator';
 import React from 'react';
+import MyTabs from './NavigationContainer.js'
 
 const Stack = createNativeStackNavigator();
 
@@ -23,7 +24,10 @@ class App extends React.Component {
 
           <Stack.Screen
             name="Financial Planner"
-            component={FinancialPlanner}
+            component={MyTabs}
+            
+
+            
           />
 
           <Stack.Screen
