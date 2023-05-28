@@ -10,14 +10,17 @@ class MainMenu extends React.Component {
                 <Button mode="contained"
                 buttonColor="#00008b"
                 style={{marginBottom:10}}
+                // eslint-disable-next-line react/prop-types
                 onPress={()=>this.props.navigation.navigate("Financial Planner")}>Financial Planner</Button>
                 <Button mode="contained"
                 style={{marginBottom:10}}
                 buttonColor="#00008b"
+                // eslint-disable-next-line react/prop-types
                 onPress={()=>this.props.navigation.navigate("Financial Literacy")}>Financial Literacy</Button>
                 <Button mode="contained"
                 style={{marginBottom:10}}
                 buttonColor="#00008b"
+                // eslint-disable-next-line react/prop-types
                 onPress={()=>this.props.navigation.navigate("Investment Simulator")}>Investment Simulator</Button>
             </View>
 
