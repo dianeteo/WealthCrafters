@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React from 'react';
 import { Text, Button } from 'react-native-paper';
 
@@ -9,6 +9,7 @@ class FinancialPlanner extends React.Component {
             <View style={styles.container}>
                 <Text>Code for Financial Planner</Text>
             </View>
+            
         )
     }
 }
