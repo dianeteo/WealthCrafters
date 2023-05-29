@@ -25,9 +25,6 @@ class App extends React.Component {
           <Stack.Screen
             name="Financial Planner"
             component={MyTabs}
-            
-
-            
           />
 
           <Stack.Screen

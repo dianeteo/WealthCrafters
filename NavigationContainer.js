@@ -1,10 +1,11 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, TouchableOpacity} from 'react-native';
 
 // Import your screens/components here
-import Settings from './screens/financial-planner/settings';
+import Entry from './screens/financial-planner/entry';
 import Stats from './screens/financial-planner/stats';
 import FinancialPlanner from './screens/FinancialPlanner';
 
@@ -21,7 +22,7 @@ const getCurrentDate=()=>{
 //Screen Names
 const Home=getCurrentDate()
 const statsName='Stats'
-const settingsName='Settings'
+const entryName='Entry'
 
 
 const Tab = createBottomTabNavigator();
@@ -43,8 +44,6 @@ const MyTabs = () => {
                     iconName = focused ? 'calendar' : 'calendar-outline';
                 } else if (rn===statsName) {
                     iconName=focused ? 'pie-chart':'pie-chart-outline';
-                } else if (rn===settingsName) {
-                    iconName=focused ? 'settings' : 'settings-outline';
                 }
 
                 return <Ionicons name={iconName} size={size} color={color}/>
@@ -53,8 +52,15 @@ const MyTabs = () => {
         })}
         >
         <Tab.Screen name={Home} component={FinancialPlanner} />
+        <Tab.Screen name={entryName} component={Entry} options={({navigation})=>({
+            tabBarIcon:(color,size) => {
+                <Ionicons name='add-circle' size={size} color={color}/>
+            }},
+            {tabBarShowLabel:false},
+            {tabBarButton: (props)=>(
+                <TouchableOpacity onPress={()=> navigation.navigate('Entry')} {...props}/>
+            )})} />
         <Tab.Screen name={statsName} component={Stats} />
-        <Tab.Screen name={settingsName} component={Settings} />
       </Tab.Navigator>
     
   );
@@ -62,4 +68,8 @@ const MyTabs = () => {
 
 export default MyTabs;
 
+const styles = StyleSheet.create({
+    shadow:{
 
+    }
+})
