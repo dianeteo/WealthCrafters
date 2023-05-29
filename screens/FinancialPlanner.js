@@ -5,7 +5,17 @@ import { Text, Button} from 'react-native-paper';
 import Entry from './financial-planner/entry.js';
 import {Calendar} from 'react-native-calendars';
 import MyModal from './financial-planner/modal.js';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+const Stack = createNativeStackNavigator()
+function MyStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Entry" component={Entry} />
+    </Stack.Navigator>
+  );
+}
 
 class FinancialPlanner extends React.Component {
 
@@ -171,7 +181,5 @@ const styles = StyleSheet.create({
   header2text:{
     alignSelf:'center',
     fontSize:40,
-
-
   }
 });
