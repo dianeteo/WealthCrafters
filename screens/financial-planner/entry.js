@@ -6,9 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import CalculatorPopup from './calculatorpopup';
 import { TouchableOpacity } from 'react-native-web';
 
-
-const Entry = () => {
-    
+function Entry() {
 
     return (
         <SafeAreaView style={styles.container}>
@@ -26,16 +24,15 @@ const Entry = () => {
                 <Text>Amount:</Text>
                 <TextInput></TextInput> 
             </View>
-            <Button style={styles.button}>
-                <Text style={styles.buttontext}>Submit</Text>
+            <Button contentStyle={styles.buttonContent}>
+            <Text style={styles.buttontext}>Submit</Text>
             </Button>
+
         </SafeAreaView>
     )
 }
 
-
-
-
+export default Entry;
 
 
 const styles = StyleSheet.create({
@@ -73,5 +70,3 @@ const styles = StyleSheet.create({
     }
 
 })
-
-export default Entry
