@@ -3,8 +3,11 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 
+
 class MainMenu extends React.Component {
-    render() {
+  
+  render() {
+
         return(
             <View style={styles.container}>
                 <Button mode="contained"

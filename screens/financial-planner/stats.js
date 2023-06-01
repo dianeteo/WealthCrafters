@@ -3,17 +3,24 @@ import { StyleSheet, View, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
 import { Text, Button,Modal } from 'react-native-paper';
 import CalculatorPopup from './calculatorpopup';
+import axios from 'axios';
 
 
 const Stats = () => {
     const [inputValue,setInputValue] = useState('')
-
+    const data = {
+        id: 3,
+        description: 'food',
+        amount: 10.0,
+        created_at: new Date(),
+        created_by: 3,
+    }
     return (
         <View style={styles.container}>
-            <CalculatorPopup style={{
-                
-            }} />
-            <Button></Button>
+            <Button style={{backgroundColor:'black',borderRadius:10}}
+            >
+                <Text>Submit</Text>
+            </Button>
         </View>
     )
 }

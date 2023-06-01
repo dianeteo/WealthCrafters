@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View,SafeAreaView,TouchableOpacity,Image} from 'react-native';
+import { StyleSheet, View,SafeAreaView,TouchableOpacity,Image,Modal,Pressable} from 'react-native';
 import React, {useState} from 'react';
 import { Text, Button, TextInput } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import MyModal from './modal';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
+import Ionicons from 'react-native-vector-icons/Ionicons';import SQLite from 'expo-sqlite'; 
+
 const Entry = () => {
+    // for modal appearing
+    const [modalVisible, setModalVisible]=useState(true)
     //for Amount Keying
     const [inputValue, setInputValue] = useState();
     
@@ -29,8 +32,6 @@ const Entry = () => {
 
                 <Text style={{fontSize:20}}>Category:</Text>
                     <DropDownPicker 
-                addCustomItem={true}
-                searchable={true}
                 dropDownContainerStyle={{
                     width:200,
                     left:10
@@ -43,8 +44,33 @@ const Entry = () => {
                 items={items}
                 setOpen={setOpen}
                 setValue={setValue}
-                setItems={setItems}/>
-                <TouchableOpacity onPress={this.showModal} style={styles.button}/>
+                setItems={setItems}
+                />
+                <TouchableOpacity style={styles.add} >
+                    <Ionicons name='add-outline' size={45}/>
+                </TouchableOpacity>
+                <Modal
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}>
+                    <Pressable style={styles.outsideModal}
+                    onPress={(event) => { if (event.target == event.currentTarget) { 
+                        setModalVisible(false); } }} >
+                    <View style={styles.modal}>
+                        <View style={styles.modalHeader}>
+                        <View style={styles.modalHeaderContent}>
+                            <Text>Other header content</Text></View>
+                        <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <Text style={styles.modalHeaderCloseText}>X</Text>
+                        </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalContent}>
+                        <Text>
+                            Popup content.
+                        </Text>
+                        </View>
+                    </View>
+                    </Pressable>
+                </Modal>
                 {//insert category choice here
                 }
             </View>
@@ -70,7 +96,7 @@ const Entry = () => {
             <Text style={{fontSize:20}}>Note:</Text>
             <TextInput style={styles.noteinp}/>
         </View>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} >
             <Text>Submit</Text>
         </TouchableOpacity>
         </SafeAreaView>
@@ -105,8 +131,15 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'center',
         alignItems:'center',
-        left:100,
+        left:70,
         zIndex:999
+    },
+    add:{
+        backgroundColor:'#bebebe',
+        borderRadius:50,
+        alignItems:'center',
+        justifyContent:'center',
+        right:200
     },
     dropDownPicker:{
         left:10,
@@ -145,5 +178,44 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center'
 
-    }
-})
+    },
+    //for the modal
+    modal: {
+        flex: 1,
+        margin: 50,
+        padding: 5,
+        backgroundColor: "white",
+        shadowColor: "black",
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      /* The content of the modal takes all the vertical space not used by the header. */
+      modalContent: {
+        flex: 1,
+        borderWidth: 1,
+        borderColor: "black"
+      },
+      modalHeader: {
+        flexDirection: "row",
+        borderWidth: 1,
+        borderColor: "black"
+      },
+      /* The header takes up all the vertical space not used by the close button. */
+      modalHeaderContent: {
+        flexGrow: 1,
+      },
+      modalHeaderCloseText: {
+        textAlign: "center",
+        paddingLeft: 5,
+        paddingRight: 5
+      },
+      outsideModal: {
+        backgroundColor: "rgba(1, 1, 1, 0.2)",
+        flex: 1,
+        }
+    })
