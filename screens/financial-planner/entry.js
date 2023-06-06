@@ -67,3 +67,4 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         fontSize:20
     }
+})
