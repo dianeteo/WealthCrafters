@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text, Button } from 'react-native';
-//import { Text, Button } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainMenu from "./screens/MainMenu";
@@ -8,13 +7,18 @@ import FinancialPlanner from "./screens/FinancialPlanner";
 import FinancialLiteracy from "./screens/FinancialLiteracy";
 import InvestmentSimulator from './screens/InvestmentSimulator';
 import React from 'react';
-import MyTabs from './NavigationContainer.js'
+import MyTabs from './NavigationContainer.js';
+import { NativeBaseProvider } from 'native-base';
+
 
 const Stack = createNativeStackNavigator();
 
 class App extends React.Component {
+  
   render() {
+    
     return (
+      <NativeBaseProvider>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -38,6 +42,7 @@ class App extends React.Component {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      </NativeBaseProvider>
     )
   }
 }
