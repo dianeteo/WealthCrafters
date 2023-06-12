@@ -13,7 +13,9 @@ import MyTabs from './NavigationContainer.js'
 const Stack = createNativeStackNavigator();
 
 class App extends React.Component {
+  
   render() {
+    
     return (
       <NavigationContainer>
         <Stack.Navigator>

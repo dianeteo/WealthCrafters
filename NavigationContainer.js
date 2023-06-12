@@ -68,8 +68,4 @@ const MyTabs = () => {
 
 export default MyTabs;
 
-const styles = StyleSheet.create({
-    shadow:{
 
-    }
-})
