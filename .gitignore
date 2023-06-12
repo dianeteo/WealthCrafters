@@ -5,3 +5,4 @@ npm-debug.log
 package.json
 babelconfig.js
 nest-user-api/
+node_modules
