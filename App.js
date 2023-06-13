@@ -9,14 +9,29 @@ import InvestmentSimulator from './screens/InvestmentSimulator';
 import React from 'react';
 import MyTabs from './NavigationContainer.js';
 import { NativeBaseProvider } from 'native-base';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
 
 
 const Stack = createNativeStackNavigator();
 
-class App extends React.Component {
-  
-  render() {
-    
+
+const App = () => {
+  SplashScreen.preventAutoHideAsync();
+  const [loaded] = Font.useFonts({ 
+    Poppins: require('./assets/fonts/Poppins-Regular.ttf'),
+    LatoBlack: require('./assets/fonts/Lato-Black.ttf'),
+    LatoBold: require('./assets/fonts/Lato-Bold.ttf'),
+    Lato: require('./assets/fonts/Lato-Regular.ttf'),
+    PoppinsSemi: require('./assets/fonts/Poppins-SemiBold.ttf')
+    });
+
+  if (!loaded) {
+    return null;
+  } else {
+    SplashScreen.hideAsync();
+  }
+
     return (
       <NativeBaseProvider>
       <NavigationContainer>
@@ -45,7 +60,6 @@ class App extends React.Component {
       </NativeBaseProvider>
     )
   }
-}
 
 export default App;
 

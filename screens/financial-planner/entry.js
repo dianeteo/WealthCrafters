@@ -5,8 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,Spacer,Select} from 'native-base';
-import RNPickerSelect from 'react-native-picker-select';
-import {systemWeights} from 'react-native-typography';
+
 
 
 const Entry = () => {
