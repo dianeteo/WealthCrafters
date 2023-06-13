@@ -5,6 +5,7 @@ import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native'; // Import the useNavigation hook
 import { firebase_auth } from '../config/firebase';
 
+
 const MainMenu = () => {
   const navigation = useNavigation(); // Get the navigation object using the useNavigation hook
 

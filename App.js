@@ -15,7 +15,9 @@ import { firebase_auth } from './config/firebase.js';
 
 const Stack = createNativeStackNavigator();
 
+
 const LoggedInStack = createNativeStackNavigator();
+
 
 const LoggedIn = () => {
   return (

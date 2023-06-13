@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+
 import { StyleSheet,TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -236,6 +237,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity:0.25,
         shadowRadius:5,
+
     },
     //respective features
     picker:{
@@ -249,7 +251,6 @@ const styles = StyleSheet.create({
         // borderColor:'#d3d3d3',
         // borderWidth:1,
         // minWidth:10
-        
     },
     calculator:{
         left:14,
@@ -271,4 +272,5 @@ const styles = StyleSheet.create({
         backgroundColor:'#6077c0'
 
     },
+
     })
