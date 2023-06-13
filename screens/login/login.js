@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
 import { firebase_auth } from '../../config/firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth"
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { Input, Stack, Center, NativeBaseProvider } from 'native-base';
+import { Button } from 'react-native-paper';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -38,47 +41,59 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <KeyboardAvoidingView behaviour="padding">
-        <TextInput
+    <Stack space={3} w="80%" maxW="300px" mx="auto">
+        <Input variant="rounded"
+          borderColor="#f79256"
+          bgColor="#fff"
+          size="md"
           value={username}
-          style={styles.input}
           placeholder="Enter your username"
           autoCapitalize="none"
           onChangeText={(text) => setUsername(text)}
         />
 
-        <TextInput
+        <Input variant="rounded"
+          borderColor="#f79256"
+          bgColor="#fff"
+          size="md"
           value={email}
-          style={styles.input}
           placeholder="Enter your email"
           autoCapitalize="none"
           onChangeText={(text) => setEmail(text)}
         />
 
-        <TextInput
+        <Input variant="rounded"
+          borderColor="#f79256"
+          bgColor="#fff"
+          size="md"
           secureTextEntry={true}
           value={password}
-          style={styles.input}
           placeholder="Enter your password"
           autoCapitalize="none"
           onChangeText={(text) => setPassword(text)}
         />
 
         {loading ? (
-          <ActivityIndicator size="large" color="#0000ff" />
+          <Button mode="contained" loading={loading} icon="refresh" buttonColor="#f79256">Loading</Button>
         ) : (
           <>
-            <Button title="Login" onPress={signIn} />
-            <Button title="Create account" onPress={signUp} />
+            <Button mode="contained" onPress={signIn} buttonColor="#f79256">Login</Button>
+            <Button mode="contained" onPress={signUp} buttonColor="#f79256">Create account</Button>
           </>
         )}
-      </KeyboardAvoidingView>
-    </View>
+    </Stack>
   );
 };
 
-export default Login;
+export default () => {
+  return (
+    <NativeBaseProvider>
+      <Center flex={1} px="3">
+        <Login />
+      </Center>
+    </NativeBaseProvider>
+  )
+};
 
 const styles = StyleSheet.create({
   container: {
