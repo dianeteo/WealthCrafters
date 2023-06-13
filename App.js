@@ -7,48 +7,66 @@ import FinancialPlanner from "./screens/FinancialPlanner";
 import FinancialLiteracy from "./screens/FinancialLiteracy";
 import InvestmentSimulator from './screens/InvestmentSimulator';
 import Login from "./screens/login/login.js";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import MyTabs from './NavigationContainer.js';
 import { NativeBaseProvider } from 'native-base';
-import User, { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import { firebase_auth } from './config/firebase.js';
-
 
 const Stack = createNativeStackNavigator();
 
+const LoggedInStack = createNativeStackNavigator();
+
+const LoggedIn = () => {
+  return (
+    <NativeBaseProvider>
+      <LoggedInStack.Navigator>
+        <LoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Financial Planner" component={MyTabs} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+      </LoggedInStack.Navigator>
+    </NativeBaseProvider>
+  );
+};
+
+const NotLoggedInStack = createNativeStackNavigator();
+
+const NotLoggedIn = () => {
+  return (
+    <NativeBaseProvider>
+      <NotLoggedInStack.Navigator>
+        <NotLoggedInStack.Screen name="Log In" component={Login} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Financial Planner" component={MyTabs} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+      </NotLoggedInStack.Navigator>
+    </NativeBaseProvider>
+  );
+};
+
 const App = () => {
-    return (
-      <NativeBaseProvider>
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(firebase_auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <NativeBaseProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-          />
-
-          <Stack.Screen
-            name="Main Menu"
-            component={MainMenu}
-          />
-
-          <Stack.Screen
-            name="Financial Planner"
-            component={MyTabs}
-          />
-
-          <Stack.Screen
-          name="Financial Literacy"
-          component={FinancialLiteracy}
-          />
-
-          <Stack.Screen
-          name="Investment Simulator"
-          component={InvestmentSimulator}
-          />
+          {user ? <Stack.Screen name="Main Menu" component={LoggedIn} /> : <Stack.Screen name="Login" component={NotLoggedIn} />}
         </Stack.Navigator>
       </NavigationContainer>
-      </NativeBaseProvider>
-    )
-  }
+    </NativeBaseProvider>
+  );
+};
 
 export default App;

@@ -43,7 +43,7 @@ const Login = () => {
         <TextInput
           value={username}
           style={styles.input}
-          placeholder="Enter your desired username!"
+          placeholder="Enter your username"
           autoCapitalize="none"
           onChangeText={(text) => setUsername(text)}
         />
@@ -51,7 +51,7 @@ const Login = () => {
         <TextInput
           value={email}
           style={styles.input}
-          placeholder="Enter your email!"
+          placeholder="Enter your email"
           autoCapitalize="none"
           onChangeText={(text) => setEmail(text)}
         />
@@ -60,7 +60,7 @@ const Login = () => {
           secureTextEntry={true}
           value={password}
           style={styles.input}
-          placeholder="Enter your password!"
+          placeholder="Enter your password"
           autoCapitalize="none"
           onChangeText={(text) => setPassword(text)}
         />
