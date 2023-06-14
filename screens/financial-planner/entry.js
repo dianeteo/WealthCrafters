@@ -1,75 +1,69 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,TouchableOpacity} from 'react-native';
+import { Animated,StyleSheet,TouchableOpacity,View} from 'react-native';
 import React, {useState} from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,Spacer,Select} from 'native-base';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 
+const Tab = createMaterialTopTabNavigator();
 
-const Entry = () => {
+const EntryIncome = () => {
+
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
     // for calendar date
-    const[date,setDate]=useState(new Date())
+    const[date1,setDate]=useState(new Date())
     //for Category List
-    const [selectedCategory, setSelectedCategory] = useState('');
-    const [categories, setCategories] = useState([
+    const [selectedCategory1, setSelectedCategory] = useState('');
+    const [categories1, setCategories] = useState([
         { label: 'Category 1', value: 'category1' },
         { label: 'Category 2', value: 'category2' },
         { label: 'Category 3', value: 'category3' },
     ]);
     //for adding Category
-    const [newCategory, setNewCategory] = useState('');
+    const [newCategory1, setNewCategory] = useState('');
 
     //for Amount Keying
-    const [numValue, setNumValue] = useState();
+    const [numValue1, setNumValue] = useState(0);
     //for changing note
-    const [text,setText]=useState('')
+    const [text1,setText]=useState('')
 
 
     const handleCategoryAdd = () => {
-        setCategories([...categories,{label:newCategory,value:newCategory}]);
+        setCategories([...categories1,{label:newCategory1,value:newCategory1}]);
         setNewCategory('');
         }
 
     return (
-        <Box style={{backgroundColor:'#445073',height:1000}}>
-        <Flex style={styles.container} flexDirection='column' justifyContent='center'>
-            <Center style={styles.header} _text={styles.headertext}>
-                NEW ENTRY
-            </Center>
-            <Spacer h='7%' />
-            <Flex flexDirection='row'>
-                <Text style={styles.titledate}>Date:</Text>
-                <DateTimePicker style={styles.picker} value={date} onChange={(event,date)=>{setDate(date);event='dismissed'}} />
-            </Flex>
-            <Spacer h='7%' />
-            <Flex flexDirection='row'>
-                <Text style={styles.titlecategory}>Category:</Text>
+            <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
+            <Text style={styles.titledate}>DATE:</Text>
+            <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
+        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+                <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
-                    <Select selectedValue={selectedCategory} 
-                            minWidth="212" 
-                            accessibilityLabel="Choose A Category" 
-                            placeholder="Choose A Category"
-                            onValueChange={itemValue => setSelectedCategory(itemValue)}
-                            >
-                    <Select.Item label='Food' value='food'></Select.Item>
-                    <Select.Item label='Shopping' value='shopping'></Select.Item>  
-                    <Select.Item label='Haircut' value='haircut'></Select.Item>
-                    <Select.Item label='Transport' value='transport'></Select.Item>
+                    <Select selectedValue={selectedCategory1}
+                        minWidth="212"
+                        accessibilityLabel="Choose A Category"
+                        placeholder="Choose A Category"
+                        placeholderTextColor='black'
+                        // backgroundColor='#78b0a3'
+                        color='white'
+                        borderRadius={5}
+                        margin={0}
+                        padding={0}
+                        onValueChange={itemValue => setSelectedCategory(itemValue)}
+                    >
+                        <Select.Item label='Income' value='income'></Select.Item>
+                        <Select.Item label='Shopping' value='shopping'></Select.Item>
+                        <Select.Item label='Haircut' value='haircut'></Select.Item>
+                        <Select.Item label='Transport' value='transport'></Select.Item>
                     </Select>
-                    {/* <RNPickerSelect
-                        style={{alignSelf:'center', width:60}}
-                        value={selectedCategory}
-                        onValueChange={(value) => setSelectedCategory(value)}
-                        items={categories}
-                        
-                    /> */}
                 </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
-                    <Ionicons name='add-outline' size={40} />
+                    <Ionicons name='add-outline' size={40} color='white' />
                 </TouchableOpacity>
                 <Modal
                     isOpen={modalVisible}
@@ -79,25 +73,23 @@ const Entry = () => {
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Category</FormControl.Label>
-                                <Input value={newCategory} onChange={(text)=>{setNewCategory(text)}} />
+                                <Input value={newCategory1} onChange={(text) => { setNewCategory(text); } } />
                             </FormControl>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button.Group space={2}>
-                                <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory('') } }>
+                                <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory(''); } }>
                                     Cancel
                                 </Button>
-                                <Button onPress={()=>{setModalVisible(false)}}>
+                                <Button onPress={() => { setModalVisible(false); } }>
                                     Save
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex>
-            <Spacer height='7%' />
-            <Flex flexDirection='row'>
-                <Text style={styles.titleamt}>Amount:</Text>
+            </Flex><Spacer height='7%' /><Flex flexDirection='row'>
+                <Text style={styles.titleamt}>AMOUNT:</Text>
                 <CalculatorInput
                     fieldContainerStyle={styles.calculator}
                     fieldTextStyle={{ alignSelf: 'center' }}
@@ -111,23 +103,176 @@ const Entry = () => {
                     fontSize={25}
                     roundTo={2}
                     onBeforeChange={setNumValue}
-                    value={numValue} />
+                    value={numValue1.toFixed(2)} />
+            </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
+                <Text style={styles.titlenote}>NOTE:</Text>
+                <Input style={{ borderRadius: 5,
+                    //  backgroundColor: '#78b0a3', 
+                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button}>
+                <Text style={styles.submit}>Submit</Text>
+            </TouchableOpacity>
             </Flex>
-            <Spacer height='7%' />
-            <Flex flexDirection='row' justifyContent='unset'>
-                <Text style={styles.titlenote}>Note:</Text>
-                <Input position='unset' left='53' bottom='1' w='60%' maxW='300' value={text} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' variant='outline' />
-            </Flex>
-            <Spacer h='12%' />
-            <Button style={styles.button} variant={'solid'} >
-                Submit
-            </Button>
-        </Flex>
-    </Box>
+
     )
 }
 
-export default Entry;
+const EntryExpenses = () => {
+
+    // for modal appearing
+    const [modalVisible, setModalVisible]=useState(false)
+    // for calendar date
+    const[date2,setDate]=useState(new Date())
+    //for Category List
+    const [selectedCategory2, setSelectedCategory] = useState('');
+    const [categories2, setCategories] = useState([
+        { label: 'Category 1', value: 'category1' },
+        { label: 'Category 2', value: 'category2' },
+        { label: 'Category 3', value: 'category3' },
+    ]);
+    //for adding Category
+    const [newCategory2, setNewCategory] = useState('');
+
+    //for Amount Keying
+    const [numValue2, setNumValue] = useState(0);
+    //for changing note
+    const [text2,setText]=useState('')
+
+
+    const handleCategoryAdd = () => {
+        setCategories([...categories2,{label:newCategory2,value:newCategory2}]);
+        setNewCategory('');
+        }
+
+    return (
+            <>
+            <Flex direction='column' style={{top:150}}>
+            <Flex flexDirection='row'>
+            <Text style={styles.titledate}>DATE:</Text>
+            <DateTimePicker themeVariant='dark' style={styles.picker} value={date2} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
+        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+                <Text style={styles.titlecategory}>CATEGORY:</Text>
+                <Box style={styles.select}>
+                    <Select selectedValue={selectedCategory2}
+                        minWidth="212"
+                        accessibilityLabel="Choose A Category"
+                        placeholder="Choose A Category"
+                        placeholderTextColor='black'
+                        // backgroundColor='#78b0a3'
+                        color='white'
+                        borderRadius={5}
+                        margin={0}
+                        padding={0}
+                        onValueChange={itemValue => setSelectedCategory(itemValue)}
+                    >
+                        <Select.Item label='Food' value='food'></Select.Item>
+                        <Select.Item label='Shopping' value='shopping'></Select.Item>
+                        <Select.Item label='Haircut' value='haircut'></Select.Item>
+                        <Select.Item label='Transport' value='transport'></Select.Item>
+                    </Select>
+                </Box>
+                <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
+                    <Ionicons name='add-outline' size={40} color='white' />
+                </TouchableOpacity>
+                <Modal
+                    isOpen={modalVisible}
+                    onClose={() => setModalVisible(false)}>
+                    <Modal.Content maxWidth='400px'>
+                        <Modal.CloseButton />
+                        <Modal.Body>
+                            <FormControl>
+                                <FormControl.Label>Category</FormControl.Label>
+                                <Input value={newCategory2} onChange={(text) => { setNewCategory(text); } } />
+                            </FormControl>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button.Group space={2}>
+                                <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory(''); } }>
+                                    Cancel
+                                </Button>
+                                <Button onPress={() => { setModalVisible(false); } }>
+                                    Save
+                                </Button>
+                            </Button.Group>
+                        </Modal.Footer>
+                    </Modal.Content>
+                </Modal>
+            </Flex><Spacer height='7%' /><Flex flexDirection='row'>
+                <Text style={styles.titleamt}>AMOUNT:</Text>
+                <CalculatorInput
+                    fieldContainerStyle={styles.calculator}
+                    fieldTextStyle={{ alignSelf: 'center' }}
+                    displayTextAlign='right'
+                    height={400}
+                    displayHeight={60}
+                    numericButtonColor='black'
+                    calcButtonBackgroundColor='#ff6531'
+                    acceptButtonBackgroundColor='#ff6531'
+                    borderColor='#d3d3d3'
+                    fontSize={25}
+                    roundTo={2}
+                    onBeforeChange={setNumValue}
+                    value={numValue2.toFixed(2)} />
+            </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
+                <Text style={styles.titlenote}>NOTE:</Text>
+                <Input style={{ borderRadius: 5, 
+                    // backgroundColor: '#78b0a3', 
+                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button}>
+                <Text style={styles.submit}>Submit</Text>
+            </TouchableOpacity>
+        </Flex></>
+
+    )
+}
+
+const NewEntry = () =>{
+    return (<>
+    <Center style={styles.header} _text={styles.headertext}>NEW ENTRY</Center>
+            <Tab.Navigator
+                initialRouteName='EntryIncome'
+                sceneContainerStyle={{
+                    position:'relative',
+                    top:100,
+                }}
+                initialLayout={{
+                    height:300
+                }}
+                screenOptions={{
+                    tabBarActiveTintColor: '#fbd1a2',
+                    tabBarLabelStyle: { fontSize: 12, fontFamily:'Poppins' },
+                    tabBarStyle: { 
+                        position:'relative',
+                        backgroundColor: '#1d4e89',
+                        borderRadius:20,
+                        width:350,
+                        alignSelf:'center',
+                        top:50
+                        },
+                    tabBarIndicator: () =>{
+                        null
+                    }
+                    
+                  }}>
+                <Tab.Screen 
+                    name='EntryIncome'
+                    component={EntryIncome}
+                    options={{
+                        tabBarLabel:'Income'
+
+                    }}/>
+                <Tab.Screen
+                    name='EntryExpenses'
+                    component={EntryExpenses}
+                    options={{tabBarLabel:'Expenses'}} />
+            </Tab.Navigator>
+            
+            </>
+    )
+}
+
+
+export default NewEntry;
 
 
 const styles = StyleSheet.create({
@@ -138,12 +283,12 @@ const styles = StyleSheet.create({
     },
     //header entry
     header:{
-        bottom:25,
+        top:10,
         alignItems:'center',
         justifyContent:'center',
         margin:5,
         padding:5,
-        backgroundColor:'#00154f',
+        backgroundColor:'#f79256',
         borderRadius:20,
         shadowColor:'#7F5DF0',
         shadowOffset:{
@@ -156,8 +301,7 @@ const styles = StyleSheet.create({
     },
     headertext:{
         fontSize:35,
-        fontWeight:'bold',
-        color:'#f2bc94',
+        color:'#fbd1a2',
         shadowColor:'#96765f',
         shadowOffset:{
           width:3,
@@ -165,64 +309,40 @@ const styles = StyleSheet.create({
         },
         shadowOpacity:0.2,
         shadowRadius:4,
-        // fontFamily:'helvetica-neue'
+        fontFamily:'PoppinsSemi'
     },
     //Titles
     titledate:{
         fontSize:20,
-        left:44,
-        color:'#c0904d',
-        fontWeight:'bold',
-        shadowColor:'#916e3c',
-        shadowOffset:{
-          width:2,
-          height:2
-        },
-        shadowOpacity:0.25,
-        shadowRadius:1,
+        left:63,
+        top:3,
+        color:'#cf9a4e',
+        fontFamily:'PoppinsSemi',
     },
     titlecategory:{
         fontSize:20,
         left:5,
-        color:'#c0904d',
-        fontWeight:'bold',
-        shadowColor:'#916e3c',
-        shadowOffset:{
-          width:2,
-          height:2
-        },
-        shadowOpacity:0.25,
-        shadowRadius:1,
+        color:'#cf9a4e',
+        fontFamily:'PoppinsSemi',
+
     },
     titleamt:{
         fontSize:20,
-        left:18,
-        color:'#c0904d',
-        fontWeight:'bold',
-        shadowColor:'#916e3c',
-        shadowOffset:{
-          width:2,
-          height:2
-        },
-        shadowOpacity:0.25,
-        shadowRadius:1,
+        left:24,
+        color:'#cf9a4e',
+        fontFamily:'PoppinsSemi',
+
     },
     titlenote:{
         fontSize:20,
-        left:44,
-        color:'#c0904d',
-        fontWeight:'bold',
-        shadowColor:'#916e3c',
-        shadowOffset:{
-          width:2,
-          height:2
-        },
-        shadowOpacity:0.25,
-        shadowRadius:1,
+        left:56,
+        color:'#cf9a4e',
+        fontFamily:'PoppinsSemi',
+
     },
     //button
     add:{
-        backgroundColor:'#6077c0',
+        backgroundColor:'#e32f45',
         borderRadius:100,
         alignItems:'center',
         justifyContent:'center',
@@ -239,35 +359,48 @@ const styles = StyleSheet.create({
     //respective features
     picker:{
         bottom:6,
-        left:40,
+        left:60,
+        borderColor:'black',
+        borderRadius:1,
+        shadowColor:'#0f0e0d',
+        shadowOffset:{
+          width:2,
+          height:2
+        },
+        shadowOpacity:0.25,
+        shadowRadius:1,
 
     },
     select:{
         bottom:5,
         left:13,
-        // borderColor:'#d3d3d3',
-        // borderWidth:1,
-        // minWidth:10
-        
+
     },
     calculator:{
-        left:14,
+        left:24,
         bottom:15,
         width:90,
-        borderColor:'gray',
-        borderWidth:1,
+        // backgroundColor:'#78b0a3',
         borderRadius:7,
         height:30
     },
     input:{
-        left:70,
+        left:84,
     },
     //submit button
     button:{
         width:250,
+        height:45,
+        justifyContent:'center',
         borderRadius:100,
+        alignItems:'center',
         alignSelf:'center',
-        backgroundColor:'#6077c0'
+        backgroundColor:'#e32f45',
 
     },
+    submit:{
+        fontFamily:'MontserratSemi',
+        fontSize:18,
+        color:'#fff'
+    }
     })

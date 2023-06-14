@@ -42,7 +42,7 @@ export default MainMenu;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f79256',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

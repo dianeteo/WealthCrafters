@@ -23,7 +23,10 @@ const App = () => {
     LatoBlack: require('./assets/fonts/Lato-Black.ttf'),
     LatoBold: require('./assets/fonts/Lato-Bold.ttf'),
     Lato: require('./assets/fonts/Lato-Regular.ttf'),
-    PoppinsSemi: require('./assets/fonts/Poppins-SemiBold.ttf')
+    PoppinsSemi: require('./assets/fonts/Poppins-SemiBold.ttf'),
+    MontserratSemi: require ('./assets/fonts/Montserrat-SemiBold.ttf'),
+    MontserratBold: require('./assets/fonts/Montserrat-Bold.ttf'),
+    PoppinsBlack: require('./assets/fonts/Poppins-Black.ttf')
     });
 
   if (!loaded) {

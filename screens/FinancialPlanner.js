@@ -52,7 +52,7 @@ class FinancialPlanner extends React.Component {
                       flexDirection: 'row',
                       justifyContent: 'space-around',
                       alignItems:'center'
-                      }
+                      },
                     
                     }
                   }}
@@ -82,9 +82,9 @@ class FinancialPlanner extends React.Component {
                     <Flex justifyContent='space-evenly' direction='row'>
                         {/* income side */}
                         <Flex direction='column'>
-                          <Spacer h='7%'/>
-                          <Box alignItems='center'>
-                            <Text style={styles.header}>Income ()</Text>
+                          <Spacer h='3%'/>
+                          <Box justifyContent='center'>
+                            <Text style={{fontFamily:'Poppins',color:'blue',fontSize:18,alignSelf:'center'}}>Income (+)</Text>
                           </Box>
                           <Spacer h='3%'/>
                           <Box>
@@ -93,7 +93,7 @@ class FinancialPlanner extends React.Component {
                             <HStack>
                               <VStack alignItems='center'>
                                 <Text style={styles.item}>{item.category}</Text>
-                                <Text italic style={styles.description}>{item.description}</Text>
+                                <Text style={styles.description}>{item.description}</Text>
                               </VStack>
                               <Spacer />
                               <Text style={{top:10}} fontFamily="Lato" fontSize="xs" _dark={{color: "warmGray.50"}} color="coolGray.800" alignSelf="flex-start">
@@ -106,11 +106,11 @@ class FinancialPlanner extends React.Component {
                         </Flex>
                         {/* expenses side */}
                         <Flex direction='column'>
-                        <Spacer h='7%'/>
-                          <Box alignItems='center'>
-                            <Text>Expenses ()</Text>
+                        <Spacer h='3%'/>
+                          <Box alignItems='center' justifyContent='center'>
+                            <Text style={{fontFamily:'Poppins',color:'red',fontSize:18}}>Expenses (-)</Text>
                           </Box>
-                          <Spacer h='4%'/>
+                          <Spacer h='3%'/>
                           <Box>
                             <FlatList w='175'minH='400'data={expense_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800' renderItem={({item})=>
                           <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   //for calendar
   container: {
     flex:1,
-    backgroundColor: '#7dcfb6',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
