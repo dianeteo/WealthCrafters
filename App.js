@@ -12,12 +12,13 @@ import MyTabs from './NavigationContainer.js';
 import { NativeBaseProvider } from 'native-base';
 import { onAuthStateChanged } from 'firebase/auth';
 import { firebase_auth } from './config/firebase.js';
+import * as SplashScreen from 'expo-splash-screen';
+import * as Font from 'expo-font';
+
 
 const Stack = createNativeStackNavigator();
 
-
-const LoggedInStack = createNativeStackNavigator();
-
+const LoggedInStack = createNativeStackNavigator();  
 
 const LoggedIn = () => {
   return (
@@ -49,6 +50,23 @@ const NotLoggedIn = () => {
 };
 
 const App = () => {
+  SplashScreen.preventAutoHideAsync();
+  const [loaded] = Font.useFonts({ 
+    Poppins: require('./assets/fonts/Poppins-Regular.ttf'),
+    LatoBlack: require('./assets/fonts/Lato-Black.ttf'),
+    LatoBold: require('./assets/fonts/Lato-Bold.ttf'),
+    Lato: require('./assets/fonts/Lato-Regular.ttf'),
+    PoppinsSemi: require('./assets/fonts/Poppins-SemiBold.ttf'),
+    MontserratSemi: require ('./assets/fonts/Montserrat-SemiBold.ttf'),
+    MontserratBold: require('./assets/fonts/Montserrat-Bold.ttf'),
+    PoppinsBlack: require('./assets/fonts/Poppins-Black.ttf')
+    });
+
+  if (!loaded) {
+    return null;
+  } else {
+    SplashScreen.hideAsync();
+  }
   const [user, setUser] = useState(null);
 
   useEffect(() => {
