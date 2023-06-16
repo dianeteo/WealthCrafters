@@ -1,39 +1,48 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, TouchableOpacity,SafeAreaView,ScrollView} from 'react-native';
+import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
-import { Text, Button} from 'react-native-paper';
 import Entry from './financial-planner/entry.js';
 import {Calendar} from 'react-native-calendars';
-import MyModal from './financial-planner/modal.js';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer} from 'native-base';
 
-const Stack = createNativeStackNavigator()
-function MyStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Entry" component={Entry} />
-    </Stack.Navigator>
-  );
-}
+const expense_data = [{
+  id: 3,
+  description: 'ramen',
+  category:'food',
+  amount: 10.00,
+  created_at: new Date(),
+  created_by: 3,
+},]
+const income_data = [{
+  id: 3,
+  description: 'barista job',
+  category:'salary',
+  amount: 1000.00,
+  created_at: new Date(),
+  created_by: 3,
+},]
+
+
 
 class FinancialPlanner extends React.Component {
-
   
   state = {
     isModalVisible: false,
   };
-  
 
 
   showModal = () => this.setState({ isModalVisible: true });
   hideModal = () => this.setState({ isModalVisible: false });
   
-  
 
     render() {
+
         return(
             <SafeAreaView style={styles.container}>
+              <Box style={{
+                margin:15,
+                borderRadius:10
+              }}>
                 <Calendar
                   hideExtraDays={true}
                   //do you wanna show the extra days
@@ -43,61 +52,90 @@ class FinancialPlanner extends React.Component {
                       flexDirection: 'row',
                       justifyContent: 'space-around',
                       alignItems:'center'
-                      }
+                      },
+                    
                     }
                   }}
                   
                   //to be edited later, to just show the entry screen for now without animation
-
-                  
-                  
-                  
-
                   style={[styles.calendar, {height: 200}]}
                   dayComponent={({date}) => {
                     return (
                             <><TouchableOpacity onPress={this.showModal}>
                         {//need to store date somewhere so that modal will have currentdate
                         }
-                        <View style={[styles.main]}>
-                          <Button style={{ marginVertical: 12, color: 'black', justifyContent: 'space-around', flexDirection: 'row', }}>{date.day}</Button>
-                          <Text style={{ fontSize: 10, color: 'red', left: 10 }}>100</Text>
-                          <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10 }}>200</Text>
-                          <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10 }}>300</Text>
-                        </View>
-                      </TouchableOpacity>
-                      <View>
-                          <MyModal visible={this.state.isModalVisible} dismiss={this.hideModal}>
-                            <View style={styles.background}>
-                              <View style={styles.header}>
-                                <Text>Date</Text>
-                              </View>
-                              <View style={styles.body}>
-                                <View style={styles.header2}>
-                                  <Text style={styles.header2text}>Income</Text>
-                                  <Text style={styles.header2text}>Expenses</Text>
-                                </View>
-                                <View style={styles.logs}>
-                                  <ScrollView style={styles.scroll}>
-                                    <Text>Income (80)</Text>
-                                  </ScrollView>
-                                  <ScrollView style={styles.scroll}>
-                                    <Text>Food (5)</Text>
-                                  </ScrollView>
-                                </View>
-                              </View>
-                            </View>
-                          </MyModal>
-                        </View></>
+                        <Box style={[styles.main]}>
+                          <Text style={{ marginVertical: 7.5, color: '#171717', fontFamily:'LatoBold'}}>{date.day}</Text>
+                          <Text style={{ fontSize: 10, color: 'red', left: 10, fontFamily:'Lato'}}>100</Text>
+                          <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily:'Lato'}}>200</Text>
+                          <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily:'Lato' }}>300</Text>
+                        </Box>
+                      </TouchableOpacity></>
                           
                            );
                           }}
                 />
+                <Modal isOpen={this.state.isModalVisible} onClose={this.hideModal} style={styles.modal} size='xl' >
+                  <Modal.Content h='600'>
+                    <Modal.Header alignSelf='center'>Total:</Modal.Header>
+                    <Modal.CloseButton />
+                    <Flex justifyContent='space-evenly' direction='row'>
+                        {/* income side */}
+                        <Flex direction='column'>
+                          <Spacer h='3%'/>
+                          <Box justifyContent='center'>
+                            <Text style={{fontFamily:'Poppins',color:'blue',fontSize:18,alignSelf:'center'}}>Income (+)</Text>
+                          </Box>
+                          <Spacer h='3%'/>
+                          <Box>
+                            <FlatList minH='400' w='175' data={income_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800'renderItem={({item})=>
+                          <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
+                            <HStack>
+                              <VStack alignItems='center'>
+                                <Text style={styles.item}>{item.category}</Text>
+                                <Text style={styles.description}>{item.description}</Text>
+                              </VStack>
+                              <Spacer />
+                              <Text style={{top:10}} fontFamily="Lato" fontSize="xs" _dark={{color: "warmGray.50"}} color="coolGray.800" alignSelf="flex-start">
+                                {item.amount.toFixed(2)}
+                              </Text>
+                            </HStack>
+                          </Box>} keyExtractor={item => item.id}>
+                          </FlatList>
+                          </Box>
+                        </Flex>
+                        {/* expenses side */}
+                        <Flex direction='column'>
+                        <Spacer h='3%'/>
+                          <Box alignItems='center' justifyContent='center'>
+                            <Text style={{fontFamily:'Poppins',color:'red',fontSize:18}}>Expenses (-)</Text>
+                          </Box>
+                          <Spacer h='3%'/>
+                          <Box>
+                            <FlatList w='175'minH='400'data={expense_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800' renderItem={({item})=>
+                          <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
+                            <HStack>
+                              <VStack alignItems='center' justifyContent='space-evenly'>
+                                <Text style={styles.item}>{item.category}</Text>
+                                <Text style={styles.description}>{item.description}</Text>
+                              </VStack>
+                              <Spacer />
+                              <Text style={{top:10}} fontFamily='Lato' fontSize="xs" _dark={{color: "warmGray.50"}} color="coolGray.800" alignSelf="flex-start">
+                                {item.amount.toFixed(2)}
+                              </Text>
+                            </HStack>
+                          </Box>} keyExtractor={item => item.id}></FlatList>
+                          </Box>
+                        </Flex>
+                    </Flex>
+                    </Modal.Content>
+                </Modal>
+                </Box>
                 </SafeAreaView>
           
         )
     }
-}
+  }
 
 export default FinancialPlanner;
 
@@ -110,76 +148,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   main:{
-    justifyContent:'center'
+    justifyContent:'center',
+    height:89
   },
 
   calendar:{
     flex:1,
-    width:405
+    width:405,
+    padding:10,
+    borderRadius:10
   },
   //for modal
-  header:{
-    flex:1,
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'center',
-    borderColor:'black'
+  item:{
+    fontSize:16,
+    fontFamily:'PoppinsSemi'
   },
-  button:{
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    left:100,
-    borderRadius: 200,
-    backgroundColor: '#add8e6',
-    shadowColor:'black'
-  },
-  body:{
-    flex:6,
-    flexDirection:'column',
-    justifyContent:'space-between',
-    alignItems:'center',
-    borderColor:'black'
-  },
-  buttontext:{
-    fontWeight:'bold',
-    fontSize:20,
-    color:'#fff',
-    alignSelf:'center',
-    bottom:3
-  },
-  background:{
-    flexDirection:'column',
-    backgroundColor:'white',
-    width:350,
-    height:600,
-    justifyContent:'center'
-  },
-  scroll:{
-    alignSelf:'top',
-    fontSize:18,
-    left:20
-
-  },
-  logs:{
-    flex:5,
-    flexDirection:'row',
-    justifyContent:'space-evenly',
-    alignItems:'center'
-  },
-  header2:{
-    flex:1,
-    flexDirection:'row',
-    alignItems:'center',
-    justifyContent:'space-between',
-    borderColor:'black',
-    borderWidth:1,
-    width:350
-  },
-  header2text:{
-    alignSelf:'center',
-    fontSize:40,
+  description:{
+    fontSize:10,
+    fontFamily:'Poppins',
+  
+    
   }
 });

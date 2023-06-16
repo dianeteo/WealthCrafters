@@ -32,9 +32,13 @@ const MyTabs = () => {
   return (
     
       <Tab.Navigator
+
         initialRouteName={Home}
         screenOptions={
             ({route})=>({
+            tabBarStyle:{
+                
+            },
             headerShown:false,
             tabBarIcon: ({focused,color,size})=>{
                 let iconName;
@@ -52,13 +56,12 @@ const MyTabs = () => {
         })}
         >
         <Tab.Screen name={Home} component={FinancialPlanner} />
-        <Tab.Screen name={entryName} component={Entry} options={({navigation})=>({
-            tabBarIcon:(color,size) => {
-                <Ionicons name='add-circle' size={size} color={color}/>
-            }},
+        <Tab.Screen name={entryName} component={Entry} options={({navigation})=>(
             {tabBarShowLabel:false},
             {tabBarButton: (props)=>(
-                <TouchableOpacity onPress={()=> navigation.navigate('Entry')} {...props}/>
+                <TouchableOpacity onPress={()=> navigation.navigate('Entry')} {...props}>
+                    <Ionicons name='add-circle' size={50} color='#e32f45' style={{bottom:2}}/>
+                </TouchableOpacity>
             )})} />
         <Tab.Screen name={statsName} component={Stats} />
       </Tab.Navigator>
@@ -68,8 +71,4 @@ const MyTabs = () => {
 
 export default MyTabs;
 
-const styles = StyleSheet.create({
-    shadow:{
 
-    }
-})
