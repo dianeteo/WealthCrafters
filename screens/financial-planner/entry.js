@@ -6,6 +6,9 @@ import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,Spacer,Select} from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { db } from '../config/firebase.js';
+import { email, username } from '../login/login.js';
+
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -31,11 +34,22 @@ const EntryIncome = () => {
     //for changing note
     const [text1,setText]=useState('')
 
-
     const handleCategoryAdd = () => {
         setCategories([...categories1,{label:newCategory1,value:newCategory1}]);
         setNewCategory('');
         }
+
+    const submitIncome = async () => {
+        const incomeRef = db.collection('users').doc(email);
+        const addIncome = await incomeRef.set({
+            income: { 
+                amount: numValue1,
+                category: selectedCategory1,
+                created_at: date1,
+                description: text1
+            }
+          })
+    }
 
     return (
         <Box alignSelf="center">
