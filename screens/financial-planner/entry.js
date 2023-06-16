@@ -38,17 +38,18 @@ const EntryIncome = () => {
         }
 
     return (
-        <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
-        <Text style={styles.titledate}>DATE:</Text>
-        <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
-        </Flex>
-        <Spacer h='7%' /><Flex flexDirection='row'>
+        <Box alignSelf="center">
+            <Flex direction='column' style={{top:25}}><Flex flexDirection='row'>
+            <Text style={styles.titledate}>DATE:</Text>
+            <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
+            </Flex>
+            <Spacer h='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                     <Select selectedValue={selectedCategory1}
                         minWidth="212"
-                        accessibilityLabel="Choose A Category"
-                        placeholder="Choose A Category"
+                        accessibilityLabel="Choose a category"
+                        placeholder="Choose a category"
                         placeholderTextColor='black'
                         // backgroundColor='#78b0a3'
                         color='white'
@@ -106,14 +107,15 @@ const EntryIncome = () => {
                     onBeforeChange={setNumValue}
                     value={numValue1.toFixed(2)} />
             </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
-                <Text style={styles.titlenote}>NOTE:</Text>
-                <Input style={{ borderRadius: 5,
+                <Text style={styles.titlenote} marginRight={5}>NOTE:</Text>
+                <Input style={{borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
-                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button}>
+                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='30%' /><TouchableOpacity style={styles.button}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
+        </Box>
     )
 }
 
@@ -145,8 +147,8 @@ const EntryExpenses = () => {
         }
 
     return (
-            <>
-            <Flex direction='column' style={{top:150}}>
+        <Box alignSelf="center">
+            <Flex direction='column' style={{top:25}}>
             <Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date2} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
@@ -155,8 +157,8 @@ const EntryExpenses = () => {
                 <Box style={styles.select}>
                     <Select selectedValue={selectedCategory2}
                         minWidth="212"
-                        accessibilityLabel="Choose A Category"
-                        placeholder="Choose A Category"
+                        accessibilityLabel="Choose a category"
+                        placeholder="Choose a category"
                         placeholderTextColor='black'
                         // backgroundColor='#78b0a3'
                         color='white'
@@ -217,11 +219,12 @@ const EntryExpenses = () => {
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
-                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button}>
+                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='30%' /><TouchableOpacity style={styles.button}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
-        </Flex></>
+        </Flex>
+    </Box>
 
     )
 }
