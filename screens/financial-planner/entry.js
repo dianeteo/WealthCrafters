@@ -38,10 +38,11 @@ const EntryIncome = () => {
         }
 
     return (
-            <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
-            <Text style={styles.titledate}>DATE:</Text>
-            <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
-        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+        <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
+        <Text style={styles.titledate}>DATE:</Text>
+        <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
+        </Flex>
+        <Spacer h='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                     <Select selectedValue={selectedCategory1}
@@ -113,7 +114,6 @@ const EntryIncome = () => {
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
-
     )
 }
 
@@ -279,7 +279,6 @@ const styles = StyleSheet.create({
     container:{
         top:45,
         borderRadius:10
-        
     },
     //header entry
     header:{
@@ -314,6 +313,8 @@ const styles = StyleSheet.create({
     //Titles
     titledate:{
         fontSize:20,
+        alignItems:'center',
+        justifyContent:'center',
         left:63,
         top:3,
         color:'#cf9a4e',
@@ -321,6 +322,8 @@ const styles = StyleSheet.create({
     },
     titlecategory:{
         fontSize:20,
+        alignItems:'center',
+        justifyContent:'center',
         left:5,
         color:'#cf9a4e',
         fontFamily:'PoppinsSemi',
@@ -328,6 +331,8 @@ const styles = StyleSheet.create({
     },
     titleamt:{
         fontSize:20,
+        alignItems:'center',
+        justifyContent:'center',
         left:24,
         color:'#cf9a4e',
         fontFamily:'PoppinsSemi',
@@ -335,6 +340,8 @@ const styles = StyleSheet.create({
     },
     titlenote:{
         fontSize:20,
+        alignItems:'center',
+        justifyContent:'center',
         left:56,
         color:'#cf9a4e',
         fontFamily:'PoppinsSemi',
