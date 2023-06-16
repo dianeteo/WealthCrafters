@@ -2,8 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
 import { Text, Button,Modal } from 'react-native-paper';
-import CalculatorPopup from './calculatorpopup';
-import axios from 'axios';
 
 const Stats = () => {
     const [inputValue,setInputValue] = useState('')
@@ -19,7 +17,7 @@ const Stats = () => {
             <Button></Button>
         </View>
     )
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -28,6 +26,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 
-})
+});
 
-export default Stats
+export default Stats;

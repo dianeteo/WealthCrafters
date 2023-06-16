@@ -50,6 +50,17 @@ const NotLoggedIn = () => {
 };
 
 const App = () => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(firebase_auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
   SplashScreen.preventAutoHideAsync();
   const [loaded] = Font.useFonts({ 
     Poppins: require('./assets/fonts/Poppins-Regular.ttf'),
@@ -67,16 +78,6 @@ const App = () => {
   } else {
     SplashScreen.hideAsync();
   }
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(firebase_auth, (currentUser) => {
-      setUser(currentUser);
-    });
-
-    // Clean up the listener when the component unmounts
-    return () => unsubscribe();
-  }, []);
 
   return (
     <NativeBaseProvider>
