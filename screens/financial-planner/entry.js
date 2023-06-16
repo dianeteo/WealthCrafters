@@ -355,6 +355,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity:0.25,
         shadowRadius:5,
+
     },
     //respective features
     picker:{
@@ -374,7 +375,7 @@ const styles = StyleSheet.create({
     select:{
         bottom:5,
         left:13,
-
+      
     },
     calculator:{
         left:24,

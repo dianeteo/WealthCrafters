@@ -6,15 +6,48 @@ import MainMenu from "./screens/MainMenu";
 import FinancialPlanner from "./screens/FinancialPlanner";
 import FinancialLiteracy from "./screens/FinancialLiteracy";
 import InvestmentSimulator from './screens/InvestmentSimulator';
-import React from 'react';
+import Login from "./screens/login/login.js";
+import React, { useEffect, useState } from 'react';
 import MyTabs from './NavigationContainer.js';
 import { NativeBaseProvider } from 'native-base';
+import { onAuthStateChanged } from 'firebase/auth';
+import { firebase_auth } from './config/firebase.js';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 
 
 const Stack = createNativeStackNavigator();
 
+const LoggedInStack = createNativeStackNavigator();  
+
+const LoggedIn = () => {
+  return (
+    <NativeBaseProvider>
+      <LoggedInStack.Navigator>
+        <LoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Financial Planner" component={MyTabs} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+      </LoggedInStack.Navigator>
+    </NativeBaseProvider>
+  );
+};
+
+const NotLoggedInStack = createNativeStackNavigator();
+
+const NotLoggedIn = () => {
+  return (
+    <NativeBaseProvider>
+      <NotLoggedInStack.Navigator>
+        <NotLoggedInStack.Screen name="Log In" component={Login} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Financial Planner" component={MyTabs} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+      </NotLoggedInStack.Navigator>
+    </NativeBaseProvider>
+  );
+};
 
 const App = () => {
   SplashScreen.preventAutoHideAsync();
@@ -34,74 +67,26 @@ const App = () => {
   } else {
     SplashScreen.hideAsync();
   }
+  const [user, setUser] = useState(null);
 
-    return (
-      <NativeBaseProvider>
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(firebase_auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <NativeBaseProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
-            name="Main Menu"
-            component={MainMenu}
-          />
-
-          <Stack.Screen
-            name="Financial Planner"
-            component={MyTabs}
-          />
-
-          <Stack.Screen
-          name="Financial Literacy"
-          component={FinancialLiteracy}
-          />
-
-          <Stack.Screen
-          name="Investment Simulator"
-          component={InvestmentSimulator}
-          />
+          {user ? <Stack.Screen name="Main Menu" component={LoggedIn} /> : <Stack.Screen name="Login" component={NotLoggedIn} />}
         </Stack.Navigator>
       </NavigationContainer>
-      </NativeBaseProvider>
-    )
-  }
+    </NativeBaseProvider>
+  );
+};
 
 export default App;
-
-// export default function MainMenu({ navigation }) {
-//   return (
-//     <View style={styles.container}>
-//         <Button mode='contained' onPress={() => navigation.navigate("FinancialPlanner")}>Financial Planner</Button>
-//         <Button mode='contained'>Financial Literacy</Button>
-//         <Button mode='contained'>Investment Simulator</Button>
-//         <StatusBar style="auto" />
-//     </View>
-//   )
-// }
-
-// const RootStack = createNativeStackNavigator();
-
-// function App() {
-//   return (
-//     <SafeAreaView style={{flex:1}}>
-//       <NavigationContainer>
-//         <Stack.Navigator>
-//           {<Stack.Screen name="Main Menu" 
-//             component={ MainMenu } 
-//             options={{title:"Main Menu"}}/>}
-
-//           <Stack.Screen name="Financial Planner" 
-//             component={ FinancialPlanner } 
-//             options={{title:"Financial Planner"}} />
-//         </Stack.Navigator>
-//       </NavigationContainer>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });

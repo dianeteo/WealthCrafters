@@ -4,13 +4,23 @@ import React, {useState} from 'react';
 import { Text, Button,Modal } from 'react-native-paper';
 
 
+
+
+
 const Settings = () => {
     const [inputValue,setInputValue] = useState('')
-
+    const data = {
+        id: 3,
+        description: 'food',
+        amount: 10.0,
+        created_at: new Date(),
+        created_by: 3,
+    }
+    
     return (
         <View style={styles.container}>
             <Text>Settings</Text>
-            <Button></Button>
+            
         </View>
     )
 }
