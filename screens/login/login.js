@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
-import { firebase_auth } from '../../config/firebase';
+import { db, firebase_auth } from '../../config/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { Input, Stack, Center, NativeBaseProvider } from 'native-base';
 import { Button } from 'react-native-paper';
@@ -29,9 +29,19 @@ const Login = () => {
 
   const signUp = async () => {
     setLoading(true);
+    if (username.length == 0) {
+      alert("Enter a username!");
+    }   
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       console.log(response);
+      // users are identified uniquely by their email (like in firebase authentication), more than 1 user can have a specific username
+      // users' passwords are encrypted using firebase authentication's password hashing
+      // only collaborators of the database are able to decrypt users' passwords
+      await setDoc(doc(db, 'users', email), {
+        username: username,
+        email: email
+      });
     } catch (error) {
       console.log(error);
       alert('Sign up failed: ' + error.message);
@@ -85,6 +95,8 @@ const Login = () => {
   );
 };
 
+export { email, username }; 
+
 export default () => {
   return (
     <NativeBaseProvider>
@@ -112,3 +124,4 @@ const styles = StyleSheet.create({
   },
 
 });
+
