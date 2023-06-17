@@ -6,10 +6,9 @@ import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,Spacer,Select} from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { db } from '../config/firebase.js';
-import { email, username } from '../login/login.js';
-
-
+import { firebase_auth } from '../../config/firebase.js';
+import { db } from '../../config/firebase.js';
+import { doc, collection, addDoc } from '@firebase/firestore';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -39,21 +38,31 @@ const EntryIncome = () => {
         setNewCategory('');
         }
 
+    const user = firebase_auth.currentUser;
+    
+    const userEmail = user.email
+
     const submitIncome = async () => {
-        const incomeRef = db.collection('users').doc(email);
-        const addIncome = await incomeRef.set({
-            income: { 
-                amount: numValue1,
-                category: selectedCategory1,
-                created_at: date1,
-                description: text1
+        const userCollectionRef = doc(db, 'users', userEmail);
+        const incomeCollectionRef = collection(userCollectionRef, 'income');
+        try {
+            await addDoc(incomeCollectionRef, {
+                    amount: numValue1,
+                    category: selectedCategory1,
+                    created_at: date1,
+                    description: text1
+                });
+            } catch (error) {
+                console.log(error);
+                alert('Sign up failed: ' + error.message);
+            } finally {
+                setLoading(false);
             }
-          })
-    }
+            };
 
     return (
         <Box alignSelf="center">
-            <Flex direction='column' style={{top:25}}><Flex flexDirection='row'>
+            <Flex direction='column'><Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
             </Flex>
@@ -125,7 +134,7 @@ const EntryIncome = () => {
                 <Input style={{borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
                      borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='30%' /><TouchableOpacity style={styles.button}>
+            </Flex><Spacer h='30%' /><TouchableOpacity style={styles.button} onPress={submitIncome}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>

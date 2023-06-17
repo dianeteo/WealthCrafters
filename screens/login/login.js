@@ -95,8 +95,6 @@ const Login = () => {
   );
 };
 
-export { email, username }; 
-
 export default () => {
   return (
     <NativeBaseProvider>
