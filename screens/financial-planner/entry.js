@@ -52,9 +52,10 @@ const EntryIncome = () => {
                     created_at: date1,
                     description: text1
                 });
+                alert('Successfully submitted!');
             } catch (error) {
                 console.log(error);
-                alert('Sign up failed: ' + error.message);
+                alert('Submission failed: ' + error.message);
             } finally {
                 setLoading(false);
             }
@@ -169,6 +170,29 @@ const EntryExpenses = () => {
         setNewCategory('');
         }
 
+    const user = firebase_auth.currentUser;
+    
+    const userEmail = user.email;
+
+    const submitExpenses = async () => {
+        const userCollectionRef = doc(db, 'users', userEmail);
+        const expensesCollectionRef = collection(userCollectionRef, 'expenses');
+        try {
+            await addDoc(expensesCollectionRef, {
+                    amount: numValue2,
+                    category: selectedCategory2,
+                    created_at: date2,
+                    description: text2
+                });
+                alert('Successfully submitted!');
+            } catch (error) {
+                console.log(error);
+                alert('Submission failed: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+            };
+
     return (
         <Box alignSelf="center">
             <Flex direction='column' style={{top:25}}>
@@ -243,7 +267,7 @@ const EntryExpenses = () => {
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='30%' /><TouchableOpacity style={styles.button}>
+            </Flex><Spacer h='30%' /><TouchableOpacity style={styles.button} onPress={submitExpenses}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
         </Flex>
