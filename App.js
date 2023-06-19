@@ -2,19 +2,19 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import MainMenu from "./screens/MainMenu";
-import FinancialPlanner from "./screens/FinancialPlanner";
-import FinancialLiteracy from "./screens/FinancialLiteracy";
-import InvestmentSimulator from './screens/InvestmentSimulator';
-import Login from "./screens/login/login.js";
+import MainMenu from "./mainscreens/MainMenu";
+import FinancialPlanner from "./mainscreens/FinancialPlanner";
+import FinancialLiteracy from "./mainscreens/FinancialLiteracy";
+import InvestmentSimulator from './mainscreens/InvestmentSimulator';
+import Login from "./mainscreens/login/login.js";
 import React, { useEffect, useState } from 'react';
-import MyTabs from './NavigationContainer.js';
+import MyTabs from './BottomTabNavigator.js';
 import { NativeBaseProvider } from 'native-base';
 import { onAuthStateChanged } from 'firebase/auth';
 import { firebase_auth } from './config/firebase.js';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
-import Navigation from './ButtonNavigation';
+import Navigation from './ButtonNavigationFP';
 
 
 const Stack = createNativeStackNavigator();
@@ -26,7 +26,7 @@ const LoggedIn = () => {
     <NativeBaseProvider>
       <LoggedInStack.Navigator>
         <LoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
-        <LoggedInStack.Screen name="Financial Planner" component={Navigation} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Financial Planner" component={Navigation}/>
         <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
       </LoggedInStack.Navigator>
@@ -41,7 +41,7 @@ const NotLoggedIn = () => {
     <NativeBaseProvider>
       <NotLoggedInStack.Navigator>
         <NotLoggedInStack.Screen name="Log In" component={Login} options={{ headerShown: false }}/>
-        <NotLoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Main Menu" component={MainMenu}/>
         <NotLoggedInStack.Screen name="Financial Planner" component={Navigation} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
@@ -83,7 +83,7 @@ const App = () => {
   return (
     <NativeBaseProvider>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{headerShown:false}}>
           {user ? <Stack.Screen name="Main Menu" component={LoggedIn} /> : <Stack.Screen name="Login" component={NotLoggedIn} />}
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,21 +1,20 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import NewEntry from "./screens/financial-planner/entry";
+import Stats from "./mainscreens/financial-planner/stats";
 
-import MyTabs from "./NavigationContainer";
 
 const Stack = createNativeStackNavigator()
 
 export default function Navigation() {
     return (
             <Stack.Navigator 
-                initialRouteName="Calendar"
+                initialRouteName="Stats"
                 screenOptions={{
                     headerShown:false
                 }}> 
-                <Stack.Screen name='Calendar' component={MyTabs} />
-                <Stack.Screen name='NewEntry' component={NewEntry} />
+                <Stack.Screen name='Stats' component={Stats} />
+                {/* <Stack.Screen name='Filter'  /> */}
             </Stack.Navigator>
     )
 }

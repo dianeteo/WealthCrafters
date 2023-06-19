@@ -67,8 +67,9 @@ const FinancialPlanner = () =>{
                  );
                 }}
       />
+      {/* button to navigate to entry page */}
       <TouchableOpacity onPress={()=> navigation.navigate('NewEntry')} >
-        <Ionicons name='add-circle' size={55} color='#e32f45' style={{ bottom:90, alignSelf:'flex-end',right:35}}/>
+        <Ionicons name='add-circle' size={55} color='#e32f45' style={{ bottom:90, alignSelf:'flex-end',right:35, zIndex:999}}/>
       </TouchableOpacity>
       <Modal isOpen={modalVisible} onClose={()=>{setModalVisible(false)}} style={styles.modal} size='xl' >
         <Modal.Content h='600'>
