@@ -263,7 +263,7 @@ const EntryExpenses = () => {
                     onBeforeChange={setNumValue}
                     value={numValue2.toFixed(2)} />
             </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
-                <Text style={styles.titlenote}>NOTE:</Text>
+                <Text style={styles.titlenote} marginRight={5}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
