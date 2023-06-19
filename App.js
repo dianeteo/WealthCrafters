@@ -14,6 +14,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { firebase_auth } from './config/firebase.js';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
+import Navigation from './ButtonNavigation';
 
 
 const Stack = createNativeStackNavigator();
@@ -25,7 +26,7 @@ const LoggedIn = () => {
     <NativeBaseProvider>
       <LoggedInStack.Navigator>
         <LoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
-        <LoggedInStack.Screen name="Financial Planner" component={MyTabs} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Financial Planner" component={Navigation} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
       </LoggedInStack.Navigator>
@@ -41,7 +42,7 @@ const NotLoggedIn = () => {
       <NotLoggedInStack.Navigator>
         <NotLoggedInStack.Screen name="Log In" component={Login} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
-        <NotLoggedInStack.Screen name="Financial Planner" component={MyTabs} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Financial Planner" component={Navigation} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
       </NotLoggedInStack.Navigator>

@@ -7,6 +7,7 @@ import { StyleSheet, TouchableOpacity} from 'react-native';
 // Import your screens/components here
 import Entry from './screens/financial-planner/entry';
 import Stats from './screens/financial-planner/stats';
+import Navigation from './ButtonNavigation';
 import FinancialPlanner from './screens/FinancialPlanner';
 
 const getCurrentDate=()=>{
@@ -22,7 +23,7 @@ const getCurrentDate=()=>{
 //Screen Names
 const Home=getCurrentDate()
 const statsName='Stats'
-const entryName='Entry'
+// const entryName='Entry'
 
 
 const Tab = createBottomTabNavigator();
@@ -56,13 +57,13 @@ const MyTabs = () => {
         })}
         >
         <Tab.Screen name={Home} component={FinancialPlanner} />
-        <Tab.Screen name={entryName} component={Entry} options={({navigation})=>(
+        {/* <Tab.Screen name={entryName} component={Entry} options={({navigation})=>(
             {tabBarShowLabel:false},
             {tabBarButton: (props)=>(
                 <TouchableOpacity onPress={()=> navigation.navigate('Entry')} {...props}>
                     <Ionicons name='add-circle' size={50} color='#e32f45' style={{bottom:2}}/>
                 </TouchableOpacity>
-            )})} />
+            )})} /> */}
         <Tab.Screen name={statsName} component={Stats} />
       </Tab.Navigator>
     
