@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Animated,StyleSheet,TouchableOpacity,View} from 'react-native';
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -8,7 +8,7 @@ import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
-import { doc, collection, addDoc } from '@firebase/firestore';
+import { doc, collection, addDoc, getDocs } from '@firebase/firestore';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -17,7 +17,7 @@ const EntryIncome = () => {
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
     // for calendar date
-    const[date1,setDate]=useState(new Date())
+    const[date1,setDate]=useState(new Date().getDate() + '/' + (new Date().getMonth()+1) + '/' + new Date().getFullYear())
     //for Category List
     const [selectedCategory1, setSelectedCategory] = useState('');
     const [categories1, setCategories] = useState([
@@ -40,7 +40,7 @@ const EntryIncome = () => {
 
     const user = firebase_auth.currentUser;
     
-    const userEmail = user.email
+    const userEmail = user.email;
 
     const submitIncome = async () => {
         const userCollectionRef = doc(db, 'users', userEmail);
@@ -60,7 +60,7 @@ const EntryIncome = () => {
                 setLoading(false);
             }
             };
-
+            
     return (
         <Box alignSelf="center">
             <Flex direction='column'><Flex flexDirection='row'>
@@ -148,7 +148,7 @@ const EntryExpenses = () => {
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
     // for calendar date
-    const[date2,setDate]=useState(new Date())
+    const[date2,setDate]=useState(new Date().getDate() + '/' + (new Date().getMonth()+1) + '/' + new Date().getFullYear())
     //for Category List
     const [selectedCategory2, setSelectedCategory] = useState('');
     const [categories2, setCategories] = useState([
@@ -316,7 +316,6 @@ const NewEntry = () =>{
                     component={EntryExpenses}
                     options={{tabBarLabel:'Expenses'}} />
             </Tab.Navigator>
-            
             </>
     )
 }

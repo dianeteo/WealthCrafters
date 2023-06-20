@@ -1,9 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Entry from './financial-planner/entry.js';
-import {Calendar} from 'react-native-calendars';
-import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer} from 'native-base';
+import { Calendar } from 'react-native-calendars';
+import { NativeBaseProvider, Modal, Flex,Text, View, Box, FlatList, HStack, VStack, Spacer } from 'native-base';
+import { firebase_auth } from '../config/firebase.js';
+import { db } from '../config/firebase.js';
+import { doc, collection, getDocs } from '@firebase/firestore';
 
 const expense_data = [{
   id: 3,
@@ -21,7 +24,6 @@ const income_data = [{
   created_at: new Date(),
   created_by: 3,
 },]
-
 
 
 class FinancialPlanner extends React.Component {
@@ -60,15 +62,76 @@ class FinancialPlanner extends React.Component {
                   //to be edited later, to just show the entry screen for now without animation
                   style={[styles.calendar, {height: 200}]}
                   dayComponent={({date}) => {
+                    const user = firebase_auth.currentUser;
+                    const userEmail = user.email;
+
+                    //set of constants for income
+                    const [incomes, setIncomes] = useState([]);
+                    const usersCollectionRef = collection(db, 'users');
+                    const userDocRef = doc(usersCollectionRef, userEmail);
+                    const userIncomesRef = collection(userDocRef, 'income');
+
+                    //set of constants for expenses
+                    const [expenses, setExpenses] = useState([]);
+                    const userExpensesRef = collection(userDocRef, 'expenses');
+
+                    //for incomes
+                    const getIncomes = async () => {
+                        const data = await getDocs(userIncomesRef);
+                        setIncomes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+                    };
+
+                    useEffect(() => {
+                        getIncomes();
+                    }, []);
+
+                    const income_amt = () => {
+                        let sumIncome = 0;
+                        for (let i = 0; i < incomes.length; i++) {
+                            if (incomes[i].created_at == date.day + '/' + date.month + '/' + date.year)
+                            {
+                                sumIncome += incomes[i].amount
+                            }
+                            else {
+                                sumIncome += 0
+                            };
+                        };
+                        return sumIncome;
+                    };
+
+                  //for expenses
+                  const getExpenses = async () => {
+                      const data = await getDocs(userExpensesRef);
+                      setExpenses(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+                  };
+
+                  useEffect(() => {
+                      getExpenses();
+                  }, []);
+
+                  const expense_amt = () => {
+                      let sumExpense = 0;
+                      for (let i = 0; i < expenses.length; i++) {
+                          if (expenses[i].created_at == date.day + '/' + date.month + '/' + date.year)
+                          {
+                              sumExpense += expenses[i].amount
+                          }
+                          else {
+                              sumExpense += 0
+                          };
+                      };
+                      return sumExpense;
+                  };
+
                     return (
                             <><TouchableOpacity onPress={this.showModal}>
                         {//need to store date somewhere so that modal will have currentdate
                         }
                         <Box style={[styles.main]}>
                           <Text style={{ marginVertical: 7.5, color: '#171717', fontFamily:'LatoBold'}}>{date.day}</Text>
-                          <Text style={{ fontSize: 10, color: 'red', left: 10, fontFamily:'Lato'}}>100</Text>
-                          <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily:'Lato'}}>200</Text>
-                          <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily:'Lato' }}>300</Text>
+                          <Text style={{ fontSize: 10, color: 'red', left: 10, fontFamily:'Lato'}}>{income_amt()}</Text>
+                          <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily:'Lato'}}>{expense_amt()}</Text>
+                          <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily:'Lato' }}>{income_amt()-expense_amt()}</Text>
                         </Box>
                       </TouchableOpacity></>
                           
@@ -113,7 +176,7 @@ class FinancialPlanner extends React.Component {
                           <Spacer h='3%'/>
                           <Box>
                             <FlatList w='175'minH='400'data={expense_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800' renderItem={({item})=>
-                          <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
+                          <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800'>
                             <HStack>
                               <VStack alignItems='center' justifyContent='space-evenly'>
                                 <Text style={styles.item}>{item.category}</Text>
