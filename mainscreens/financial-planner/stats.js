@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TouchableOpacity,SafeAreaView,PixelRatio} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import { View,Box,Flex,Center,Button,Text,Spacer } from 'native-base';
+import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {VictoryPie} from 'victory-native';
 import Donut from './DonutChart';
@@ -34,8 +34,13 @@ const ExpensesStats = () => {
 
 //Goal Page
 const GoalsStats = () => {
-
-    return (
+    // for modal appearing
+    const [modalVisible,setModalVisible]=useState(false)
+    // for goal setting
+    const [goalText,setGoalText]=useState('')
+    const [inputError, setInputError] = useState('');
+    const [goal,setGoal]=useState(0)
+    return (<>
     <Flex direction='column'>
     <Box style={styles.goal}>
         {data.map((p, i) => {
@@ -43,8 +48,67 @@ const GoalsStats = () => {
         })}
     </Box>
     <Spacer h='50%'/>
+    {/* text to indicate goal */}
     <Text style={{alignSelf:'center'}}>You are $200 away from your monthly goal!</Text>
+    <TouchableOpacity style={{justifyContent:'center',alignItems:'center',top:50,borderRadius:20,backgroundColor:'#e32f45',width:175,height:40,alignSelf:'center'}}onPress={()=> setModalVisible(true)}>
+        <Text style={{fontFamily:'Poppins',color:'#fff'}}>Change Target?</Text>
+    </TouchableOpacity>
     </Flex>
+    <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
+        <Modal.Content maxWidth="400px">
+            <Modal.CloseButton onPress={()=>setGoalText('')} />
+            <Modal.Body>
+            <FormControl isInvalid={inputError !== ''}>
+                <FormControl.Label>New Target:</FormControl.Label>
+                <Input
+                value={goalText}
+                onChangeText={(text) => {
+                    if (/^\d*\.?\d*$/.test(text)) {
+                    setGoalText(text);
+                    setInputError('');
+                    } else {
+                    setGoalText(text);
+                    setInputError('Input must be a number.');
+                    }
+                }}
+                />
+                {inputError !== '' && (
+                <FormControl.ErrorMessage>
+                    {inputError}
+                </FormControl.ErrorMessage>
+                )}
+            </FormControl>
+            </Modal.Body>
+            <Modal.Footer>
+            <Button.Group space={2}>
+                <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={() => {
+                    setModalVisible(false);
+                    setGoal('');
+                    setInputError('');
+                }}
+                >
+                Cancel
+                </Button>
+                <Button
+                onPress={() => {
+                    if (inputError === '') {
+                    setModalVisible(false);
+                    setGoal(parseFloat(goalText).toFixed(2))
+                    setGoalText('')
+                    }
+                }}
+                >
+                Confirm
+                </Button>
+            </Button.Group>
+            </Modal.Footer>
+        </Modal.Content>
+    </Modal>
+
+    </>
     );
   };
 
