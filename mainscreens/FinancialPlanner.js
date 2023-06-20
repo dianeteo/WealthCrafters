@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, {useState} from 'react';
 import {Calendar} from 'react-native-calendars';
-import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer} from 'native-base';
+import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer, ScrollView} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import SwipeView from './financial-planner/SwipeView';
@@ -15,7 +15,14 @@ const expense_data = [{
   amount: 10.00,
   created_at: new Date(),
   created_by: 3,
-},]
+},{
+  id:5,
+  description:'hor fun',
+  category:'food',
+  amount:5.00,
+  created_at:new Date(),
+  created_by:3,
+}]
 const income_data = [{
   id: 3,
   description: 'barista job',
@@ -79,50 +86,41 @@ const FinancialPlanner = () =>{
           <Flex justifyContent='space-evenly' direction='row'>
               {/* income side */}
               <Flex direction='column'>
-                <Spacer h='3%'/>
+                <Spacer h='4%'/>
                 <Box justifyContent='center'>
                   <Text style={{fontFamily:'Poppins',color:'blue',fontSize:18,alignSelf:'center'}}>Income (+)</Text>
                 </Box>
                 <Spacer h='3%'/>
-                <Box>
-                <SwipeView style={{minH:'400',width:175,borderTopWidth:'0.5', borderBottomWidth:'0.5'}}/>
-                  {/* <FlatList minH='400' w='175' data={income_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800'renderItem={({item})=>
-                <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
-                  <HStack>
-                    <VStack alignItems='center'>
-                      <Text style={styles.item}>{item.category}</Text>
-                      <Text style={styles.description}>{item.description}</Text>
-                    </VStack>
-                    <Spacer />
-                    <Text style={{top:10}} fontFamily="Lato" fontSize="xs" _dark={{color: "warmGray.50"}} color="coolGray.800" alignSelf="flex-start">
-                      {item.amount.toFixed(2)}
-                    </Text>
-                  </HStack>
-                </Box>} keyExtractor={item => item.id}>
-                </FlatList> */}
+                <Box style={{width:170,minHeight: 400,}}>
+                  <SwipeView 
+                    data={income_data}
+                    style={{
+                      minHeight: 400,
+                      width: 200,
+                      borderTopWidth: 0.5,
+                      borderBottomWidth: 0.5,
+                    }}
+                  />
                 </Box>
               </Flex>
               {/* expenses side */}
               <Flex direction='column'>
-              <Spacer h='3%'/>
+              <Spacer h='4%'/>
                 <Box alignItems='center' justifyContent='center'>
                   <Text style={{fontFamily:'Poppins',color:'red',fontSize:18}}>Expenses (-)</Text>
                 </Box>
                 <Spacer h='3%'/>
-                <Box>
-                  <FlatList w='175'minH='400'data={expense_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800' renderItem={({item})=>
-                <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
-                  <HStack>
-                    <VStack alignItems='center' justifyContent='space-evenly'>
-                      <Text style={styles.item}>{item.category}</Text>
-                      <Text style={styles.description}>{item.description}</Text>
-                    </VStack>
-                    <Spacer />
-                    <Text style={{top:10}} fontFamily='Lato' fontSize="xs" _dark={{color: "warmGray.50"}} color="coolGray.800" alignSelf="flex-start">
-                      {item.amount.toFixed(2)}
-                    </Text>
-                  </HStack>
-                </Box>} keyExtractor={item => item.id}></FlatList>
+                <Box style={{width:170,minHeight: 400,}}>
+                  <SwipeView 
+                    data={expense_data}
+                    style={{
+                      minHeight: 400,
+                      width: 200,
+                      borderTopWidth: 0.5,
+                      borderBottomWidth: 0.5,
+
+                    }}
+                  />
                 </Box>
               </Flex>
           </Flex>

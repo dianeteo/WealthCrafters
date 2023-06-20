@@ -1,23 +1,13 @@
 import React, { useState } from 'react';
-import {
-    StyleSheet,
-    Text,
-    TouchableOpacity
-} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
-import {Box, Pressable,Spacer,HStack,VStack,Icon} from 'native-base';
+import {Box, Pressable,Spacer,HStack,VStack,Icon,Text} from 'native-base';
 import {MaterialIcons} from '@expo/vector-icons'
-const expense_data = [{
-    id: 3,
-    description: 'ramen',
-    category:'food',
-    amount: 10.00,
-    created_at: new Date(),
-    created_by: 3,
-  },]
-export default function SwipeView() {
-    const [listData, setListData] = useState(expense_data);
+
+
+export default function SwipeView({data}) {
+    const [listData, setListData] = useState(data);
 
     const closeRow = (rowMap, rowKey) => {
       if (rowMap[rowKey]) {
@@ -33,19 +23,16 @@ export default function SwipeView() {
       setListData(newData);
     };
   
-    const onRowDidOpen = rowKey => {
-      console.log('This row opened', rowKey);
-    };
   
     const renderItem = ({
       item
     }) => <Box>
-        <Pressable onPress={() => console.log('You touched me')} _dark={{
+        <Pressable  _dark={{
         bg: 'coolGray.800'
       }} _light={{
         bg: 'white'
       }}>
-            <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
+            <Box pl="4" pr="5" py="2" >
                 <HStack>
                     <VStack alignItems='center'>
                       <Text style={styles.item}>{item.category}</Text>
@@ -60,8 +47,9 @@ export default function SwipeView() {
         </Pressable>
       </Box>;
   
-    const renderHiddenItem = (data, rowMap) => <HStack flex="1" pl="2">
-        <Pressable w="70" cursor="pointer" bg="red.500" justifyContent="center" onPress={() => deleteRow(rowMap, data.item.key)} _pressed={{
+    const renderHiddenItem = (data2, rowMap) => 
+    <HStack flex="1" pl="2">
+        <Pressable w="50" cursor="pointer" bg="red.500" justifyContent="center" style={{left:100}} onPress={() => deleteRow(rowMap, data2.item.key)} _pressed={{
         opacity: 0.5
       }}>
           <VStack alignItems="center" space={2}>
@@ -73,9 +61,10 @@ export default function SwipeView() {
         </Pressable>
       </HStack>;
   
-    return <Box bg="white" safeArea flex="1">
-        <SwipeListView data={listData} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-130} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} onRowDidOpen={onRowDidOpen} />
-      </Box>;
+    return <>
+        <SwipeListView data={listData} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-63} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} 
+        />
+    </>
   }
 
 const styles=StyleSheet.create({
