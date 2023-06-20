@@ -5,6 +5,7 @@ import {Calendar} from 'react-native-calendars';
 import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import SwipeView from './financial-planner/SwipeView';
 
 
 const expense_data = [{
@@ -84,7 +85,8 @@ const FinancialPlanner = () =>{
                 </Box>
                 <Spacer h='3%'/>
                 <Box>
-                  <FlatList minH='400' w='175' data={income_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800'renderItem={({item})=>
+                <SwipeView style={{minH:'400',width:175,borderTopWidth:'0.5', borderBottomWidth:'0.5'}}/>
+                  {/* <FlatList minH='400' w='175' data={income_data} borderTopWidth='0.5' borderBottomWidth='0.5' borderColor='muted.800'renderItem={({item})=>
                 <Box borderTopWidth='0.5' borderBottomWidth='0.3' borderColor='muted.800' >
                   <HStack>
                     <VStack alignItems='center'>
@@ -97,7 +99,7 @@ const FinancialPlanner = () =>{
                     </Text>
                   </HStack>
                 </Box>} keyExtractor={item => item.id}>
-                </FlatList>
+                </FlatList> */}
                 </Box>
               </Flex>
               {/* expenses side */}
@@ -152,15 +154,4 @@ const styles = StyleSheet.create({
     padding:10,
     borderRadius:10
   },
-  //for modal
-  item:{
-    fontSize:16,
-    fontFamily:'PoppinsSemi'
-  },
-  description:{
-    fontSize:10,
-    fontFamily:'Poppins',
-  
-    
-  }
 });
