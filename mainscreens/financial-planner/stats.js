@@ -86,7 +86,7 @@ const GoalsStats = () => {
                 colorScheme="blueGray"
                 onPress={() => {
                     setModalVisible(false);
-                    setGoal('');
+                    setGoalText('');
                     setInputError('');
                 }}
                 >
