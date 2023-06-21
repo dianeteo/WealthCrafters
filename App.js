@@ -25,7 +25,7 @@ const LoggedIn = () => {
   return (
     <NativeBaseProvider>
       <LoggedInStack.Navigator>
-        <LoggedInStack.Screen name="Main Menu" component={MainMenu} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="MainMenu" component={MainMenu} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Financial Planner" component={Navigation}/>
         <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
@@ -41,7 +41,7 @@ const NotLoggedIn = () => {
     <NativeBaseProvider>
       <NotLoggedInStack.Navigator>
         <NotLoggedInStack.Screen name="Log In" component={Login} options={{ headerShown: false }}/>
-        <NotLoggedInStack.Screen name="Main Menu" component={MainMenu}/>
+        <NotLoggedInStack.Screen name="MainMenu" component={MainMenu}/>
         <NotLoggedInStack.Screen name="Financial Planner" component={Navigation} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>

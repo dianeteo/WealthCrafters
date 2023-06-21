@@ -56,7 +56,7 @@ const GoalsStats = () => {
     </Flex>
     <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
         <Modal.Content maxWidth="400px">
-            <Modal.CloseButton onPress={()=>setGoalText('')} />
+            <Modal.CloseButton onPress={()=>{setGoalText('');setModalVisible(false)}} />
             <Modal.Body>
             <FormControl isInvalid={inputError !== ''}>
                 <FormControl.Label>New Target:</FormControl.Label>
@@ -125,7 +125,9 @@ const Stats = () => {
                 initialLayout={{
                     height:300
                 }}
+
                 screenOptions={{
+                    animationEnabled:false,
                     tabBarActiveTintColor: '#fbd1a2',
                     tabBarLabelStyle: { fontSize: 12, fontFamily:'Poppins' },
                     tabBarStyle: { 
@@ -146,7 +148,7 @@ const Stats = () => {
                     component={IncomeStats}
                     options={{
                         tabBarLabel:'Income',
-                        // lazy:true
+                        lazy:true
 
                     }}/>
                 <Tab.Screen 
@@ -164,7 +166,7 @@ const Stats = () => {
                     component={ExpensesStats}
                     options={{
                         tabBarLabel:'Expenses',
-                        // lazy:true
+                        lazy:true
                     }} />
             </Tab.Navigator>
     </>
