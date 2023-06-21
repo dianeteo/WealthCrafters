@@ -1,12 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {Calendar} from 'react-native-calendars';
 import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer, ScrollView} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import SwipeView from './financial-planner/SwipeView';
-
+import { firebase_auth } from '../config/firebase.js';
+import { db } from '../config/firebase.js';
+import { doc, collection, getDocs } from '@firebase/firestore';
 
 const expense_data = [{
   id: 3,
@@ -35,8 +37,34 @@ const income_data = [{
 
 
 const FinancialPlanner = () =>{
-  const navigation = useNavigation()
-  const [modalVisible,setModalVisible]=useState(false)
+  const navigation = useNavigation();
+  const [modalVisible,setModalVisible]=useState(false);
+
+  const user = firebase_auth.currentUser;
+  const userEmail = user.email;
+
+  //set of constants for income
+  const [incomes, setIncomes] = useState([]);
+  const usersCollectionRef = collection(db, 'users');
+  const userDocRef = doc(usersCollectionRef, userEmail);
+  const userIncomesRef = collection(userDocRef, 'income');
+
+  //set of constants for expenses
+  const [expenses, setExpenses] = useState([]);
+  const userExpensesRef = collection(userDocRef, 'expenses');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const incomeData = await getDocs(userIncomesRef);
+      setIncomes(incomeData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+
+      const expenseData = await getDocs(userExpensesRef);
+      setExpenses(expenseData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+
+    fetchData();
+  }, []);
+
   return(
     <SafeAreaView style={styles.container}>
     <Box style={{
@@ -60,15 +88,44 @@ const FinancialPlanner = () =>{
         //to be edited later, to just show the entry screen for now without animation
         style={[styles.calendar, {height: 200}]}
         dayComponent={({date}) => {
+
+          const income_amt = () => {
+              let sumIncome = 0;
+              for (let i = 0; i < incomes.length; i++) {
+                  if (incomes[i].created_at == date.day + '/' + date.month + '/' + date.year)
+                  {
+                      sumIncome += incomes[i].amount
+                  }
+                  else {
+                      sumIncome += 0
+                  };
+              };
+              return sumIncome;
+          };
+
+          const expense_amt = () => {
+              let sumExpense = 0;
+              for (let i = 0; i < expenses.length; i++) {
+                  if (expenses[i].created_at == date.day + '/' + date.month + '/' + date.year)
+                  {
+                      sumExpense += expenses[i].amount
+                  }
+                  else {
+                      sumExpense += 0
+                  };
+              };
+              return sumExpense;
+          };
+
           return (
-                  <><TouchableOpacity onPress={()=>{setModalVisible(true)}}>
+            <><TouchableOpacity onPress={()=>{setModalVisible(true)}}>
               {//need to store date somewhere so that modal will have currentdate
               }
               <Box style={[styles.main]}>
                 <Text style={{ marginVertical: 7.5, color: '#171717', fontFamily:'LatoBold'}}>{date.day}</Text>
-                <Text style={{ fontSize: 10, color: 'red', left: 10, fontFamily:'Lato'}}>100</Text>
-                <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily:'Lato'}}>200</Text>
-                <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily:'Lato' }}>300</Text>
+                <Text style={{ fontSize: 10, color: 'red', left: 10, fontFamily:'Lato'}}>{income_amt()}</Text>
+                <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily:'Lato'}}>{expense_amt()}</Text>
+                <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily:'Lato' }}>{income_amt()-expense_amt()}</Text>
               </Box>
             </TouchableOpacity></>
                 
