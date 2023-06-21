@@ -22,24 +22,26 @@ const EntryIncome = () => {
     //for Category List
     const [selectedCategory1, setSelectedCategory] = useState('');
     const [categories1, setCategories] = useState([
-        { label: 'Category 1', value: 'category1' },
-        { label: 'Category 2', value: 'category2' },
-        { label: 'Category 3', value: 'category3' },
-    ]);
+        { label: 'Income', value: 'income' },
+        { label: 'Fixed Income', value: 'shopping' },
+        { label: 'Variable Income', value: 'haircut' },
+        { label: 'Transport', value: 'transport' },
+      ]);      
     //for adding Category
     const [newCategory1, setNewCategory] = useState('');
-
     //for Amount Keying
     const [numValue1, setNumValue] = useState(0);
     //for changing note
-    const [text1,setText]=useState('')
+    const [text1,setText]=useState('');
 
     const handleCategoryAdd = () => {
-        setCategories([...categories1,{label:newCategory1,value:newCategory1}]);
+        const newCategory = { label: newCategory1, value: newCategory1 };
+        setCategories([...categories1, newCategory]);
+        setSelectedCategory(newCategory.value); // Set the newly added category as the selected value
         setNewCategory('');
-        }
+      };   
 
-        const user = firebase_auth.currentUser;
+    const user = firebase_auth.currentUser;
     
     const userEmail = user.email;
 
@@ -69,22 +71,25 @@ const EntryIncome = () => {
         </Flex><Spacer h='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
-                    <Select selectedValue={selectedCategory1}
-                        minWidth="212"
-                        accessibilityLabel="Choose A Category"
-                        placeholder="Choose A Category"
-                        placeholderTextColor='black'
-                        // backgroundColor='#78b0a3'
-                        color='white'
-                        borderRadius={5}
-                        margin={0}
-                        padding={0}
-                        onValueChange={itemValue => setSelectedCategory(itemValue)}
+                <Select
+                    selectedValue={selectedCategory1}
+                    minWidth="212"
+                    accessibilityLabel="Choose a Category"
+                    placeholder="Choose a category"
+                    placeholderTextColor="black"
+                    color="white"
+                    borderRadius={5}
+                    margin={0}
+                    padding={0}
+                    onValueChange={itemValue => setSelectedCategory(itemValue)}
                     >
-                        <Select.Item label='Income' value='income'></Select.Item>
-                        <Select.Item label='Shopping' value='shopping'></Select.Item>
-                        <Select.Item label='Haircut' value='haircut'></Select.Item>
-                        <Select.Item label='Transport' value='transport'></Select.Item>
+                    {categories1.map(category => (
+                        <Select.Item
+                        key={category.value}
+                        label={category.label}
+                        value={category.value}
+                        />
+                    ))}
                     </Select>
                 </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
@@ -98,7 +103,7 @@ const EntryIncome = () => {
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Category</FormControl.Label>
-                                <Input value={newCategory1} onChange={(text) => { setNewCategory(text); } } />
+                                <Input value={newCategory1} onChange={(event) => { setNewCategory(event.nativeEvent.text); }} />
                             </FormControl>
                         </Modal.Body>
                         <Modal.Footer>
@@ -106,8 +111,8 @@ const EntryIncome = () => {
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory(''); } }>
                                     Cancel
                                 </Button>
-                                <Button onPress={() => { setModalVisible(false); } }>
-                                    Save
+                                <Button onPress={() => { setModalVisible(false); handleCategoryAdd(); }}>
+                                Save
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>
@@ -133,8 +138,8 @@ const EntryIncome = () => {
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
-                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitIncome;navigation.navigate('Calendar')}}>
+                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitIncome; navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
@@ -164,11 +169,12 @@ const EntryExpenses = () => {
     //for changing note
     const [text2,setText]=useState('')
 
-
     const handleCategoryAdd = () => {
-        setCategories([...categories2,{label:newCategory2,value:newCategory2}]);
+        const newCategory = { label: newCategory2, value: newCategory2 };
+        setCategories([...categories2, newCategory]);
+        setSelectedCategory(newCategory.value); // Set the newly added category as the selected value
         setNewCategory('');
-        }
+      };        
 
     const user = firebase_auth.currentUser;
     
@@ -202,22 +208,25 @@ const EntryExpenses = () => {
         </Flex><Spacer h='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
-                    <Select selectedValue={selectedCategory2}
-                        minWidth="212"
-                        accessibilityLabel="Choose A Category"
-                        placeholder="Choose A Category"
-                        placeholderTextColor='black'
-                        // backgroundColor='#78b0a3'
-                        color='white'
-                        borderRadius={5}
-                        margin={0}
-                        padding={0}
-                        onValueChange={itemValue => setSelectedCategory(itemValue)}
+                <Select
+                    selectedValue={selectedCategory2}
+                    minWidth="212"
+                    accessibilityLabel="Choose a Category"
+                    placeholder="Choose a category"
+                    placeholderTextColor="black"
+                    color="white"
+                    borderRadius={5}
+                    margin={0}
+                    padding={0}
+                    onValueChange={itemValue => setSelectedCategory(itemValue)}
                     >
-                        <Select.Item label='Food' value='food'></Select.Item>
-                        <Select.Item label='Shopping' value='shopping'></Select.Item>
-                        <Select.Item label='Haircut' value='haircut'></Select.Item>
-                        <Select.Item label='Transport' value='transport'></Select.Item>
+                    {categories2.map(category => (
+                        <Select.Item
+                        key={category.value}
+                        label={category.label}
+                        value={category.value}
+                        />
+                    ))}
                     </Select>
                 </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
@@ -231,7 +240,7 @@ const EntryExpenses = () => {
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Category</FormControl.Label>
-                                <Input value={newCategory2} onChange={(text) => { setNewCategory(text); } } />
+                                <Input value={newCategory2} onChange={(event) => { setNewCategory(event.nativeEvent.text); }} />
                             </FormControl>
                         </Modal.Body>
                         <Modal.Footer>
@@ -239,8 +248,8 @@ const EntryExpenses = () => {
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory(''); } }>
                                     Cancel
                                 </Button>
-                                <Button onPress={() => { setModalVisible(false); } }>
-                                    Save
+                                <Button onPress={() => { setModalVisible(false); handleCategoryAdd(); }}>
+                                Save
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>
@@ -266,8 +275,8 @@ const EntryExpenses = () => {
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
-                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitExpenses;navigation.navigate('Calendar')}}>
+                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitExpenses; navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
         </Flex></>
