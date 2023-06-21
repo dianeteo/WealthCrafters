@@ -7,8 +7,6 @@ import { Input, Stack, Center, NativeBaseProvider } from 'native-base';
 import { Button } from 'react-native-paper';
 import { doc, setDoc } from '@firebase/firestore';
 
-
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
