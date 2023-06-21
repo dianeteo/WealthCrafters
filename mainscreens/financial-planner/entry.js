@@ -6,12 +6,13 @@ import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,Spacer,Select} from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useNavigation } from '@react-navigation/native';
 
 
 const Tab = createMaterialTopTabNavigator();
 
 const EntryIncome = () => {
-
+    const navigation=useNavigation()
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
     // for calendar date
@@ -109,7 +110,7 @@ const EntryIncome = () => {
                 <Input style={{ borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
                      borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button}>
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('Calendar')}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
@@ -118,6 +119,7 @@ const EntryIncome = () => {
 }
 
 const EntryExpenses = () => {
+    const navigation=useNavigation()
 
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
@@ -218,7 +220,7 @@ const EntryExpenses = () => {
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button}>
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('Calendar')}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
         </Flex></>
