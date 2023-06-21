@@ -10,7 +10,6 @@ import { doc, setDoc } from '@firebase/firestore';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = firebase_auth;
 
@@ -52,16 +51,6 @@ const Login = () => {
 
   return (
     <Stack space={3} w="80%" maxW="300px" mx="auto">
-        <Input variant="rounded"
-          borderColor="#f79256"
-          bgColor="#fff"
-          size="md"
-          value={username}
-          placeholder="Enter your username"
-          autoCapitalize="none"
-          onChangeText={(text) => setUsername(text)}
-        />
-
         <Input variant="rounded"
           borderColor="#f79256"
           bgColor="#fff"
