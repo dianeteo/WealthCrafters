@@ -1,12 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { Animated,StyleSheet,TouchableOpacity,View} from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {NativebaseProvider, Modal,FormControl,Button,Input,Box,Center,Text,Flex,Spacer,Select} from 'native-base';
+import { NativebaseProvider, Modal, FormControl, Button, Input, Box, Center, Text, Flex, Spacer, Select } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
+import { firebase_auth } from '../../config/firebase.js';
+import { db } from '../../config/firebase.js';
+import { doc, collection, addDoc, getDocs } from '@firebase/firestore';
+
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -32,11 +36,33 @@ const EntryIncome = () => {
     //for changing note
     const [text1,setText]=useState('')
 
-
     const handleCategoryAdd = () => {
         setCategories([...categories1,{label:newCategory1,value:newCategory1}]);
         setNewCategory('');
         }
+
+        const user = firebase_auth.currentUser;
+    
+    const userEmail = user.email;
+
+    const submitIncome = async () => {
+        const userCollectionRef = doc(db, 'users', userEmail);
+        const incomeCollectionRef = collection(userCollectionRef, 'income');
+        try {
+            await addDoc(incomeCollectionRef, {
+                    amount: numValue1,
+                    category: selectedCategory1,
+                    created_at: date1.getDate() + '/' + (date1.getMonth()+1) + '/' + date1.getFullYear(),
+                    description: text1
+                });
+                alert('Successfully submitted!');
+            } catch (error) {
+                console.log(error);
+                alert('Submission failed: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+            };
 
     return (
             <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
@@ -110,7 +136,7 @@ const EntryIncome = () => {
                 <Input style={{ borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
                      borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('Calendar')}>
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={submitIncome}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
@@ -145,6 +171,29 @@ const EntryExpenses = () => {
         setCategories([...categories2,{label:newCategory2,value:newCategory2}]);
         setNewCategory('');
         }
+
+    const user = firebase_auth.currentUser;
+    
+    const userEmail = user.email;
+
+    const submitExpenses = async () => {
+        const userCollectionRef = doc(db, 'users', userEmail);
+        const expensesCollectionRef = collection(userCollectionRef, 'expenses');
+        try {
+            await addDoc(expensesCollectionRef, {
+                    amount: numValue2,
+                    category: selectedCategory2,
+                    created_at: date2.getDate() + '/' + (date2.getMonth()+1) + '/' + date2.getFullYear(),
+                    description: text2
+                });
+                alert('Successfully submitted!');
+            } catch (error) {
+                console.log(error);
+                alert('Submission failed: ' + error.message);
+            } finally {
+                setLoading(false);
+            }
+            };
 
     return (
             <>
@@ -220,7 +269,7 @@ const EntryExpenses = () => {
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('Calendar')}>
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={submitExpenses}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
         </Flex></>
