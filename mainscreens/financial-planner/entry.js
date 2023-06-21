@@ -11,8 +11,6 @@ import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
 import { doc, collection, addDoc, getDocs } from '@firebase/firestore';
 
-
-
 const Tab = createMaterialTopTabNavigator();
 
 const EntryIncome = () => {
