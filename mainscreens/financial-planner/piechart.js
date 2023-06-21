@@ -41,13 +41,15 @@ const processCategoryDataToDisplay = ({data}) =>{
 const renderChart = ({data}) => {
 
     let chartData=processCategoryDataToDisplay(data)
-    
+
 
     return(
         <View>
             <VictoryPie
                 data={data}
-
+                colorScale='warm'
+                labels={(datum)=> `${datum.y}`}
+                radius
                 />
         </View>
     )
