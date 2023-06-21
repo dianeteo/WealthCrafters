@@ -17,7 +17,7 @@ const EntryIncome = () => {
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
     // for calendar date
-    const[date1,setDate]=useState(new Date().getDate() + '/' + (new Date().getMonth()+1) + '/' + new Date().getFullYear())
+    const[date1,setDate]=useState(new Date())
     //for Category List
     const [selectedCategory1, setSelectedCategory] = useState('');
     const [categories1, setCategories] = useState([
@@ -49,7 +49,7 @@ const EntryIncome = () => {
             await addDoc(incomeCollectionRef, {
                     amount: numValue1,
                     category: selectedCategory1,
-                    created_at: date1,
+                    created_at: date1.getDate() + '/' + (date1.getMonth()+1) + '/' + date1.getFullYear(),
                     description: text1
                 });
                 alert('Successfully submitted!');
@@ -148,7 +148,7 @@ const EntryExpenses = () => {
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
     // for calendar date
-    const[date2,setDate]=useState(new Date().getDate() + '/' + (new Date().getMonth()+1) + '/' + new Date().getFullYear())
+    const[date2,setDate]=useState(new Date())
     //for Category List
     const [selectedCategory2, setSelectedCategory] = useState('');
     const [categories2, setCategories] = useState([
@@ -181,7 +181,7 @@ const EntryExpenses = () => {
             await addDoc(expensesCollectionRef, {
                     amount: numValue2,
                     category: selectedCategory2,
-                    created_at: date2,
+                    created_at: date2.getDate() + '/' + (date2.getMonth()+1) + '/' + date2.getFullYear(),
                     description: text2
                 });
                 alert('Successfully submitted!');
