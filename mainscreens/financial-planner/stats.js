@@ -4,7 +4,8 @@ import React, {useEffect, useState} from 'react';
 import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {VictoryPie} from 'victory-native';
-import Donut from './DonutChart';
+import Donut from './stats/DonutChart';
+import RenderStats from './stats/piechart';
 
 //for donut graph(to fit with data later)
 const data = [{
@@ -13,6 +14,20 @@ const data = [{
     max: 10
 }]
 
+//dummy data
+
+const expense_data = [{
+    description: 'ramen',
+    category:'food',
+    amount: 10.00,
+    created_at: new Date(),
+  },{
+    description:'hor fun',
+    category:'food',
+    amount:5.00,
+    created_at:new Date(),
+  }]
+
 //creating toggle option
 const Tab= createMaterialTopTabNavigator()
 
@@ -20,15 +35,23 @@ const Tab= createMaterialTopTabNavigator()
 const IncomeStats = () =>{
 
     return(<>
-    <Box>
-    </Box>
+    <RenderStats 
+        type='Income'
+
+        />
     </>
 
     )
 }
 //expense page
 const ExpensesStats = () => {
+    return(<>
+    <RenderStats
+        type='Expenses'
+        />
+    </>
 
+    )
 }
 
 
@@ -127,7 +150,7 @@ const Stats = () => {
                 }}
 
                 screenOptions={{
-                    animationEnabled:false,
+                    // animationEnabled:false,
                     tabBarActiveTintColor: '#fbd1a2',
                     tabBarLabelStyle: { fontSize: 12, fontFamily:'Poppins' },
                     tabBarStyle: { 

@@ -53,25 +53,13 @@ const FinancialPlanner = () =>{
   const [expenses, setExpenses] = useState([]);
   const userExpensesRef = collection(userDocRef, 'expenses');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const incomeData = await getDocs(userIncomesRef);
-      setIncomes(incomeData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-
-      const expenseData = await getDocs(userExpensesRef);
-      setExpenses(expenseData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-
-    fetchData();
-  }, []);
-
   return(
     <SafeAreaView style={styles.container}>
     <Box style={{
       margin:15,
       borderRadius:10
     }}>
-      <Calendar
+      {/* <Calendar
         hideExtraDays={true}
         //do you wanna show the extra days
         theme={{'stylesheet.calendar.header': {
@@ -88,6 +76,15 @@ const FinancialPlanner = () =>{
         //to be edited later, to just show the entry screen for now without animation
         style={[styles.calendar, {height: 200}]}
         dayComponent={({date}) => {
+          //for incomes
+          const getIncomes = async () => {
+              const data = await getDocs(userIncomesRef);
+              setIncomes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+          };
+
+          useEffect(() => {
+              getIncomes();
+          }, []);
 
           const income_amt = () => {
               let sumIncome = 0;
@@ -103,6 +100,16 @@ const FinancialPlanner = () =>{
               return sumIncome;
           };
 
+          //for expenses
+          const getExpenses = async () => {
+              const data = await getDocs(userExpensesRef);
+              setExpenses(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+          };
+
+          useEffect(() => {
+              getExpenses();
+          }, []);
+
           const expense_amt = () => {
               let sumExpense = 0;
               for (let i = 0; i < expenses.length; i++) {
@@ -112,8 +119,8 @@ const FinancialPlanner = () =>{
                   }
                   else {
                       sumExpense += 0
-                  };
-              };
+                  }
+              }
               return sumExpense;
           };
 
@@ -131,7 +138,7 @@ const FinancialPlanner = () =>{
                 
                  );
                 }}
-      />
+      /> */}
       {/* button to navigate to entry page */}
       <TouchableOpacity onPress={()=> navigation.navigate('NewEntry')} >
         <Ionicons name='add-circle' size={55} color='#e32f45' style={{ bottom:90, alignSelf:'flex-end',right:35, zIndex:999}}/>
@@ -149,7 +156,7 @@ const FinancialPlanner = () =>{
                 </Box>
                 <Spacer h='3%'/>
                 <Box style={{width:170,minHeight: 400,}}>
-                  <SwipeView 
+                  {/* <SwipeView 
                     data={income_data}
                     style={{
                       minHeight: 400,
@@ -157,7 +164,7 @@ const FinancialPlanner = () =>{
                       borderTopWidth: 0.5,
                       borderBottomWidth: 0.5,
                     }}
-                  />
+                  /> */}
                 </Box>
               </Flex>
               {/* expenses side */}
@@ -168,7 +175,7 @@ const FinancialPlanner = () =>{
                 </Box>
                 <Spacer h='3%'/>
                 <Box style={{width:170,minHeight: 400,}}>
-                  <SwipeView 
+                  {/* <SwipeView 
                     data={expense_data}
                     style={{
                       minHeight: 400,
@@ -177,7 +184,7 @@ const FinancialPlanner = () =>{
                       borderBottomWidth: 0.5,
 
                     }}
-                  />
+                  /> */}
                 </Box>
               </Flex>
           </Flex>
