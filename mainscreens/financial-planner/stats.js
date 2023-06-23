@@ -72,7 +72,7 @@ const GoalsStats = () => {
     </Box>
     <Spacer h='50%'/>
     {/* text to indicate goal */}
-    <Text style={{alignSelf:'center'}}>You are $200 away from your monthly goal!</Text>
+    <Text style={{alignSelf:'center'}}>You are ${goal} away from your monthly goal!</Text>
     <TouchableOpacity style={{justifyContent:'center',alignItems:'center',top:50,borderRadius:20,backgroundColor:'#e32f45',width:175,height:40,alignSelf:'center'}}onPress={()=> setModalVisible(true)}>
         <Text style={{fontFamily:'Poppins',color:'#fff'}}>Change Target?</Text>
     </TouchableOpacity>
