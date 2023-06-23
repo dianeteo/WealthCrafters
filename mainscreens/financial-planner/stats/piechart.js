@@ -50,14 +50,14 @@ const dummy_data = [{
 
 
 
-const RenderStats = ({type}) => {
+const RenderStats = ({data,type}) => {
     const [selectedCategory,setSelectedCategory]=useState(null)
     const setSelectedCategoryByName = ({name})=>{
-        let categoryy=dummy_data.filter(a=>a.category==name)
+        let categoryy=data.filter(a=>a.category==name)
         setSelectedCategory(categoryy[0])
     }
     //remove when connecting backend
-    let chartData=dummy_data
+    let chartData=data
     // let chartData=processCategoryDataToDisplay(data)
     let largestTotal=chartData.reduce((a,b)=> a+ (b.y || 0),0)
 
@@ -111,7 +111,7 @@ const RenderStats = ({type}) => {
             <View>
                 <FlatList
                     contentContainerStyle={{justifyContent:'flex-end',}}
-                    data={dummy_data}
+                    data={data}
                     renderItem={({item}) => {
                         return (
                             <TouchableOpacity

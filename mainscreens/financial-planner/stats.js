@@ -16,17 +16,19 @@ const data = [{
 
 //dummy data
 
-const expense_data = [{
-    description: 'ramen',
+const dummy_data = [{
+    label:'50%',
+    count:12,
     category:'food',
-    amount: 10.00,
-    created_at: new Date(),
-  },{
-    description:'hor fun',
-    category:'food',
-    amount:5.00,
-    created_at:new Date(),
-  }]
+    y:120.00
+},
+{
+    label:'20%',
+    count:13,
+    category:'clothing',
+    y:230.00
+}]
+
 
 //creating toggle option
 const Tab= createMaterialTopTabNavigator()
@@ -36,8 +38,8 @@ const IncomeStats = () =>{
 
     return(<>
     <RenderStats 
+        data={dummy_data}
         type='Income'
-
         />
     </>
 
@@ -48,6 +50,7 @@ const ExpensesStats = () => {
     return(<>
     <RenderStats
         type='Expenses'
+        data={dummy_data}
         />
     </>
 
