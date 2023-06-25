@@ -2,19 +2,20 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Stats from "./mainscreens/financial-planner/stats";
+import NavigatorFilter from "./ButtonNavigationFilter";
 
 
 const Stack = createNativeStackNavigator()
 
-export default function Navigation() {
+export default function Navigator() {
     return (
             <Stack.Navigator 
-                initialRouteName="Stats"
+                initialRouteName="BaseStats"
                 screenOptions={{
                     headerShown:false
                 }}> 
-                <Stack.Screen name='Stats' component={Stats} />
-                {/* <Stack.Screen name='Filter'  /> */}
+                <Stack.Screen name='BaseStats' component={Stats} />
+                <Stack.Screen name='StackedFilter' component={NavigatorFilter}  />
             </Stack.Navigator>
     )
 }

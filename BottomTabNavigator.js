@@ -3,7 +3,7 @@ import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Import your screens/components here
-import Stats from './mainscreens/financial-planner/stats';
+import Navigator from './ButtonNavigationStats';
 import FinancialPlanner from './mainscreens/FinancialPlanner';
 
 const getCurrentDate=()=>{
@@ -53,7 +53,7 @@ const MyTabs = () => {
         })}
         >
         <Tab.Screen name={Home} component={FinancialPlanner} />
-        <Tab.Screen name={statsName} component={Stats} />
+        <Tab.Screen name={statsName} component={Navigator} />
       </Tab.Navigator>
     
   );

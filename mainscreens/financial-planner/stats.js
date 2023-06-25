@@ -1,10 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, TouchableOpacity,SafeAreaView,PixelRatio} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React,{useState} from 'react';
 import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import {VictoryPie} from 'victory-native';
-import Donut from './DonutChart';
+import Donut from './stats/DonutChart';
+import RenderStats from './stats/piechart';
+import { useNavigation } from '@react-navigation/native';
 
 //for donut graph(to fit with data later)
 const data = [{
@@ -13,6 +14,30 @@ const data = [{
     max: 10
 }]
 
+//dummy data
+const dummy_data = [{
+    label:'50%',
+    count:12,
+    category:'food',
+    y:120.00
+},
+{
+    label:'20%',
+    count:13,
+    category:'clothing',
+    y:230.00
+},
+{
+    label:'10%',
+    count:14,
+    category:'education',
+    y:1000.00
+}
+
+
+]
+
+
 //creating toggle option
 const Tab= createMaterialTopTabNavigator()
 
@@ -20,15 +45,24 @@ const Tab= createMaterialTopTabNavigator()
 const IncomeStats = () =>{
 
     return(<>
-    <Box>
-    </Box>
+    <RenderStats 
+        data={dummy_data}
+        type='Income'
+        />
     </>
 
     )
 }
 //expense page
 const ExpensesStats = () => {
+    return(<>
+    <RenderStats
+        type='Expenses'
+        data={dummy_data}
+        />
+    </>
 
+    )
 }
 
 
@@ -41,7 +75,7 @@ const GoalsStats = () => {
     const [inputError, setInputError] = useState('');
     const [goal,setGoal]=useState(0)
     return (<>
-    <Flex direction='column'>
+    <Flex direction='column'style={{alignItems:'center',bottom:50}}>
     <Box style={styles.goal}>
         {data.map((p, i) => {
           return <Donut key={i} percentage={p.percentage} color={p.color} delay={500 + 100 * i} max={p.max}/> 
@@ -49,7 +83,7 @@ const GoalsStats = () => {
     </Box>
     <Spacer h='50%'/>
     {/* text to indicate goal */}
-    <Text style={{alignSelf:'center'}}>You are $200 away from your monthly goal!</Text>
+    <Text style={{alignSelf:'center'}}>You are ${goal} away from your monthly goal!</Text>
     <TouchableOpacity style={{justifyContent:'center',alignItems:'center',top:50,borderRadius:20,backgroundColor:'#e32f45',width:175,height:40,alignSelf:'center'}}onPress={()=> setModalVisible(true)}>
         <Text style={{fontFamily:'Poppins',color:'#fff'}}>Change Target?</Text>
     </TouchableOpacity>
@@ -113,42 +147,39 @@ const GoalsStats = () => {
   };
 
 const Stats = () => {
+    const navigation = useNavigation()
     const [inputValue,setInputValue] = useState('')
-    return (<>
-            <Center style={styles.header}>Daily</Center>
+    return (
+            <>
+            <Flex>
+            <Center style={styles.header} _text={{fontFamily:'PoppinsSemi',fontSize:20}}>Stats</Center>
+            <TouchableOpacity style={styles.filterbutton} onPress={()=>{navigation.navigate('StackedFilter')}}>
+                <Text>Filter</Text>
+            </TouchableOpacity>
+            </Flex>
             <Tab.Navigator
                 initialRouteName='GoalsStats'
-                sceneContainerStyle={{
-                    position:'relative',
-                    top:100,
-                }}
-                initialLayout={{
-                    height:300
-                }}
-
+                sceneContainerStyle={{ flex: 1 }}
                 screenOptions={{
-                    animationEnabled:false,
-                    tabBarActiveTintColor: '#fbd1a2',
-                    tabBarLabelStyle: { fontSize: 12, fontFamily:'Poppins' },
-                    tabBarStyle: { 
-                        position:'relative',
-                        backgroundColor: '#1d4e89',
-                        borderRadius:20,
-                        width:350,
-                        alignSelf:'center',
-                        top:50
-                        },
-                    tabBarIndicator: () =>{
-                        null
-                    }
-                    
-                  }}>
+                tabBarActiveTintColor: '#fbd1a2',
+                tabBarLabelStyle: { fontSize: 12, fontFamily: 'Poppins' },
+                tabBarStyle: {
+                    backgroundColor: '#1d4e89',
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
+                    width:350,
+                    alignSelf:'center'
+                },
+                tabBarIndicatorStyle: {
+                    height: 4,
+                    backgroundColor: '#fbd1a2',
+                },
+                }}>
                 <Tab.Screen 
                     name='IncomeStats'
                     component={IncomeStats}
                     options={{
                         tabBarLabel:'Income',
-                        lazy:true
 
                     }}/>
                 <Tab.Screen 
@@ -157,7 +188,6 @@ const Stats = () => {
                     
                     options={{
                         tabBarLabel:'Goal',
-                        lazy:true
                         
 
                     }}/>
@@ -165,11 +195,10 @@ const Stats = () => {
                     name='ExpensesStats'
                     component={ExpensesStats}
                     options={{
-                        tabBarLabel:'Expenses',
-                        lazy:true
+                        tabBarLabel:'Expenses'
                     }} />
             </Tab.Navigator>
-    </>
+        </>
     )
 };
 export default Stats;
@@ -179,11 +208,24 @@ const styles = StyleSheet.create({
 
     },
     header:{
-
+        alignSelf:'center',
+        top:25
     },
     goal:{
         alignItems:'center',
         top:250
+    },
+    filterbutton:{
+        width:70,
+        height:45,
+        justifyContent:'center',
+        borderRadius:10,
+        alignItems:'center',
+        alignSelf:'flex-end',
+        backgroundColor:'#d2d2d2',
+        bottom:10,
+        right:10
+
     }
 
 });
