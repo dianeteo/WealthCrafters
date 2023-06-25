@@ -32,9 +32,8 @@ const dummy_data = [{
 
 
 const Results = () =>{
+    const route = useRoute()
     //to retrieve search results to filter data
-    // const route = useRoute()
-    // const {dateRange,type,category}=route.params
     const navigation = useNavigation();
     return(
         <>
@@ -44,7 +43,7 @@ const Results = () =>{
 
         <RenderStats
             data={dummy_data}
-            type='type'
+            type={route.params.type}
             />
         </>
     )
