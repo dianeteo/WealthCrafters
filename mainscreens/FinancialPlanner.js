@@ -1,8 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
+
 import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {Calendar} from 'react-native-calendars';
-import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer, ScrollView} from 'native-base';
+import {Modal,Flex,Text, Box, Spacer} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import SwipeView from './financial-planner/SwipeView';
@@ -10,29 +10,6 @@ import { firebase_auth } from '../config/firebase.js';
 import { db } from '../config/firebase.js';
 import { doc, collection, getDocs } from '@firebase/firestore';
 
-const expense_data = [{
-  id: 3,
-  description: 'ramen',
-  category:'food',
-  amount: 10.00,
-  created_at: new Date(),
-  created_by: 3,
-},{
-  id:5,
-  description:'hor fun',
-  category:'food',
-  amount:5.00,
-  created_at:new Date(),
-  created_by:3,
-}]
-const income_data = [{
-  id: 3,
-  description: 'barista job',
-  category:'salary',
-  amount: 1000.00,
-  created_at: new Date(),
-  created_by: 3,
-},]
 
 
 const FinancialPlanner = () =>{

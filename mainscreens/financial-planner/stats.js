@@ -1,7 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TouchableOpacity,SafeAreaView,PixelRatio} from 'react-native';
+
+import { StyleSheet, TouchableOpacity} from 'react-native';
 import React,{useState} from 'react';
-import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon } from 'native-base';
+import { Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Donut from './stats/DonutChart';
 import RenderStats from './stats/piechart';

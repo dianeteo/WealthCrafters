@@ -1,7 +1,7 @@
-import React,{useState} from 'react';
+import React from 'react';
 import RenderStats from './piechart';
-import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon } from 'native-base';
-import {  useNavigation, useRoute } from '@react-navigation/native';
+import { Text} from 'native-base';
+import {  useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native';
 import { StyleSheet } from 'react-native';
 
