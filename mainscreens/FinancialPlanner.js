@@ -35,7 +35,6 @@ const income_data = [{
 },]
 
 
-
 const FinancialPlanner = () =>{
   const navigation = useNavigation();
   const [modalVisible,setModalVisible]=useState(false);
@@ -72,6 +71,7 @@ const FinancialPlanner = () =>{
       borderRadius:10
     }}>
       <Calendar
+        current={new Date().toDateString()}
         hideExtraDays={true}
         //do you wanna show the extra days
         theme={{'stylesheet.calendar.header': {
@@ -80,8 +80,7 @@ const FinancialPlanner = () =>{
             flexDirection: 'row',
             justifyContent: 'space-around',
             alignItems:'center'
-            },
-          
+            }, 
           }
         }}
         
@@ -150,7 +149,7 @@ const FinancialPlanner = () =>{
                 <Spacer h='3%'/>
                 <Box style={{width:170,minHeight: 400,}}>
                   <SwipeView 
-                    data={income_data}
+                    data={incomes}
                     style={{
                       minHeight: 400,
                       width: 200,
@@ -169,13 +168,12 @@ const FinancialPlanner = () =>{
                 <Spacer h='3%'/>
                 <Box style={{width:170,minHeight: 400,}}>
                   <SwipeView 
-                    data={expense_data}
+                    data={expenses}
                     style={{
                       minHeight: 400,
                       width: 200,
                       borderTopWidth: 0.5,
                       borderBottomWidth: 0.5,
-
                     }}
                   />
                 </Box>
