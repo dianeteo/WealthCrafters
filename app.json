@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "wealthcrafters",
     "name": "orbital-app",
     "slug": "orbital-app",
     "version": "1.0.0",
