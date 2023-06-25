@@ -50,7 +50,8 @@
     "react-navigation": "^4.4.4",
     "rn-select-date-range": "^5.0.0",
     "typescript": "^4.9.4",
-    "victory-native": "^36.6.11"
+    "victory-native": "^36.6.11",
+    "expo-dev-client": "~2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",
