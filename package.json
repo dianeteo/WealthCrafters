@@ -20,6 +20,7 @@
     "@types/react": "~18.0.27",
     "dotenv": "^16.1.2",
     "expo": "~48.0.15",
+    "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
@@ -50,8 +51,7 @@
     "react-navigation": "^4.4.4",
     "rn-select-date-range": "^5.0.0",
     "typescript": "^4.9.4",
-    "victory-native": "^36.6.11",
-    "expo-dev-client": "~2.2.1"
+    "victory-native": "^36.6.11"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",
