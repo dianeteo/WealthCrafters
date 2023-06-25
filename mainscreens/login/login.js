@@ -3,7 +3,7 @@ import { View, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
 import { firebase_auth } from '../../config/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { Input, Stack, Center, NativeBaseProvider } from 'native-base';
+import { Input, Stack, Center, NativeBaseProvider,Text,Spacer } from 'native-base';
 import { Button } from 'react-native-paper';
 import { doc, setDoc } from '@firebase/firestore';
 
@@ -88,7 +88,10 @@ const Login = () => {
         ) : (
           <>
             <Button mode="contained" onPress={signIn} buttonColor="#f79256">Login</Button>
-            <Button mode="contained" onPress={signUp} buttonColor="#f79256">Create account</Button>
+            <View style={{top:60}}>
+            <Text style={{alignSelf:'center',fontSize:10,textAlign:'center',fontFamily:'Poppins'}}>Don't have an account? Key in your username, email and password and press the button below!</Text>
+            <Button mode="contained" onPress={signUp} buttonColor="#f79256" style={{width:175,alignSelf:'center',top:10}}>Create account</Button>
+            </View>
           </>
         )}
     </Stack>

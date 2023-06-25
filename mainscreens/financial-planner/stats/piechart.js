@@ -35,20 +35,6 @@ import { TouchableOpacity } from 'react-native';
 //     return finalChartData
 // }
 
-const dummy_data = [{
-    label:'50%',
-    count:12,
-    category:'food',
-    y:120.00
-},
-{
-    label:'20%',
-    count:13,
-    category:'clothing',
-    y:230.00
-}]
-
-
 
 const RenderStats = ({data,type}) => {
     const [selectedCategory,setSelectedCategory]=useState(null)

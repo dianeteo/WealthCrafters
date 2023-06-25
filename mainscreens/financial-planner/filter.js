@@ -5,6 +5,7 @@ import moment from 'moment';
 import DateRangePicker from 'rn-select-date-range';
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
 const categories=[{
     id:2,
     name:'Food'
@@ -16,8 +17,7 @@ const categories=[{
 {
     id:4,
     name:'Fishes'
-}
-]
+}]
 
 
 
@@ -30,6 +30,15 @@ const Filter = () =>{
     const [selectedCategory,setSelectedCategory]=useState('')
 
     const navigation=useNavigation()
+
+    //for submit button
+    const handleFilterSubmit = () => {
+        navigation.navigate('stackedResults', {
+            range:{...selectedRange},
+            type:selectedValue,
+            category:selectedCategory
+        });
+      };
 
     return (
         <SafeAreaView>
@@ -53,17 +62,13 @@ const Filter = () =>{
                     <Select
                     selectedValue={selectedValue}
                     onValueChange={(value) => setSelectedValue(value)}
-                    placeholder="Select category"
+                    placeholder="Any specific Type?"
                     width={175}
                     >
                     <Select.Item label="Income" value="income" />
                     <Select.Item label="Expenses" value="expenses" />
+                    <Select.Item label="Balance" value="Balance" />
                     </Select>
-                    {selectedValue === '' && (
-                    <FormControl.ErrorMessage>
-                        Please make a selection!
-                    </FormControl.ErrorMessage>
-                    )}
                 </FormControl>
             </HStack>
             <Spacer h='8%'/>
@@ -73,8 +78,8 @@ const Filter = () =>{
                 <FormControl isRequired>
                     <Select
                     selectedValue={selectedCategory}
-                    onValueChange={(value) => setSelectedValue(value)}
-                    placeholder="Select category"
+                    onValueChange={(value) => setSelectedCategory(value)}
+                    placeholder="Any Specific Category?"
                     width={175}
                     >
                     {categories.map(category => (
@@ -85,15 +90,10 @@ const Filter = () =>{
                         />
                     ))}
                     </Select>
-                    {selectedCategory === '' && (
-                    <FormControl.ErrorMessage>
-                        Please make a selection!
-                    </FormControl.ErrorMessage>
-                    )}
                 </FormControl>
             </HStack>
             <Spacer h='15%'/>
-            <TouchableOpacity style={styles.button} onPress={()=>{navigation.navigate('Stats')}}>
+            <TouchableOpacity style={styles.button} onPress={handleFilterSubmit}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>

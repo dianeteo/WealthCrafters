@@ -156,7 +156,7 @@ const FinancialPlanner = () =>{
                 </Box>
                 <Spacer h='3%'/>
                 <Box style={{width:170,minHeight: 400,}}>
-                  {/* <SwipeView 
+                  <SwipeView 
                     data={income_data}
                     style={{
                       minHeight: 400,
@@ -164,7 +164,7 @@ const FinancialPlanner = () =>{
                       borderTopWidth: 0.5,
                       borderBottomWidth: 0.5,
                     }}
-                  /> */}
+                  />
                 </Box>
               </Flex>
               {/* expenses side */}
@@ -175,7 +175,7 @@ const FinancialPlanner = () =>{
                 </Box>
                 <Spacer h='3%'/>
                 <Box style={{width:170,minHeight: 400,}}>
-                  {/* <SwipeView 
+                  <SwipeView 
                     data={expense_data}
                     style={{
                       minHeight: 400,
@@ -184,7 +184,7 @@ const FinancialPlanner = () =>{
                       borderBottomWidth: 0.5,
 
                     }}
-                  /> */}
+                  />
                 </Box>
               </Flex>
           </Flex>

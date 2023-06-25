@@ -26,7 +26,16 @@ const dummy_data = [{
     count:13,
     category:'clothing',
     y:230.00
-}]
+},
+{
+    label:'10%',
+    count:14,
+    category:'education',
+    y:1000.00
+}
+
+
+]
 
 
 //creating toggle option
@@ -143,8 +152,8 @@ const Stats = () => {
     return (
             <>
             <Flex>
-            <Center style={styles.header} _text={{fontFamily:'PoppinsSemi',fontSize:20}}>Daily</Center>
-            <TouchableOpacity style={styles.filterbutton} onPress={()=>{navigation.navigate('Filter')}}>
+            <Center style={styles.header} _text={{fontFamily:'PoppinsSemi',fontSize:20}}>Stats</Center>
+            <TouchableOpacity style={styles.filterbutton} onPress={()=>{navigation.navigate('StackedFilter')}}>
                 <Text>Filter</Text>
             </TouchableOpacity>
             </Flex>
@@ -171,7 +180,6 @@ const Stats = () => {
                     component={IncomeStats}
                     options={{
                         tabBarLabel:'Income',
-                        lazy:true
 
                     }}/>
                 <Tab.Screen 
@@ -180,7 +188,6 @@ const Stats = () => {
                     
                     options={{
                         tabBarLabel:'Goal',
-                        lazy:true
                         
 
                     }}/>
@@ -188,8 +195,7 @@ const Stats = () => {
                     name='ExpensesStats'
                     component={ExpensesStats}
                     options={{
-                        tabBarLabel:'Expenses',
-                        lazy:true
+                        tabBarLabel:'Expenses'
                     }} />
             </Tab.Navigator>
         </>
