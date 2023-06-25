@@ -103,7 +103,7 @@ const RenderStats = ({data,type}) => {
                     }
                 }]}
                 />
-            <View style={{position:'relative',top:30}}>
+            <View style={{position:'relative',bottom:155}}>
                 <Text style={{textAlign:'center',fontFamily:'LatoBold',fontSize:22}}>{largestTotal}</Text>
                 <Text style={{textAlign:'center',fontFamily:'Lato'}}>{type}</Text>
             </View>
@@ -126,7 +126,7 @@ const RenderStats = ({data,type}) => {
 
                                 }}>
                                 <View style={{alignItems:'center',justifyContent:'center'}}>                    
-                                    <Text style={{marginLeft:20,fontFamily:'PoppinsSemi'}}>{item.category}</Text>
+                                    <Text style={{fontFamily:'PoppinsSemi'}}>{item.category}</Text>
                                 </View>
                                 <Spacer w='20%'/>
                                 <View style={{justifyContent:'center',alignItems:'center'}}>

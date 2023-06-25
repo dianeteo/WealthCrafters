@@ -27,6 +27,7 @@
     "firebase": "^9.22.2",
     "metro-react-native-babel-preset": "^0.76.6",
     "metro-transform-worker": "^0.76.6",
+    "moment": "^2.29.4",
     "mysql2": "^3.3.3",
     "native-base": "^3.4.28",
     "react": "18.2.0",
@@ -47,6 +48,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.11",
     "react-navigation": "^4.4.4",
+    "rn-select-date-range": "^5.0.0",
     "typescript": "^4.9.4",
     "victory-native": "^36.6.11"
   },
