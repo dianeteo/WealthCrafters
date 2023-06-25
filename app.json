@@ -10,11 +10,20 @@
       "web"
     ],
     "android": {
-      "package": "com.saptow.orbitalapp"
+      "package": "com.saptow.orbitalapp",
+      "runtimeVersion": "1.0.0"
     },
     "extra": {
       "eas": {
         "projectId": "2041f220-324a-44e0-8245-1bd80181c586"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2041f220-324a-44e0-8245-1bd80181c586"
+    },
+    "ios": {
+      "runtimeVersion": {
+        "policy": "sdkVersion"
       }
     }
   }
