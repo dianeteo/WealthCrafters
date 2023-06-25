@@ -33,13 +33,13 @@ const Filter = () =>{
 
     //for submit button
     const handleFilterSubmit = () => {
-        navigation.navigate('stackedResults', {
-                range:{...selectedRange},
-                type:selectedValue,
-                catgeory:selectedCategory
-
-
-        });
+        navigation.navigate('stackedResults', 
+        // {
+        //         range:{...selectedRange},
+        //         type:selectedValue,
+        //         catgeory:selectedCategory
+        // }
+        );
       };
 
     return (

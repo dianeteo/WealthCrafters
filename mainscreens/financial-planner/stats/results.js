@@ -32,7 +32,7 @@ const dummy_data = [{
 
 
 const Results = () =>{
-    const route = useRoute()
+    // const route = useRoute()
     //to retrieve search results to filter data
     const navigation = useNavigation();
     return(
@@ -43,7 +43,7 @@ const Results = () =>{
 
         <RenderStats
             data={dummy_data}
-            type={route.params.type}
+            type='type'
             />
         </>
     )
