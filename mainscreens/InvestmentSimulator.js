@@ -1,7 +1,7 @@
-import { StatusBar } from 'expo-status-bar';
+
 import { StyleSheet, View} from 'react-native';
 import React from 'react';
-import { Text, Button } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 
 class InvestmentSimulator extends React.Component {
     render() {

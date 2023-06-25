@@ -3,6 +3,7 @@ import {Box,Form,FormControl,Text,Select,View,Flex, HStack,Spacer} from 'native-
 import { SafeAreaView, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 const categories=[{
     id:2,
@@ -21,7 +22,8 @@ const categories=[{
 
 const Filter = () =>{
     //date range
-    const [selectedRange,setSelectedRange]=useState({});
+    const [date1,setDate1]=useState(new Date())
+    const [date,setDate]=useState(new Date())
     //type
     const [selectedValue, setSelectedValue] = useState('');
 
@@ -43,8 +45,17 @@ const Filter = () =>{
     return (
         <SafeAreaView>
             <Flex direction="column">
-            <View style={styles.rangepicker}>
-            </View>
+            <Spacer h='25%'/>
+            <HStack alignSelf='center'>
+                <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Initial Date:</Text>
+                <DateTimePicker themeVariant='dark' value={date1} onChange={(event, date) => { setDate1(date); event = 'dismissed'; } } />
+            </HStack>
+            <Spacer h='7%'/>
+            <HStack alignSelf='center'>
+                <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Final Date:</Text>
+                <DateTimePicker themeVariant='dark' value={date} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
+            </HStack>
+            <Spacer h='7%'/>
             <HStack style={{left:100}}>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Type:</Text>
                 <Spacer w='2%'/>
