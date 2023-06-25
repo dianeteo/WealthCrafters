@@ -137,7 +137,8 @@ const FinancialPlanner = () =>{
       </TouchableOpacity>
       <Modal isOpen={modalVisible} onClose={()=>{setModalVisible(false)}} style={styles.modal} size='xl' >
         <Modal.Content h='600'>
-          <Modal.Header alignSelf='center'>Total:</Modal.Header>
+          {/* add daily balance here */}
+          <Modal.Header alignSelf='center'>Balance:</Modal.Header>
           <Modal.CloseButton />
           <Flex justifyContent='space-evenly' direction='row'>
               {/* income side */}
