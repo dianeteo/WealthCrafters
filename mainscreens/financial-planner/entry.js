@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Animated,StyleSheet,TouchableOpacity,View} from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,38 +10,84 @@ import { useNavigation } from '@react-navigation/native';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
 import { doc, collection, addDoc, getDocs } from '@firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const Tab = createMaterialTopTabNavigator();
 
 const EntryIncome = () => {
-    const navigation=useNavigation()
+
+    // references to firebase functions
+    const usersCollectionRef = collection(db, 'users');
+    const user = firebase_auth.currentUser;
+    const userEmail = user ? user.email : null;
+    const userDocRef = userEmail ? doc(usersCollectionRef, userEmail) : null;
+    const userIncomesCategoriesRef = userDocRef ? collection(userDocRef, 'income_categories') : null;
+
+    const navigation=useNavigation();
+
     // for modal appearing
-    const [modalVisible, setModalVisible]=useState(false)
+    const [modalVisible, setModalVisible]=useState(false);
+
     // for calendar date
-    const[date1,setDate]=useState(new Date())
+    const[date1,setDate]=useState(new Date());
+
     //for Category List
     const [selectedCategory1, setSelectedCategory] = useState('');
-    const [categories1, setCategories] = useState([
-        { label: 'Category 1', value: 'category1' },
-        { label: 'Category 2', value: 'category2' },
-        { label: 'Category 3', value: 'category3' },
-    ]);
+
+    // probably have to replace this with expenseCategories
+    const [categories1, setCategories] = useState([]);      
+
+    //fetching existing list of categories
+    const [expenseCategories, setIncomeCategories] = useState([]);
+    const [labelValuesList_incomes, setLabelValuesList_incomes] = useState([]);
+
+    useEffect(() => {
+      const fetchExistingCategories = async () => {
+        if (userEmail && userIncomesCategoriesRef) {
+          const incomeCategoriesData = await getDocs(userIncomesCategoriesRef);
+          setIncomeCategories(
+            incomeCategoriesData.docs.map((doc) => ({
+              ...doc.data(),
+              id: doc.id,
+            }))
+          );
+  
+          const labelValuesList = incomeCategoriesData.docs.map((doc) => ({
+            label: doc.data().category,
+            value: doc.data().category,
+          }));
+          setLabelValuesList_incomes(labelValuesList);
+        }
+      };
+  
+      fetchExistingCategories();
+    }, [userEmail, userIncomesCategoriesRef]);
+
     //for adding Category
     const [newCategory1, setNewCategory] = useState('');
-
     //for Amount Keying
     const [numValue1, setNumValue] = useState(0);
     //for changing note
-    const [text1,setText]=useState('')
+    const [text1,setText]=useState('');
 
-    const handleCategoryAdd = () => {
-        setCategories([...categories1,{label:newCategory1,value:newCategory1}]);
-        setNewCategory('');
+    const handleCategoryAdd = async () => {
+        try { 
+            await addDoc(userIncomesCategoriesRef, {
+                category: newCategory1
+            });
+            alert('Added a new category: ' + newCategory1);
+        } catch (error) {
+            console.log(error);
+            alert('Failed to add a new category: ' + error.message);
+        } finally {
+            setLoading(false);
         }
+        };
 
-        const user = firebase_auth.currentUser;
-    
-    const userEmail = user.email;
+        // const newCategory = { label: newCategory1, value: newCategory1 };
+        // setCategories([...categories1, newCategory]);
+        // setSelectedCategory(newCategory.value); // Set the newly added category as the selected value
+        // setNewCategory('');   
 
     const submitIncome = async () => {
         const userCollectionRef = doc(db, 'users', userEmail);
@@ -69,22 +115,25 @@ const EntryIncome = () => {
         </Flex><Spacer h='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
-                    <Select selectedValue={selectedCategory1}
-                        minWidth="212"
-                        accessibilityLabel="Choose A Category"
-                        placeholder="Choose A Category"
-                        placeholderTextColor='black'
-                        // backgroundColor='#78b0a3'
-                        color='white'
-                        borderRadius={5}
-                        margin={0}
-                        padding={0}
-                        onValueChange={itemValue => setSelectedCategory(itemValue)}
+                <Select
+                    selectedValue={selectedCategory1}
+                    minWidth="212"
+                    accessibilityLabel="Choose a Category"
+                    placeholder="Choose a category"
+                    placeholderTextColor="black"
+                    color="white"
+                    borderRadius={5}
+                    margin={0}
+                    padding={0}
+                    onValueChange={itemValue => setSelectedCategory(itemValue)}
                     >
-                        <Select.Item label='Income' value='income'></Select.Item>
-                        <Select.Item label='Shopping' value='shopping'></Select.Item>
-                        <Select.Item label='Haircut' value='haircut'></Select.Item>
-                        <Select.Item label='Transport' value='transport'></Select.Item>
+                    {labelValuesList_incomes.map(category => (
+                        <Select.Item
+                        key={category.value}
+                        label={category.label}
+                        value={category.value}
+                        />
+                    ))}
                     </Select>
                 </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
@@ -98,16 +147,16 @@ const EntryIncome = () => {
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Category</FormControl.Label>
-                                <Input value={newCategory1} onChange={(text) => { setNewCategory(text); } } />
+                                <Input value={newCategory1} onChange={(event) => { setNewCategory(event.nativeEvent.text); }} />
                             </FormControl>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button.Group space={2}>
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory(''); } }>
-                                    Cancel
+                                Cancel
                                 </Button>
-                                <Button onPress={() => { setModalVisible(false); } }>
-                                    Save
+                                <Button onPress={() => { setModalVisible(false); handleCategoryAdd(); }}>
+                                Save
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>
@@ -133,8 +182,8 @@ const EntryIncome = () => {
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
-                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitIncome;navigation.navigate('Calendar')}}>
+                     borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitIncome(); navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
@@ -143,36 +192,73 @@ const EntryIncome = () => {
 }
 
 const EntryExpenses = () => {
+
+    // references to firebase functions
+    const usersCollectionRef = collection(db, 'users');
+    const user = firebase_auth.currentUser;
+    const userEmail = user ? user.email : null;
+    const userDocRef = userEmail ? doc(usersCollectionRef, userEmail) : null;
+    const userExpensesCategoriesRef = userDocRef ? collection(userDocRef, 'expense_categories') : null;
+
     const navigation=useNavigation()
 
     // for modal appearing
     const [modalVisible, setModalVisible]=useState(false)
+
     // for calendar date
     const[date2,setDate]=useState(new Date())
+
     //for Category List
     const [selectedCategory2, setSelectedCategory] = useState('');
-    const [categories2, setCategories] = useState([
-        { label: 'Category 1', value: 'category1' },
-        { label: 'Category 2', value: 'category2' },
-        { label: 'Category 3', value: 'category3' },
-    ]);
+
+    //fetching existing list of categories
+    const [expenseCategories, setExpenseCategories] = useState([]);
+    const [labelValuesList_expenses, setLabelValuesList_expenses] = useState([]);
+
+    useEffect(() => {
+      const fetchExistingCategories = async () => {
+        if (userEmail && userExpensesCategoriesRef) {
+          const expenseCategoriesData = await getDocs(userExpensesCategoriesRef);
+          setExpenseCategories(
+            expenseCategoriesData.docs.map((doc) => ({
+              ...doc.data(),
+              id: doc.id,
+            }))
+          );
+  
+          const labelValuesList = expenseCategoriesData.docs.map((doc) => ({
+            label: doc.data().category,
+            value: doc.data().category,
+          }));
+          setLabelValuesList_expenses(labelValuesList);
+        }
+      };
+  
+      fetchExistingCategories();
+    }, [userEmail, userExpensesCategoriesRef]);
+
     //for adding Category
     const [newCategory2, setNewCategory] = useState('');
 
     //for Amount Keying
     const [numValue2, setNumValue] = useState(0);
+
     //for changing note
     const [text2,setText]=useState('')
 
-
-    const handleCategoryAdd = () => {
-        setCategories([...categories2,{label:newCategory2,value:newCategory2}]);
-        setNewCategory('');
+    const handleCategoryAdd = async () => {
+        try {
+            await addDoc(userExpensesCategoriesRef, {
+                category: newCategory2
+            });
+            alert('Added a new category: ' + newCategory2);
+        } catch (error) {
+            console.log(error);
+            alert('Failed to add a new category: ' + error.message);
+        } finally {
+            setLoading(false);
         }
-
-    const user = firebase_auth.currentUser;
-    
-    const userEmail = user.email;
+    };
 
     const submitExpenses = async () => {
         const userCollectionRef = doc(db, 'users', userEmail);
@@ -202,22 +288,25 @@ const EntryExpenses = () => {
         </Flex><Spacer h='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
-                    <Select selectedValue={selectedCategory2}
-                        minWidth="212"
-                        accessibilityLabel="Choose A Category"
-                        placeholder="Choose A Category"
-                        placeholderTextColor='black'
-                        // backgroundColor='#78b0a3'
-                        color='white'
-                        borderRadius={5}
-                        margin={0}
-                        padding={0}
-                        onValueChange={itemValue => setSelectedCategory(itemValue)}
+                <Select
+                    selectedValue={selectedCategory2}
+                    minWidth="212"
+                    accessibilityLabel="Choose a category"
+                    placeholder="Choose a category"
+                    placeholderTextColor="black"
+                    color="white"
+                    borderRadius={5}
+                    margin={0}
+                    padding={0}
+                    onValueChange={itemValue => setSelectedCategory(itemValue)}
                     >
-                        <Select.Item label='Food' value='food'></Select.Item>
-                        <Select.Item label='Shopping' value='shopping'></Select.Item>
-                        <Select.Item label='Haircut' value='haircut'></Select.Item>
-                        <Select.Item label='Transport' value='transport'></Select.Item>
+                    {labelValuesList_expenses.map(category => (
+                        <Select.Item
+                        key={category.value}
+                        label={category.label}
+                        value={category.value}
+                        />
+                    ))}
                     </Select>
                 </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
@@ -231,7 +320,7 @@ const EntryExpenses = () => {
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Category</FormControl.Label>
-                                <Input value={newCategory2} onChange={(text) => { setNewCategory(text); } } />
+                                <Input value={newCategory2} onChange={(event) => { setNewCategory(event.nativeEvent.text); }} />
                             </FormControl>
                         </Modal.Body>
                         <Modal.Footer>
@@ -239,8 +328,8 @@ const EntryExpenses = () => {
                                 <Button variant="ghost" colorScheme="blueGray" onPress={() => { setModalVisible(false); setNewCategory(''); } }>
                                     Cancel
                                 </Button>
-                                <Button onPress={() => { setModalVisible(false); } }>
-                                    Save
+                                <Button onPress={() => { setModalVisible(false); handleCategoryAdd(); }}>
+                                Save
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>
@@ -266,8 +355,8 @@ const EntryExpenses = () => {
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
-                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a Short Note!' placeholderTextColor='black' variant='outline' />
-            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitExpenses;navigation.navigate('Calendar')}}>
+                    borderWidth: 0 }} position='unset' left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
+            </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitExpenses; navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
         </Flex></>
@@ -275,7 +364,7 @@ const EntryExpenses = () => {
     )
 }
 
-const NewEntry = () =>{
+const NewEntry = () => {
     return (<>
     <Center style={styles.header} _text={styles.headertext}>NEW ENTRY</Center>
             <Tab.Navigator
