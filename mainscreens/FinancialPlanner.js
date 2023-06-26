@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
+import { StyleSheet, TouchableOpacity,SafeAreaView, ActivityIndicator} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import {Calendar} from 'react-native-calendars';
 import {NativeBaseProvider,Modal,Flex,Text, View,Box, FlatList, HStack, VStack, Spacer, ScrollView} from 'native-base';
@@ -8,31 +8,31 @@ import { useNavigation } from '@react-navigation/native';
 import SwipeView from './financial-planner/SwipeView';
 import { firebase_auth } from '../config/firebase.js';
 import { db } from '../config/firebase.js';
-import { doc, collection, onSnapshot, query, limit } from '@firebase/firestore';
+import { doc, collection, onSnapshot, query, limit, getDocs } from '@firebase/firestore';
 
-const expense_data = [{
-  id: 3,
-  description: 'ramen',
-  category:'food',
-  amount: 10.00,
-  created_at: new Date(),
-  created_by: 3,
-},{
-  id:5,
-  description:'hor fun',
-  category:'food',
-  amount:5.00,
-  created_at:new Date(),
-  created_by:3,
-}]
-const income_data = [{
-  id: 3,
-  description: 'barista job',
-  category:'salary',
-  amount: 1000.00,
-  created_at: new Date(),
-  created_by: 3,
-},]
+// const expense_data = [{
+//   id: 3,
+//   description: 'ramen',
+//   category:'food',
+//   amount: 10.00,
+//   created_at: new Date(),
+//   created_by: 3,
+// },{
+//   id:5,
+//   description:'hor fun',
+//   category:'food',
+//   amount:5.00,
+//   created_at:new Date(),
+//   created_by:3,
+// }]
+// const income_data = [{
+//   id: 3,
+//   description: 'barista job',
+//   category:'salary',
+//   amount: 1000.00,
+//   //created_at: new Date(),
+//   created_by: 3,
+// },]
 
 
 const FinancialPlanner = () =>{
@@ -52,23 +52,38 @@ const FinancialPlanner = () =>{
   const [expenses, setExpenses] = useState([]);
   const userExpensesRef = collection(userDocRef, 'expenses');
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    const unsubscribeIncome = onSnapshot(query(userIncomesRef, limit(20)), (snapshot) => {
-      const incomeData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setIncomes(incomeData);
-    });
+    const fetchIncomeData = async () => {
+      try {
+        const querySnapshot = await getDocs(query(userIncomesRef, limit(20)));
+        const incomeData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setIncomes(incomeData);
+      } catch (error) {
+        console.error('Error fetching income data:', error);
+      } finally {
+        setLoading(false); // Set loading to false after data fetching is complete
+      }
+    };
 
-    const unsubscribeExpense = onSnapshot(query(userExpensesRef, limit(20)), (snapshot) => {
-      const expenseData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setExpenses(expenseData);
-    });
+    const fetchExpenseData = async () => {
+      try {
+        const querySnapshot = await getDocs(query(userExpensesRef, limit(20)));
+        const expenseData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+        setExpenses(expenseData);
+      } catch (error) {
+        console.error('Error fetching expense data:', error);
+      }
+    };
 
-    return () => {
-      unsubscribeIncome();
-      unsubscribeExpense();
-    }
-    }, []);
+    fetchIncomeData();
+    fetchExpenseData();
+  }, []);
 
+  const expense_data = expenses;
+  const income_data = incomes;
+  
   return(
     <SafeAreaView style={styles.container}>
     <Box style={{
@@ -151,18 +166,22 @@ const FinancialPlanner = () =>{
                 <Box justifyContent='center'>
                   <Text style={{fontFamily:'Poppins',color:'blue',fontSize:18,alignSelf:'center'}}>Income (+)</Text>
                 </Box>
-                <Spacer h='3%'/>
-                <Box style={{width:170,minHeight: 400,}}>
-                  <SwipeView 
-                    data={incomes}
-                    style={{
-                      minHeight: 400,
-                      width: 200,
-                      borderTopWidth: 0.5,
-                      borderBottomWidth: 0.5,
-                    }}
-                  />
-                </Box>
+                <Spacer h="3%" />
+                {loading ? (
+                  <ActivityIndicator size="large" /> // Show a loading indicator while data is being fetched
+                ) : (
+                  <Box style={{ width: 170, minHeight: 400 }}>
+                    <SwipeView
+                      data={income_data}
+                      style={{
+                        minHeight: 400,
+                        width: 200,
+                        borderTopWidth: 0.5,
+                        borderBottomWidth: 0.5,
+                      }}
+                    />
+                  </Box>
+                )}
               </Flex>
               {/* expenses side */}
               <Flex direction='column'>
@@ -170,18 +189,22 @@ const FinancialPlanner = () =>{
                 <Box alignItems='center' justifyContent='center'>
                   <Text style={{fontFamily:'Poppins',color:'red',fontSize:18}}>Expenses (-)</Text>
                 </Box>
-                <Spacer h='3%'/>
-                <Box style={{width:170,minHeight: 400,}}>
-                  <SwipeView 
-                    data={expenses}
-                    style={{
-                      minHeight: 400,
-                      width: 200,
-                      borderTopWidth: 0.5,
-                      borderBottomWidth: 0.5,
-                    }}
-                  />
-                </Box>
+                <Spacer h="3%" />
+                {loading ? (
+                  <ActivityIndicator size="large" /> // Show a loading indicator while data is being fetched
+                ) : (
+                  <Box style={{ width: 170, minHeight: 400 }}>
+                    <SwipeView
+                      data={expense_data}
+                      style={{
+                        minHeight: 400,
+                        width: 200,
+                        borderTopWidth: 0.5,
+                        borderBottomWidth: 0.5,
+                      }}
+                    />
+                  </Box>
+                )}
               </Flex>
           </Flex>
           </Modal.Content>
