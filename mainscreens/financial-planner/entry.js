@@ -9,7 +9,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { useNavigation } from '@react-navigation/native';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
-import { doc, collection, addDoc, getDocs } from '@firebase/firestore';
+import { doc, collection, addDoc, getDocs, limit, onSnapshot, query } from '@firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const Tab = createMaterialTopTabNavigator();
@@ -38,30 +38,28 @@ const EntryIncome = () => {
     const [categories1, setCategories] = useState([]);      
 
     //fetching existing list of categories
-    const [expenseCategories, setIncomeCategories] = useState([]);
+    const [incomeCategories, setIncomeCategories] = useState([]);
     const [labelValuesList_incomes, setLabelValuesList_incomes] = useState([]);
 
     useEffect(() => {
-      const fetchExistingCategories = async () => {
-        if (userEmail && userIncomesCategoriesRef) {
-          const incomeCategoriesData = await getDocs(userIncomesCategoriesRef);
-          setIncomeCategories(
-            incomeCategoriesData.docs.map((doc) => ({
-              ...doc.data(),
-              id: doc.id,
-            }))
-          );
-  
-          const labelValuesList = incomeCategoriesData.docs.map((doc) => ({
-            label: doc.data().category,
-            value: doc.data().category,
+        const unsubscribe = onSnapshot(query(userIncomesCategoriesRef, limit(20)), (snapshot) => {
+          const incomeCategoriesData = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
           }));
+    
+          const labelValuesList = incomeCategoriesData.map((doc) => ({
+            label: doc.category,
+            value: doc.category,
+          }));
+    
+          setIncomeCategories(incomeCategoriesData);
           setLabelValuesList_incomes(labelValuesList);
-        }
-      };
-  
-      fetchExistingCategories();
-    }, [userEmail, userIncomesCategoriesRef]);
+          console.log(labelValuesList);
+        });
+    
+        return () => unsubscribe();
+      }, []);
 
     //for adding Category
     const [newCategory1, setNewCategory] = useState('');
@@ -216,26 +214,24 @@ const EntryExpenses = () => {
     const [labelValuesList_expenses, setLabelValuesList_expenses] = useState([]);
 
     useEffect(() => {
-      const fetchExistingCategories = async () => {
-        if (userEmail && userExpensesCategoriesRef) {
-          const expenseCategoriesData = await getDocs(userExpensesCategoriesRef);
-          setExpenseCategories(
-            expenseCategoriesData.docs.map((doc) => ({
-              ...doc.data(),
-              id: doc.id,
-            }))
-          );
-  
-          const labelValuesList = expenseCategoriesData.docs.map((doc) => ({
-            label: doc.data().category,
-            value: doc.data().category,
+        const unsubscribe = onSnapshot(query(userExpensesCategoriesRef, limit(20)), (snapshot) => {
+          const expenseCategoriesData = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
           }));
+    
+          const labelValuesList = expenseCategoriesData.map((doc) => ({
+            label: doc.category,
+            value: doc.category,
+          }));
+    
+          setExpenseCategories(expenseCategoriesData);
           setLabelValuesList_expenses(labelValuesList);
-        }
-      };
-  
-      fetchExistingCategories();
-    }, [userEmail, userExpensesCategoriesRef]);
+          console.log(labelValuesList);
+        });
+    
+        return () => unsubscribe();
+      }, []);
 
     //for adding Category
     const [newCategory2, setNewCategory] = useState('');

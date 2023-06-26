@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import SwipeView from './financial-planner/SwipeView';
 import { firebase_auth } from '../config/firebase.js';
 import { db } from '../config/firebase.js';
-import { doc, collection, getDocs } from '@firebase/firestore';
+import { doc, collection, onSnapshot, query, limit } from '@firebase/firestore';
 
 const expense_data = [{
   id: 3,
@@ -53,16 +53,21 @@ const FinancialPlanner = () =>{
   const userExpensesRef = collection(userDocRef, 'expenses');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const incomeData = await getDocs(userIncomesRef);
-      setIncomes(incomeData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    const unsubscribeIncome = onSnapshot(query(userIncomesRef, limit(20)), (snapshot) => {
+      const incomeData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setIncomes(incomeData);
+    });
 
-      const expenseData = await getDocs(userExpensesRef);
-      setExpenses(expenseData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
+    const unsubscribeExpense = onSnapshot(query(userExpensesRef, limit(20)), (snapshot) => {
+      const expenseData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setExpenses(expenseData);
+    });
 
-    fetchData();
-  }, []);
+    return () => {
+      unsubscribeIncome();
+      unsubscribeExpense();
+    }
+    }, []);
 
   return(
     <SafeAreaView style={styles.container}>
