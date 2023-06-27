@@ -1,5 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TouchableOpacity,SafeAreaView,PixelRatio} from 'react-native';
+
+import { StyleSheet, TouchableOpacity} from 'react-native';
 import React,{useState} from 'react';
 import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon,HStack } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';

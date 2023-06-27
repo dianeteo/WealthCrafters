@@ -1,14 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainMenu from "./mainscreens/MainMenu";
-import FinancialPlanner from "./mainscreens/FinancialPlanner";
 import FinancialLiteracy from "./mainscreens/FinancialLiteracy";
 import InvestmentSimulator from './mainscreens/InvestmentSimulator';
 import Login from "./mainscreens/login/login.js";
 import React, { useEffect, useState } from 'react';
-import MyTabs from './BottomTabNavigator.js';
 import { NativeBaseProvider } from 'native-base';
 import { onAuthStateChanged } from 'firebase/auth';
 import { firebase_auth } from './config/firebase.js';

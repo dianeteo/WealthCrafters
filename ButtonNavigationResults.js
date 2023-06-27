@@ -1,8 +1,6 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Results from "./mainscreens/financial-planner/stats/results";
-import Filter from "./mainscreens/financial-planner/filter";
 import Navigator from "./ButtonNavigationStats";
 
 

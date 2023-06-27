@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { firebase_auth } from '../../config/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { Input, Stack, Center, NativeBaseProvider,Text,Spacer } from 'native-base';
+import { Input, Stack, Center, NativeBaseProvider,Text } from 'native-base';
 import { Button } from 'react-native-paper';
 import { doc, setDoc } from '@firebase/firestore';
 

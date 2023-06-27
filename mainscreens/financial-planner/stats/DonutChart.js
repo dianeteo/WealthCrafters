@@ -3,12 +3,10 @@ import {
   Easing,
   TextInput,
   Animated,
-  Text,
   View,
   StyleSheet,
 } from 'react-native';
-import Constants from 'expo-constants';
-import Svg, { G, Circle, Rect } from 'react-native-svg';
+import Svg, { G, Circle } from 'react-native-svg';
 
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
