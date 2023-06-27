@@ -101,8 +101,6 @@ const EntryIncome = () => {
             } catch (error) {
                 console.log(error);
                 alert('Submission failed: ' + error.message);
-            } finally {
-                setLoading(false);
             }
             };
 
@@ -252,8 +250,6 @@ const EntryExpenses = () => {
         } catch (error) {
             console.log(error);
             alert('Failed to add a new category: ' + error.message);
-        } finally {
-            setLoading(false);
         }
     };
 
