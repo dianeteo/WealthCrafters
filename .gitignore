@@ -2,3 +2,4 @@
 npm-debug.log
 .expo/
 babelconfig.js
+node_modules 

@@ -35,9 +35,12 @@ const income_data = [{
 },]
 
 
+
 const FinancialPlanner = () =>{
   const navigation = useNavigation();
   const [modalVisible,setModalVisible]=useState(false);
+  const [selectedDate,setSelectedDate]=useState(new Date().toDateString())
+
 
   const user = firebase_auth.currentUser;
   const userEmail = user.email;
@@ -52,17 +55,17 @@ const FinancialPlanner = () =>{
   const [expenses, setExpenses] = useState([]);
   const userExpensesRef = collection(userDocRef, 'expenses');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const incomeData = await getDocs(userIncomesRef);
-      setIncomes(incomeData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const incomeData = await getDocs(userIncomesRef);
+  //     setIncomes(incomeData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
 
-      const expenseData = await getDocs(userExpensesRef);
-      setExpenses(expenseData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
+  //     const expenseData = await getDocs(userExpensesRef);
+  //     setExpenses(expenseData.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   return(
     <SafeAreaView style={styles.container}>
@@ -117,7 +120,7 @@ const FinancialPlanner = () =>{
           };
 
           return (
-            <><TouchableOpacity onPress={()=>{setModalVisible(true)}}>
+            <><TouchableOpacity onPress={()=>{setModalVisible(true)}} onPressIn={()=>{setSelectedDate(date.dateString)}}>
               {//need to store date somewhere so that modal will have currentdate
               }
               <Box style={[styles.main]}>
@@ -126,7 +129,8 @@ const FinancialPlanner = () =>{
                 <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily:'Lato'}}>{expense_amt()}</Text>
                 <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily:'Lato' }}>{income_amt()-expense_amt()}</Text>
               </Box>
-            </TouchableOpacity></>
+            </TouchableOpacity>
+            </>
                 
                  );
                 }}
@@ -138,7 +142,7 @@ const FinancialPlanner = () =>{
       <Modal isOpen={modalVisible} onClose={()=>{setModalVisible(false)}} style={styles.modal} size='xl' >
         <Modal.Content h='600'>
           {/* add daily balance here */}
-          <Modal.Header alignSelf='center'>Balance:</Modal.Header>
+          <Modal.Header alignSelf='center'>{selectedDate}</Modal.Header>
           <Modal.CloseButton />
           <Flex justifyContent='space-evenly' direction='row'>
               {/* income side */}
