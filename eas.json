@@ -1,10 +1,4 @@
 {
-  "cli": {
-    "version": ">= 3.13.2",
-    "requireCommit": true
-    
-
-  },
   "build": {
     "development": {
       "developmentClient": true,
@@ -20,14 +14,7 @@
       "android": {
         "gradleCommand": ":app:assembleRelease"
       }
-    },
-    "preview3": {
-      "developmentClient": true
-    },
-    "production": {}
+    }
 
-  },
-  "submit": {
-    "production": {}
   }
 }

@@ -1,7 +1,7 @@
 
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import React,{useState} from 'react';
-import { Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input } from 'native-base';
+import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon,HStack } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Donut from './stats/DonutChart';
 import RenderStats from './stats/piechart';
@@ -65,6 +65,18 @@ const ExpensesStats = () => {
     )
 }
 
+const WarningMessage = (showComponent) =>{
+    if (showComponent) {
+        return (
+            <HStack alignSelf='center'>
+            <WarningOutlineIcon />
+            <Text style={{fontFamily:'Poppins'}}>You have exceeded today's savings by $10!</Text>
+        </HStack>
+        );
+    }
+    return null 
+
+};
 
 //Goal Page
 const GoalsStats = () => {
@@ -74,6 +86,7 @@ const GoalsStats = () => {
     const [goalText,setGoalText]=useState('')
     const [inputError, setInputError] = useState('');
     const [goal,setGoal]=useState(0)
+    
     return (<>
     <Flex direction='column'style={{alignItems:'center',bottom:50}}>
     <Box style={styles.goal}>
@@ -87,6 +100,10 @@ const GoalsStats = () => {
     <TouchableOpacity style={{justifyContent:'center',alignItems:'center',top:50,borderRadius:20,backgroundColor:'#e32f45',width:175,height:40,alignSelf:'center'}}onPress={()=> setModalVisible(true)}>
         <Text style={{fontFamily:'Poppins',color:'#fff'}}>Change Target?</Text>
     </TouchableOpacity>
+    {/* replace once backend connected */}
+    {/* {expenses > savingsGoal && (
+           <WarningMessage /> 
+    )} */}
     </Flex>
     <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
         <Modal.Content maxWidth="400px">
@@ -149,6 +166,7 @@ const GoalsStats = () => {
 const Stats = () => {
     const navigation = useNavigation()
     const [inputValue,setInputValue] = useState('')
+
     return (
             <>
             <Flex>
