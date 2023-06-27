@@ -35,7 +35,7 @@
     "react-native-calculator": "^0.5.2",
     "react-native-calendars": "^1.1297.0",
     "react-native-dropdown-picker": "^5.4.6",
-    "react-native-pager-view": "^6.2.0",
+    "react-native-pager-view": "^6.1.2",
     "react-native-paper": "^5.8.0",
     "react-native-picker-select": "^8.0.4",
     "react-native-safe-area-context": "4.5.0",
@@ -46,7 +46,6 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.11",
     "react-navigation": "^4.4.4",
-    "rn-select-date-range": "^5.0.0",
     "typescript": "^4.9.4",
     "victory-native": "^36.6.11"
   },

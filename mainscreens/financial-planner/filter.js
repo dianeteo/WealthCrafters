@@ -1,8 +1,6 @@
 import React,{useState} from "react";
 import {Box,Form,FormControl,Text,Select,View,Flex, HStack,Spacer} from 'native-base';
 import { SafeAreaView, StyleSheet } from "react-native";
-import moment from 'moment';
-import DateRangePicker from 'rn-select-date-range';
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -46,16 +44,6 @@ const Filter = () =>{
         <SafeAreaView>
             <Flex direction="column">
             <View style={styles.rangepicker}>
-                <DateRangePicker
-                onSelectDateRange={(range) => {
-                    setSelectedRange(range);
-                }}
-                responseFormat="YYYY-MM-DD"
-                selectedDateContainerStyle={styles.selectedDateContainerStyle}
-                selectedDateStyle={styles.selectedDateStyle}
-                font='Poppins'
-                confirmBtnTitle=""
-                    />
             </View>
             <HStack style={{left:100}}>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Type:</Text>
