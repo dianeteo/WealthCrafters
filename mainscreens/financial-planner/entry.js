@@ -92,7 +92,7 @@ const EntryIncome = () => {
         const incomeCollectionRef = collection(userCollectionRef, 'income');
         try {
             await addDoc(incomeCollectionRef, {
-                    amount: numValue1,
+                    amount: numValue1.toFixed(2),
                     category: selectedCategory1,
                     created_at: date1.getDate() + '/' + (date1.getMonth()+1) + '/' + date1.getFullYear(),
                     description: text1
@@ -170,12 +170,12 @@ const EntryIncome = () => {
                     displayHeight={60}
                     numericButtonColor='black'
                     calcButtonBackgroundColor='#ff6531'
-                    acceptButtonBackgroundColor='#ff6531'
+                    acceptButtonBackgroundColor='#00b2ca'
                     borderColor='#d3d3d3'
                     fontSize={25}
                     roundTo={2}
-                    onBeforeChange={setNumValue}
-                    value={numValue1.toFixed(2)} />
+                    onChange={setNumValue}
+                    value={numValue1} />
             </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5,
@@ -261,7 +261,7 @@ const EntryExpenses = () => {
         const expensesCollectionRef = collection(userCollectionRef, 'expenses');
         try {
             await addDoc(expensesCollectionRef, {
-                    amount: numValue2,
+                    amount: numValue2.toFixed(2),
                     category: selectedCategory2,
                     created_at: date2.getDate() + '/' + (date2.getMonth()+1) + '/' + date2.getFullYear(),
                     description: text2
@@ -334,6 +334,7 @@ const EntryExpenses = () => {
             </Flex><Spacer height='7%' /><Flex flexDirection='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
                 <CalculatorInput
+                    
                     fieldContainerStyle={styles.calculator}
                     fieldTextStyle={{ alignSelf: 'center' }}
                     displayTextAlign='right'
@@ -346,7 +347,7 @@ const EntryExpenses = () => {
                     fontSize={25}
                     roundTo={2}
                     onBeforeChange={setNumValue}
-                    value={numValue2.toFixed(2)} />
+                    value={numValue2} />
             </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
