@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { NativebaseProvider, Modal, FormControl, Button, Input, Box, Center, Text, Flex, Spacer, Select } from 'native-base';
+import { NativebaseProvider, Modal, FormControl, Button, Input, Box, Center, Text, Flex, Spacer, Select, ScrollView } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { firebase_auth } from '../../config/firebase.js';
@@ -106,11 +106,11 @@ const EntryIncome = () => {
             }
             };
 
-    return (
+    return (<ScrollView>
             <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
-        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+        </Flex><Spacer h='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                 <Select
@@ -160,7 +160,7 @@ const EntryIncome = () => {
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex><Spacer height='7%' /><Flex flexDirection='row'>
+            </Flex><Spacer height='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
                 <CalculatorInput
                     fieldContainerStyle={styles.calculator}
@@ -176,7 +176,7 @@ const EntryIncome = () => {
                     roundTo={2}
                     onChange={setNumValue}
                     value={numValue1} />
-            </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
+            </Flex><Spacer height='16%' /><Flex flexDirection='row' justifyContent='unset'>
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
@@ -185,6 +185,7 @@ const EntryIncome = () => {
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
+            </ScrollView>
 
     )
 }
@@ -276,12 +277,12 @@ const EntryExpenses = () => {
             };
 
     return (
-            <>
+            <ScrollView>
             <Flex direction='column' style={{top:150}}>
             <Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date2} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
-        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+        </Flex><Spacer h='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                 <Select
@@ -331,7 +332,7 @@ const EntryExpenses = () => {
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex><Spacer height='7%' /><Flex flexDirection='row'>
+            </Flex><Spacer height='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
                 <CalculatorInput
                     
@@ -348,7 +349,7 @@ const EntryExpenses = () => {
                     roundTo={2}
                     onBeforeChange={setNumValue}
                     value={numValue2} />
-            </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
+            </Flex><Spacer height='16%' /><Flex flexDirection='row' justifyContent='unset'>
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
@@ -356,7 +357,7 @@ const EntryExpenses = () => {
             </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitExpenses; navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
-        </Flex></>
+        </Flex></ScrollView>
 
     )
 }
