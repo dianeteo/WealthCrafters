@@ -1,5 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, TouchableOpacity,SafeAreaView} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
 import { Modal, Flex, Text, View, Box, HStack, VStack, Spacer, Spinner } from 'native-base';

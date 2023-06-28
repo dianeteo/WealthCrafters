@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {StyleSheet} from 'react-native';
-
 import { SwipeListView } from 'react-native-swipe-list-view';
 import {Box, Pressable,Spacer,HStack,VStack,Icon,Text} from 'native-base';
 import {MaterialIcons} from '@expo/vector-icons'
