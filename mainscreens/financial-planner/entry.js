@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { NativebaseProvider, Modal, FormControl, Button, Input, Box, Center, Text, Flex, Spacer, Select } from 'native-base';
+import { NativebaseProvider, Modal, FormControl, Button, Input, Box, Center, Text, Flex, Spacer, Select, ScrollView } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation } from '@react-navigation/native';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
-import { doc, collection, addDoc, getDocs } from '@firebase/firestore';
+import { doc, collection, addDoc, getDocs, limit, onSnapshot, query } from '@firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const Tab = createMaterialTopTabNavigator();
@@ -38,30 +38,28 @@ const EntryIncome = () => {
     const [categories1, setCategories] = useState([]);      
 
     //fetching existing list of categories
-    const [expenseCategories, setIncomeCategories] = useState([]);
+    const [incomeCategories, setIncomeCategories] = useState([]);
     const [labelValuesList_incomes, setLabelValuesList_incomes] = useState([]);
 
     useEffect(() => {
-      const fetchExistingCategories = async () => {
-        if (userEmail && userIncomesCategoriesRef) {
-          const incomeCategoriesData = await getDocs(userIncomesCategoriesRef);
-          setIncomeCategories(
-            incomeCategoriesData.docs.map((doc) => ({
-              ...doc.data(),
-              id: doc.id,
-            }))
-          );
-  
-          const labelValuesList = incomeCategoriesData.docs.map((doc) => ({
-            label: doc.data().category,
-            value: doc.data().category,
+        const unsubscribe = onSnapshot(query(userIncomesCategoriesRef, limit(20)), (snapshot) => {
+          const incomeCategoriesData = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
           }));
+    
+          const labelValuesList = incomeCategoriesData.map((doc) => ({
+            label: doc.category,
+            value: doc.category,
+          }));
+    
+          setIncomeCategories(incomeCategoriesData);
           setLabelValuesList_incomes(labelValuesList);
-        }
-      };
-  
-      fetchExistingCategories();
-    }, [userEmail, userIncomesCategoriesRef]);
+          console.log(labelValuesList);
+        });
+    
+        return () => unsubscribe();
+      }, []);
 
     //for adding Category
     const [newCategory1, setNewCategory] = useState('');
@@ -94,7 +92,7 @@ const EntryIncome = () => {
         const incomeCollectionRef = collection(userCollectionRef, 'income');
         try {
             await addDoc(incomeCollectionRef, {
-                    amount: numValue1,
+                    amount: numValue1.toFixed(2),
                     category: selectedCategory1,
                     created_at: date1.getDate() + '/' + (date1.getMonth()+1) + '/' + date1.getFullYear(),
                     description: text1
@@ -103,16 +101,14 @@ const EntryIncome = () => {
             } catch (error) {
                 console.log(error);
                 alert('Submission failed: ' + error.message);
-            } finally {
-                setLoading(false);
             }
             };
 
-    return (
+    return (<ScrollView>
             <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
-        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+        </Flex><Spacer h='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                 <Select
@@ -162,7 +158,7 @@ const EntryIncome = () => {
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex><Spacer height='7%' /><Flex flexDirection='row'>
+            </Flex><Spacer height='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
                 <CalculatorInput
                     fieldContainerStyle={styles.calculator}
@@ -172,13 +168,13 @@ const EntryIncome = () => {
                     displayHeight={60}
                     numericButtonColor='black'
                     calcButtonBackgroundColor='#ff6531'
-                    acceptButtonBackgroundColor='#ff6531'
+                    acceptButtonBackgroundColor='#00b2ca'
                     borderColor='#d3d3d3'
                     fontSize={25}
                     roundTo={2}
-                    onBeforeChange={setNumValue}
-                    value={numValue1.toFixed(2)} />
-            </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
+                    onChange={setNumValue}
+                    value={numValue1} />
+            </Flex><Spacer height='16%' /><Flex flexDirection='row' justifyContent='unset'>
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5,
                     //  backgroundColor: '#78b0a3', 
@@ -187,6 +183,7 @@ const EntryIncome = () => {
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             </Flex>
+            </ScrollView>
 
     )
 }
@@ -216,26 +213,24 @@ const EntryExpenses = () => {
     const [labelValuesList_expenses, setLabelValuesList_expenses] = useState([]);
 
     useEffect(() => {
-      const fetchExistingCategories = async () => {
-        if (userEmail && userExpensesCategoriesRef) {
-          const expenseCategoriesData = await getDocs(userExpensesCategoriesRef);
-          setExpenseCategories(
-            expenseCategoriesData.docs.map((doc) => ({
-              ...doc.data(),
-              id: doc.id,
-            }))
-          );
-  
-          const labelValuesList = expenseCategoriesData.docs.map((doc) => ({
-            label: doc.data().category,
-            value: doc.data().category,
+        const unsubscribe = onSnapshot(query(userExpensesCategoriesRef, limit(20)), (snapshot) => {
+          const expenseCategoriesData = snapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
           }));
+    
+          const labelValuesList = expenseCategoriesData.map((doc) => ({
+            label: doc.category,
+            value: doc.category,
+          }));
+    
+          setExpenseCategories(expenseCategoriesData);
           setLabelValuesList_expenses(labelValuesList);
-        }
-      };
-  
-      fetchExistingCategories();
-    }, [userEmail, userExpensesCategoriesRef]);
+          console.log(labelValuesList);
+        });
+    
+        return () => unsubscribe();
+      }, []);
 
     //for adding Category
     const [newCategory2, setNewCategory] = useState('');
@@ -255,8 +250,6 @@ const EntryExpenses = () => {
         } catch (error) {
             console.log(error);
             alert('Failed to add a new category: ' + error.message);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -265,7 +258,7 @@ const EntryExpenses = () => {
         const expensesCollectionRef = collection(userCollectionRef, 'expenses');
         try {
             await addDoc(expensesCollectionRef, {
-                    amount: numValue2,
+                    amount: numValue2.toFixed(2),
                     category: selectedCategory2,
                     created_at: date2.getDate() + '/' + (date2.getMonth()+1) + '/' + date2.getFullYear(),
                     description: text2
@@ -280,12 +273,12 @@ const EntryExpenses = () => {
             };
 
     return (
-            <>
+            <ScrollView>
             <Flex direction='column' style={{top:150}}>
             <Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date2} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
-        </Flex><Spacer h='7%' /><Flex flexDirection='row'>
+        </Flex><Spacer h='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                 <Select
@@ -335,9 +328,10 @@ const EntryExpenses = () => {
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex><Spacer height='7%' /><Flex flexDirection='row'>
+            </Flex><Spacer height='16%' /><Flex flexDirection='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
                 <CalculatorInput
+                    
                     fieldContainerStyle={styles.calculator}
                     fieldTextStyle={{ alignSelf: 'center' }}
                     displayTextAlign='right'
@@ -350,8 +344,8 @@ const EntryExpenses = () => {
                     fontSize={25}
                     roundTo={2}
                     onBeforeChange={setNumValue}
-                    value={numValue2.toFixed(2)} />
-            </Flex><Spacer height='7%' /><Flex flexDirection='row' justifyContent='unset'>
+                    value={numValue2} />
+            </Flex><Spacer height='16%' /><Flex flexDirection='row' justifyContent='unset'>
                 <Text style={styles.titlenote}>NOTE:</Text>
                 <Input style={{ borderRadius: 5, 
                     // backgroundColor: '#78b0a3', 
@@ -359,7 +353,7 @@ const EntryExpenses = () => {
             </Flex><Spacer h='12%' /><TouchableOpacity style={styles.button} onPress={()=>{submitExpenses; navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
-        </Flex></>
+        </Flex></ScrollView>
 
     )
 }
