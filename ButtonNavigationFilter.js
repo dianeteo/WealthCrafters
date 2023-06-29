@@ -14,7 +14,7 @@ export default function NavigatorFilter({route: {params}}) {
                     headerShown:false
                 }}> 
                 <Stack.Screen name='Filter' component={Filter} initialParams={params} />
-                <Stack.Screen name='stackedResults' component={NavigatorResults}  />
+                <Stack.Screen name='StackedResults' component={NavigatorResults}  />
             </Stack.Navigator>
     )
 }

@@ -1,9 +1,12 @@
-import React,{useState} from "react";
+import React,{useState, useEffect} from "react";
 import {Box,Form,FormControl,Text,Select,View,Flex, HStack,Spacer} from 'native-base';
 import { SafeAreaView, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import DateTimePicker from '@react-native-community/datetimepicker'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { firebase_auth } from '../../config/firebase.js';
+import { db } from '../../config/firebase.js';
+import { doc, collection, onSnapshot, query, limit, getDocs } from '@firebase/firestore';
 
 const categories=[{
     id:2,
@@ -19,21 +22,104 @@ const categories=[{
 }]
 
 
-
 const Filter = () =>{
-    //date range
-    const [date1,setDate1]=useState(new Date())
-    const [date,setDate]=useState(new Date())
-    //type
-    const [selectedValue, setSelectedValue] = useState('');
+    //fetching of data
+    const user = firebase_auth.currentUser;
+    const userEmail = user.email;
+    const usersCollectionRef = collection(db, 'users');
+    const userDocRef = doc(usersCollectionRef, userEmail);
+    const userIncomesRef = collection(userDocRef, 'income');
+    const userExpensesRef = collection(userDocRef, 'expenses');
+    const [incomes, setIncomes] = useState(null);
+    const [expenses, setExpenses] = useState(null);
 
-    const [selectedCategory,setSelectedCategory]=useState('')
+    //date range
+    const [date1,setDate1]=useState(new Date());
+    const [date2,setDate2]=useState(new Date());
+
+    //type
+    const [selectedType, setSelectedType] = useState('');
+
+    //category
+    const [selectedCategory,setSelectedCategory]=useState('');
+
+    useEffect(() => {
+        const fetchIncomeData = async () => {
+          try {
+            const querySnapshot = await getDocs(query(userIncomesRef, limit(20)));
+            const incomeData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            setIncomes(incomeData);
+          } catch (error) {
+            console.error('Error fetching income data:', error);
+          }
+        };
+    
+        const fetchExpenseData = async () => {
+          try {
+            const querySnapshot = await getDocs(query(userExpensesRef, limit(20)));
+            const expenseData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            setExpenses(expenseData);
+          } catch (error) {
+            console.error('Error fetching expense data:', error);
+          }
+        };
+    
+        fetchIncomeData();
+        fetchExpenseData();
+      }, []);
+
+    const filterByDate = (date1, date2) => {
+        const secondFilter = (date1, date2, data) => {
+            const filtData = [];
+            const convertToDateObject = (string) => {
+                const dateParts = string.split('/');
+                const day = dateParts[0];
+                const month = dateParts[1];
+                const year = dateParts[2];
+                console.log(new Date(year+'-'+month+'-'+day));
+                return new Date(year+'-'+month+'-'+day);
+            };
+    
+            if (date1 && date2 && data) {
+                for (let i = 0; i < data.length; i++) {
+                    if (convertToDateObject(data[i].created_at) >= date1 && convertToDateObject(data[i].created_at) <= date2) {
+                        filtData.push(data[i])
+                    }
+                }
+            }
+            console.log(filtData);
+            return filtData;
+        };
+    
+        if (selectedType == "Income") {
+            const data = incomes;
+            return secondFilter(date1, date2, data);
+        } else {
+            const data = expenses;
+            return secondFilter(date1, date2, data);
+        }
+    };
+    
+
+    const getCategories = (data) => {
+        const categoriesList = [];
+        if (data) {
+            for (let i = 0; i < data.length; i++) {
+                if (!(data[i].category in categoriesList)) {
+                    categoriesList.push(data[i].category)
+                }
+            }
+        }
+        
+        return categoriesList;
+    };
+    
 
     const navigation=useNavigation()
 
     //for submit button
     const handleFilterSubmit = () => {
-        navigation.navigate('stackedResults', 
+        navigation.navigate('StackedResults', 
         // {
         //         range:{...selectedRange},
         //         type:selectedValue,
@@ -53,7 +139,7 @@ const Filter = () =>{
             <Spacer h='7%'/>
             <HStack alignSelf='center'>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Final Date:</Text>
-                <DateTimePicker themeVariant='dark' value={date} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
+                <DateTimePicker themeVariant='dark' value={date2} onChange={(event, date) => { setDate2(date); event = 'dismissed'; } } />
             </HStack>
             <Spacer h='7%'/>
             <HStack style={{left:100}}>
@@ -61,14 +147,13 @@ const Filter = () =>{
                 <Spacer w='2%'/>
                 <FormControl isRequired>
                     <Select
-                    selectedValue={selectedValue}
-                    onValueChange={(value) => setSelectedValue(value)}
+                    selectedType={selectedType}
+                    onValueChange={(value) => setSelectedType(value)}
                     placeholder="Any specific Type?"
                     width={175}
                     >
-                    <Select.Item label="Income" value="income" />
-                    <Select.Item label="Expenses" value="expenses" />
-                    <Select.Item label="Balance" value="Balance" />
+                    <Select.Item label="Income" value="Income" />
+                    <Select.Item label="Expenses" value="Expenses" />
                     </Select>
                 </FormControl>
             </HStack>
@@ -83,11 +168,11 @@ const Filter = () =>{
                     placeholder="Any Specific Category?"
                     width={175}
                     >
-                    {categories.map(category => (
+                    {getCategories(filterByDate(date1, date2)).map(category => (
                         <Select.Item
-                        key={category.id}
-                        label={category.name}
-                        value={category.id}
+                        key={category}
+                        label={category}
+                        value={category}
                         />
                     ))}
                     </Select>
