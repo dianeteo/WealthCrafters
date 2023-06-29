@@ -119,7 +119,7 @@ const Filter = () =>{
 
     //for submit button
     const handleFilterSubmit = () => {
-        navigation.navigate('stackedResults', 
+        navigation.navigate('StackedResults', 
         // {
         //         range:{...selectedRange},
         //         type:selectedValue,
