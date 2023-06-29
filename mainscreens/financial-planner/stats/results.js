@@ -2,33 +2,23 @@ import React from 'react';
 import RenderStats from './piechart';
 import { Text} from 'native-base';
 import {  useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { StyleSheet } from 'react-native';
+import { VictoryChart, VictoryBar, VictoryTheme } from 'victory-native';
 
-const dummy_data = [{
-    label:'50%',
-    count:12,
-    category:'food',
-    y:120.00
-},
+const dummy_data = [
 {
-    label:'20%',
-    count:13,
-    category:'clothing',
-    y:230.00
-},
+    Day: 1,
+    Expense: 100,
+}, 
 {
-    label:'10%',
-    count:14,
-    category:'education',
-    y:1000.00
-}
-
-
-]
-
-
-
+    Day: 2,
+    Expense: 450,
+}, 
+{
+    Day: 3,
+    Expense: 200,
+}]
 
 
 const Results = () =>{
@@ -40,11 +30,11 @@ const Results = () =>{
         <TouchableOpacity style={styles.button} onPress={()=>{navigation.navigate('StackedStats')}}>
             <Text color="#fff">Back</Text>
         </TouchableOpacity>
-
-        <RenderStats
-            data={dummy_data}
-            type='type'
-            />
+        <View style={styles.container}>
+            <VictoryChart theme={VictoryTheme.material}>
+                <VictoryBar animate data={dummy_data} x="Day" y="Expense"/>
+            </VictoryChart>
+        </View>
         </>
     )
 }
@@ -62,5 +52,12 @@ const styles=StyleSheet.create ({
         backgroundColor:'#00b2ca',
         top:10,
         left:10
+    },
+    
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     }
+
 })

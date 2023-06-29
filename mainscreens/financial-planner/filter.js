@@ -76,7 +76,6 @@ const Filter = () =>{
                 const day = dateParts[0];
                 const month = dateParts[1];
                 const year = dateParts[2];
-                console.log(new Date(year+'-'+month+'-'+day));
                 return new Date(year+'-'+month+'-'+day);
             };
     
@@ -87,7 +86,6 @@ const Filter = () =>{
                     }
                 }
             }
-            console.log(filtData);
             return filtData;
         };
     
