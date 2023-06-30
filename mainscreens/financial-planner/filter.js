@@ -161,7 +161,7 @@ const Filter = () => {
             for (let i = 0; i < list.length; i++) {
               let dailyTotal = 0;
               for (let j = 0; j < filtData.length; j++) {
-                if (filtData[j].created_at === list[i]) {
+                if (filtData[j].created_at == list[i] && filtData[i].category == selectedCategory) {
                   dailyTotal += filtData[j].amount;
                 }
               }
