@@ -113,9 +113,7 @@ const FinancialPlanner = () => {
     }
   }, [modalVisible]);
 
-  
-  
-  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -144,7 +142,7 @@ const FinancialPlanner = () => {
                   sumIncome += 0;
                 }
               }
-              return sumIncome;
+              return parseFloat(sumIncome).toFixed(2);
             };
 
             const expense_amt = () => {
@@ -156,7 +154,7 @@ const FinancialPlanner = () => {
                   sumExpense += 0;
                 }
               }
-              return sumExpense;
+              return parseFloat(sumExpense).toFixed(2);
             };
 
             return (
@@ -166,7 +164,7 @@ const FinancialPlanner = () => {
                     <Text style={{ marginVertical: 7.5, color: '#171717', fontFamily: 'LatoBold' }}>{date.day}</Text>
                     <Text style={{ fontSize: 10, color: 'red', left: 10, fontFamily: 'Lato' }}>{income_amt()}</Text>
                     <Text style={{ fontSize: 10, color: 'blue', top: 2, left: 10, fontFamily: 'Lato' }}>{expense_amt()}</Text>
-                    <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily: 'Lato' }}>{income_amt() - expense_amt()}</Text>
+                    <Text style={{ fontSize: 10, color: 'green', top: 4, left: 10, fontFamily: 'Lato' }}>{parseFloat(income_amt() - expense_amt()).toFixed(2)}</Text>
                   </Box>
                 </TouchableOpacity>
               </>

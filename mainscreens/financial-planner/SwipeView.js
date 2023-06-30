@@ -39,7 +39,7 @@ export default function SwipeView({data}) {
                     </VStack>
                     <Spacer />
                     <Text style={{top:10}} fontFamily="Lato" fontSize="xs" _dark={{color: "warmGray.50"}} color="coolGray.800" alignSelf="flex-start">
-                      {item.amount.toFixed(2)}
+                      {item.amount}
                     </Text>
                 </HStack>
             </Box>
