@@ -113,9 +113,7 @@ const FinancialPlanner = () => {
     }
   }, [modalVisible]);
 
-  
-  
-  
+
 
   return (
     <SafeAreaView style={styles.container}>

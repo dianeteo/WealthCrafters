@@ -1,28 +1,28 @@
 import React,{useState, useEffect} from "react";
 import {Box,Form,FormControl,Text,Select,View,Flex, HStack,Spacer} from 'native-base';
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
 import { doc, collection, onSnapshot, query, limit, getDocs } from '@firebase/firestore';
+import { VictoryChart, VictoryBar, VictoryTheme } from 'victory-native';
 
-const categories=[{
-    id:2,
-    name:'Food'
-},
-{
-    id:3,
-    name:'Clothing'
-},
-{
-    id:4,
-    name:'Fishes'
-}]
+// const categories=[{
+//     id:2,
+//     name:'Food'
+// },
+// {
+//     id:3,
+//     name:'Clothing'
+// },
+// {
+//     id:4,
+//     name:'Fishes'
+// }]
 
-
-const Filter = () =>{
+const Filter = () => {
     //fetching of data
     const user = firebase_auth.currentUser;
     const userEmail = user.email;
@@ -33,6 +33,24 @@ const Filter = () =>{
     const [incomes, setIncomes] = useState(null);
     const [expenses, setExpenses] = useState(null);
 
+    const [dummy_data, setDummyData] = useState([
+        {
+            Day: '20/6/2023',
+            Amount: 10,
+        }, 
+        {
+            Day: '21/6/2023',
+            Amount: 150,
+        }, 
+        {
+            Day: '22/6/2023',
+            Amount: 30,
+        },
+        {
+            Day: '23/6/2023',
+            Amount: 50
+        }]);
+
     //date range
     const [date1,setDate1]=useState(new Date());
     const [date2,setDate2]=useState(new Date());
@@ -42,6 +60,9 @@ const Filter = () =>{
 
     //category
     const [selectedCategory,setSelectedCategory]=useState('');
+
+    //styling
+    const { width } = Dimensions.get("screen");
 
     useEffect(() => {
         const fetchIncomeData = async () => {
@@ -103,7 +124,7 @@ const Filter = () =>{
         const categoriesList = [];
         if (data) {
             for (let i = 0; i < data.length; i++) {
-                if (!(data[i].category in categoriesList)) {
+                if (!categoriesList.includes(data[i].category)) {
                     categoriesList.push(data[i].category)
                 }
             }
@@ -117,29 +138,79 @@ const Filter = () =>{
 
     //for submit button
     const handleFilterSubmit = () => {
-        navigation.navigate('StackedResults', 
-        // {
-        //         range:{...selectedRange},
-        //         type:selectedValue,
-        //         catgeory:selectedCategory
+        // navigation.navigate('StackedResults', {
+        //     selectedType: 86,
         // }
-        );
-      };
+        // // {
+        // //         range:{...selectedRange},
+        // //         type:selectedValue,
+        // //         catgeory:selectedCategory
+        // // }
+        // );
+
+        const getAmount = (filtData) => {
+            const list = [];
+            const finalDataArray = [];
+          
+            for (let i = 0; i < filtData.length; i++) {
+              if (!list.includes(filtData[i].created_at)) {
+                list.push(filtData[i].created_at);
+              }
+            }
+          
+            for (let i = 0; i < list.length; i++) {
+              let dailyTotal = 0;
+              for (let j = 0; j < filtData.length; j++) {
+                if (filtData[j].created_at === list[i]) {
+                  dailyTotal += filtData[j].amount;
+                }
+              }
+              finalDataArray.push({ Day: list[i], Amount: dailyTotal });
+            }
+          
+            return finalDataArray;
+          };
+
+          if (selectedType == "Income") {
+            const data = incomes;
+            setDummyData(getAmount(data));
+        } else {
+            const data = expenses;
+            setDummyData(getAmount(data));
+        };
+          
+        // const getAmount = (date1, date2, data) => {
+        //     const amt_data = [];
+
+        //     if (data) {
+        //         for (let i = 0; i < data.length; i++) {
+        //             amt_data.push({Day: data[i].created_at, Amount: data[i].amount})
+        //         }
+        //     };
+        //     return amt_data
+        // };
+    };
 
     return (
         <SafeAreaView>
             <Flex direction="column">
-            <Spacer h='25%'/>
+
+            <Spacer h='4%'/>
+
             <HStack alignSelf='center'>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Initial Date:</Text>
                 <DateTimePicker themeVariant='dark' value={date1} onChange={(event, date) => { setDate1(date); event = 'dismissed'; } } />
             </HStack>
-            <Spacer h='7%'/>
+
+            <Spacer h='5%'/>
+
             <HStack alignSelf='center'>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Final Date:</Text>
                 <DateTimePicker themeVariant='dark' value={date2} onChange={(event, date) => { setDate2(date); event = 'dismissed'; } } />
             </HStack>
-            <Spacer h='7%'/>
+
+            <Spacer h='5%'/>
+
             <HStack style={{left:100}}>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Type:</Text>
                 <Spacer w='2%'/>
@@ -147,7 +218,7 @@ const Filter = () =>{
                     <Select
                     selectedType={selectedType}
                     onValueChange={(value) => setSelectedType(value)}
-                    placeholder="Any specific Type?"
+                    placeholder="Any specific type?"
                     width={175}
                     >
                     <Select.Item label="Income" value="Income" />
@@ -155,7 +226,9 @@ const Filter = () =>{
                     </Select>
                 </FormControl>
             </HStack>
-            <Spacer h='8%'/>
+
+            <Spacer h='5%'/>
+
             <HStack style={{left:65}}>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Category:</Text>
                 <Spacer w='2%'/>
@@ -163,7 +236,7 @@ const Filter = () =>{
                     <Select
                     selectedValue={selectedCategory}
                     onValueChange={(value) => setSelectedCategory(value)}
-                    placeholder="Any Specific Category?"
+                    placeholder="Any specific category?"
                     width={175}
                     >
                     {getCategories(filterByDate(date1, date2)).map(category => (
@@ -176,14 +249,31 @@ const Filter = () =>{
                     </Select>
                 </FormControl>
             </HStack>
-            <Spacer h='15%'/>
+
+            <Spacer h='5%'/>
+
             <TouchableOpacity style={styles.button} onPress={handleFilterSubmit}>
-                <Text style={styles.submit}>Submit</Text>
+                <Text style={styles.submit}>Render Statistics</Text>
             </TouchableOpacity>
+
+            <Spacer h='2%'/>
+
+            <Text style={{fontFamily:'PoppinsSemi',fontSize:9, top:2}} alignSelf="center">On clicking "Render Statistics", dummy data will udpate to your filtered data!</Text>
+            
+            <HStack alignSelf='center'>
+            <VictoryChart theme={VictoryTheme.material}>
+                <VictoryBar 
+                animate 
+                data={dummy_data} 
+                x="Day" y="Amount"
+                labels={({datum}) => `${datum.Amount}`}
+                />
+            </VictoryChart>
+            </HStack>
             </Flex>
         </SafeAreaView>
     )
-}
+};
 
 export default Filter
 
@@ -220,4 +310,4 @@ const styles=StyleSheet.create({
         fontSize:18,
         color:'#fff'
     }
-})
+});

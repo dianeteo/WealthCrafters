@@ -92,7 +92,7 @@ const EntryIncome = () => {
         const incomeCollectionRef = collection(userCollectionRef, 'income');
         try {
             await addDoc(incomeCollectionRef, {
-                    amount: numValue1.toFixed(2),
+                    amount: numValue1,
                     category: selectedCategory1,
                     created_at: date1.getDate() + '/' + (date1.getMonth()+1) + '/' + date1.getFullYear(),
                     description: text1
@@ -258,7 +258,7 @@ const EntryExpenses = () => {
         const expensesCollectionRef = collection(userCollectionRef, 'expenses');
         try {
             await addDoc(expensesCollectionRef, {
-                    amount: numValue2.toFixed(2),
+                    amount: numValue2,
                     category: selectedCategory2,
                     created_at: date2.getDate() + '/' + (date2.getMonth()+1) + '/' + date2.getFullYear(),
                     description: text2
