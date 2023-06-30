@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import {StyleSheet} from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import {Box, Pressable,Spacer,HStack,VStack,Icon,Text} from 'native-base';
-import {MaterialIcons} from '@expo/vector-icons'
+import { Box, Pressable, Spacer, HStack, VStack, Icon, Text } from 'native-base';
+import { MaterialIcons } from '@expo/vector-icons'
+import { firebase_auth } from '../../config/firebase.js';
+import { db } from '../../config/firebase.js';
+import { doc, collection, addDoc, getDocs, limit, onSnapshot, query } from '@firebase/firestore';
 
 
 export default function SwipeView({data}) {
     const [listData, setListData] = useState(data);
+
+    //firestore db references
+    const user = firebase_auth.currentUser;
+    const userEmail = user.email;
+    const usersCollectionRef = collection(db, 'users');
+    const userDocRef = doc(usersCollectionRef, userEmail);
+    const userIncomesRef = collection(userDocRef, 'income');
+    const userExpensesRef = collection(userDocRef, 'expenses');
 
     const closeRow = (rowMap, rowKey) => {
       if (rowMap[rowKey]) {
