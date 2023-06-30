@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Animated,StyleSheet,TouchableOpacity,View} from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
@@ -55,7 +55,6 @@ const EntryIncome = () => {
     
           setIncomeCategories(incomeCategoriesData);
           setLabelValuesList_incomes(labelValuesList);
-          console.log(labelValuesList);
         });
     
         return () => unsubscribe();
@@ -104,7 +103,8 @@ const EntryIncome = () => {
             }
             };
 
-    return (<ScrollView>
+    return (
+            <ScrollView>
             <Flex direction='column' style={{top:150}}><Flex flexDirection='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <DateTimePicker themeVariant='dark' style={styles.picker} value={date1} onChange={(event, date) => { setDate(date); event = 'dismissed'; } } />
@@ -117,7 +117,7 @@ const EntryIncome = () => {
                     accessibilityLabel="Choose a Category"
                     placeholder="Choose a category"
                     placeholderTextColor="black"
-                    color="white"
+                    color="black"
                     borderRadius={5}
                     margin={0}
                     padding={0}
@@ -184,7 +184,6 @@ const EntryIncome = () => {
             </TouchableOpacity>
             </Flex>
             </ScrollView>
-
     )
 }
 
@@ -226,7 +225,6 @@ const EntryExpenses = () => {
     
           setExpenseCategories(expenseCategoriesData);
           setLabelValuesList_expenses(labelValuesList);
-          console.log(labelValuesList);
         });
     
         return () => unsubscribe();
@@ -287,7 +285,7 @@ const EntryExpenses = () => {
                     accessibilityLabel="Choose a category"
                     placeholder="Choose a category"
                     placeholderTextColor="black"
-                    color="white"
+                    color="black"
                     borderRadius={5}
                     margin={0}
                     padding={0}
