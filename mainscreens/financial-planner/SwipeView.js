@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import {StyleSheet} from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import {Box, Pressable,Spacer,HStack,VStack,Icon,Text} from 'native-base';
-import {MaterialIcons} from '@expo/vector-icons'
+import { Box, Pressable, Spacer, HStack, VStack, Icon, Text } from 'native-base';
+import { MaterialIcons } from '@expo/vector-icons'
+import { firebase_auth } from '../../config/firebase.js';
+import { db } from '../../config/firebase.js';
+import { doc, collection, deleteDoc, getDocs, limit, onSnapshot, query } from '@firebase/firestore';
 
 
 export default function SwipeView({data}) {
     const [listData, setListData] = useState(data);
+
+    //firestore db references
+    const user = firebase_auth.currentUser;
+    const userEmail = user.email;
+    const usersCollectionRef = collection(db, 'users');
+    const userDocRef = doc(usersCollectionRef, userEmail);
+    const userIncomesRef = collection(userDocRef, 'income');
+    const userExpensesRef = collection(userDocRef, 'expenses');
 
     const closeRow = (rowMap, rowKey) => {
       if (rowMap[rowKey]) {
@@ -20,7 +31,33 @@ export default function SwipeView({data}) {
       const prevIndex = listData.findIndex(item => item.key === rowKey);
       newData.splice(prevIndex, 1);
       setListData(newData);
-    };
+
+      //handling backend deletion
+      const deleteData = async (listData, prevIndex) => {
+        for (let i = 0; i < listData.length; i++) {
+          if (doc(userIncomesRef, listData[prevIndex].id)) {
+            try {
+              await deleteDoc(doc(userIncomesRef, listData[prevIndex].id))
+              alert('Successfully deleted an entry');
+            } catch (error) {
+              console.log(error)
+              alert('Error deleting entry: ' + error.message);
+            }
+          } else if (doc(userExpensesRef, listData[prevIndex].id)) {
+            try {
+              await deleteDoc(doc(userExpensesRef, listData[prevIndex].id))
+              alert('Successfully deleted an entry');
+            } catch (error) {
+              console.log(error)
+              alert('Error deleting entry: ' + error.message);
+            }
+          }
+      }
+      };
+
+      deleteData(listData, prevIndex);
+
+      };
   
   
     const renderItem = ({
