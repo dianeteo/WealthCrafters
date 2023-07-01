@@ -1,11 +1,15 @@
 
 import { StyleSheet, TouchableOpacity} from 'react-native';
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon,HStack } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Donut from './stats/DonutChart';
 import RenderStats from './stats/piechart';
 import { useNavigation } from '@react-navigation/native';
+import firebase from 'firebase/app';
+import { firebase_auth } from '../../config/firebase';
+import { collection,doc,getDoc,setDoc,updateDoc } from '@firebase/firestore';
+import {db} from '../../config/firebase.js';
 
 //for donut graph(to fit with data later)
 const data = [{
@@ -65,12 +69,12 @@ const ExpensesStats = () => {
     )
 }
 
-const WarningMessage = (showComponent) =>{
+const WarningMessage = (showComponent,diff) =>{
     if (showComponent) {
         return (
             <HStack alignSelf='center'>
             <WarningOutlineIcon />
-            <Text style={{fontFamily:'Poppins'}}>You have exceeded today's savings by $10!</Text>
+            <Text style={{fontFamily:'Poppins'}}>You have exceeded your savings today by ${diff}!</Text>
         </HStack>
         );
     }
@@ -85,8 +89,66 @@ const GoalsStats = () => {
     // for goal setting
     const [goalText,setGoalText]=useState('')
     const [inputError, setInputError] = useState('');
-    const [goal,setGoal]=useState(0)
+    const [goal,setGoal]=useState(0);
+    const [hasGoal, setHasGoal] = useState(false);
+
+    //for user recognition
+    const user = firebase_auth.currentUser;
+    const userEmail = user.email;
+
+    //references
+    const usersCollectionRef=collection(db,'users');
+    const userDocRef=doc(usersCollectionRef,userEmail)
     
+    //to submit goal
+    const submitGoal = async () => {
+        try {
+          const userDocSnapshot = await getDoc(userDocRef);
+          
+          if (userDocSnapshot.exists()) {
+            // User's document exists
+            const userData = userDocSnapshot.data();
+            if (userData.hasOwnProperty('goal')) {
+              // 'goal' field exists in the document, update it
+              await updateDoc(userDocRef, { goal: goal });
+            } else {
+              // 'goal' field does not exist, create it
+              await setDoc(userDocRef, { goal: goal }, { merge: true });
+            }
+          }
+        } catch (error) {
+          // Handle the error
+          console.error('Error submitting goal:', error);
+        }
+      };
+    
+    
+    
+    
+    
+    //to retrieve goal
+      const retrieveGoal = async () => {
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+            // User's document exists
+            const userData = userDocSnapshot.data();
+          
+            if (userData.hasOwnProperty('goal')) {
+              // 'goal' field exists in the document
+              setGoal(userData.goal);
+              setHasGoal(true)
+            }
+        
+        }
+      }         
+      
+      //upon rendering page
+      useEffect(()=>{
+        //to recognise user
+        retrieveGoal()
+      },[]);
+      
     return (<>
     <Flex direction='column'style={{alignItems:'center',bottom:50}}>
     <Box style={styles.goal}>
@@ -95,8 +157,12 @@ const GoalsStats = () => {
         })}
     </Box>
     <Spacer h='50%'/>
-    {/* text to indicate goal */}
-    <Text style={{alignSelf:'center'}}>You are ${goal} away from your monthly goal!</Text>
+   {/* Conditional rendering of the goal text */}
+   {hasGoal ? (
+          <Text style={{ alignSelf: 'center' }}>You are ${goal} away from your monthly goal!</Text>
+        ) : (
+          <Text style={{ alignSelf: 'center' }}>You do not have a monthly goal right now! Set it up now!</Text>
+        )}
     <TouchableOpacity style={{justifyContent:'center',alignItems:'center',top:50,borderRadius:20,backgroundColor:'#e32f45',width:175,height:40,alignSelf:'center'}}onPress={()=> setModalVisible(true)}>
         <Text style={{fontFamily:'Poppins',color:'#fff'}}>Change Target?</Text>
     </TouchableOpacity>
@@ -149,6 +215,7 @@ const GoalsStats = () => {
                     setModalVisible(false);
                     setGoal(parseFloat(goalText).toFixed(2))
                     setGoalText('')
+                    submitGoal()
                     }
                 }}
                 >
