@@ -8,15 +8,9 @@ import RenderStats from './stats/piechart';
 import { useNavigation } from '@react-navigation/native';
 import firebase from 'firebase/app';
 import { firebase_auth } from '../../config/firebase';
-import { collection,doc,getDoc,setDoc,updateDoc } from '@firebase/firestore';
+import { collection,doc,getDoc,setDoc,updateDoc,getDocs } from '@firebase/firestore';
 import {db} from '../../config/firebase.js';
 
-//for donut graph(to fit with data later)
-const data = [{
-    percentage: 8,
-    color: 'tomato',
-    max: 10
-}]
 
 //dummy data
 const dummy_data = [{
@@ -46,11 +40,10 @@ const dummy_data = [{
 const Tab= createMaterialTopTabNavigator()
 
 //income page
-const IncomeStats = () =>{
-
+const IncomeStats = ({income}) =>{
     return(<>
     <RenderStats 
-        data={dummy_data}
+        data={income}
         type='Income'
         />
     </>
@@ -58,11 +51,12 @@ const IncomeStats = () =>{
     )
 }
 //expense page
-const ExpensesStats = () => {
+const ExpensesStats = ({expense}) => {
+    const data=expense
     return(<>
     <RenderStats
         type='Expenses'
-        data={dummy_data}
+        data={data}
         />
     </>
 
@@ -83,7 +77,13 @@ const WarningMessage = (showComponent,diff) =>{
 };
 
 //Goal Page
-const GoalsStats = () => {
+const GoalsStats = ({balance}) => {
+    const percentage=balance/goal*100
+    const new_data=[{
+        label: `${percentage}%`,
+        color:'orange',
+        max:goal
+    }]
     // for modal appearing
     const [modalVisible,setModalVisible]=useState(false)
     // for goal setting
@@ -121,11 +121,6 @@ const GoalsStats = () => {
           console.error('Error submitting goal:', error);
         }
       };
-    
-    
-    
-    
-    
     //to retrieve goal
       const retrieveGoal = async () => {
         const userDocSnapshot = await getDoc(userDocRef);
@@ -152,14 +147,14 @@ const GoalsStats = () => {
     return (<>
     <Flex direction='column'style={{alignItems:'center',bottom:50}}>
     <Box style={styles.goal}>
-        {data.map((p, i) => {
+        {new_data.map((p, i) => {
           return <Donut key={i} percentage={p.percentage} color={p.color} delay={500 + 100 * i} max={p.max}/> 
         })}
     </Box>
     <Spacer h='50%'/>
    {/* Conditional rendering of the goal text */}
    {hasGoal ? (
-          <Text style={{ alignSelf: 'center' }}>You are ${goal} away from your monthly goal!</Text>
+          <Text style={{ alignSelf: 'center' }}>You are ${goal-balance} away from your monthly goal!</Text>
         ) : (
           <Text style={{ alignSelf: 'center' }}>You do not have a monthly goal right now! Set it up now!</Text>
         )}
@@ -167,9 +162,9 @@ const GoalsStats = () => {
         <Text style={{fontFamily:'Poppins',color:'#fff'}}>Change Target?</Text>
     </TouchableOpacity>
     {/* replace once backend connected */}
-    {/* {expenses > savingsGoal && (
+    {balance > goal && (
            <WarningMessage /> 
-    )} */}
+    )}
     </Flex>
     <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
         <Modal.Content maxWidth="400px">
@@ -233,6 +228,111 @@ const GoalsStats = () => {
 const Stats = () => {
     const navigation = useNavigation()
     const [inputValue,setInputValue] = useState('')
+    const [filteredExpenseCategories, setFilteredExpenseCategories] = useState([]);
+    const [filteredIncomeCategories,setFilteredIncomeCategories]=useState([]);
+    const [balance,setBalance]=useState(0);
+
+    //for backend
+        //for user recognition
+        const user = firebase_auth.currentUser;
+        const userEmail = user.email;
+    
+        //references
+        const usersCollectionRef=collection(db,'users');
+        const userDocRef=doc(usersCollectionRef,userEmail)
+        const userIncomesRef = collection(userDocRef, 'income');
+        const userExpensesRef=collection(userDocRef,'expenses')
+        //income
+        const [incomes, setIncomes] = useState([]);
+        //expenses
+        const [expenses, setExpenses] = useState([]);
+        const fetchIncomeData = async () => {
+        try {
+            const querySnapshot = await getDocs(userIncomesRef);
+            const incomeData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+            setIncomes(incomeData);
+        } catch (error) {
+            console.error('Error fetching income data:', error);
+        }
+        };
+
+        const fetchExpenseData = async () => {
+            try {
+                const querySnapshot = await getDocs(userExpensesRef);
+                const expenseData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                setExpenses(expenseData);
+            } catch (error) {
+                console.error('Error fetching expense data:', error);
+            }
+        }
+
+        const filterDataByMonth= (data) => {
+            const convertMonth=(str)=>{
+                const parts=str.split('/')
+                console.log(parseInt(parts[1]))
+                return parseInt(parts[1])
+            }
+            const currentMonth=new Date().getMonth() +1;
+            const filteredData=[];
+            if (data){
+                for (let i=0; i<data.length;i++){
+                    if (convertMonth(data[i].created_at)===currentMonth) {
+                        console.log(data[i])
+                        filteredData.push(data[i])
+                    }
+                }
+            }
+            return filteredData
+        }
+
+        const filterDatabyCategories = (monthData) =>{
+            const newData = monthData.reduce((result, data) => {
+                const existingData = result.find(item => item.category === data.category);
+              
+                if (existingData) {
+                  existingData.total += data.amount;
+                } else {
+                  result.push({ category: data.category, total: data.amount });
+                }
+              
+                return result;
+              }, []);
+            const totalAmount=newData.reduce((sum,data)=> sum+data.total,0)
+    
+            let finalData=newData.map((item)=>{
+                let percentage=(item.total/totalAmount*100).toFixed(1)
+                return {
+                    label:`${percentage}%`,
+                    total:Number(item.total),
+                    category:item.category
+    
+                }
+            })
+            return finalData
+        }
+        const findingTotal = (data) =>{
+            return data.reduce((a,b)=> a+(b.total || 0),0)
+        }
+        useEffect(() => {
+            const fetchAndFilterData = () => {
+              fetchExpenseData();
+              fetchIncomeData();
+              // Filter the data by month
+              const filteredExpenseData = filterDataByMonth(expenses);
+              const filteredIncomeData = filterDataByMonth(incomes);
+
+              // Filter the data by categories
+              const ExpenseCategories = filterDatabyCategories(filteredExpenseData);
+              const IncomeCategories = filterDatabyCategories(filteredIncomeData);
+              setFilteredExpenseCategories(ExpenseCategories);
+              setFilteredIncomeCategories(IncomeCategories);
+              setBalance(findingTotal(filteredIncomeData)-findingTotal(filteredExpenseData))
+            
+            };
+        
+            fetchAndFilterData();
+          }, []);
+
 
     return (
             <>
@@ -260,28 +360,30 @@ const Stats = () => {
                     backgroundColor: '#fbd1a2',
                 },
                 }}>
-                <Tab.Screen 
-                    name='IncomeStats'
-                    component={IncomeStats}
+                    <Tab.Screen
+                    name="IncomeStats"
                     options={{
-                        tabBarLabel:'Income',
-
-                    }}/>
-                <Tab.Screen 
-                    name='GoalsStats'
-                    component={GoalsStats}
-                    
+                        tabBarLabel: 'Income',
+                    }}
+                    >
+                    {() => <IncomeStats income={filteredIncomeCategories} />}
+                    </Tab.Screen>
+                    <Tab.Screen
+                    name="GoalsStats"
                     options={{
-                        tabBarLabel:'Goal',
-                        
-
-                    }}/>
-                <Tab.Screen
-                    name='ExpensesStats'
-                    component={ExpensesStats}
+                        tabBarLabel: 'Goal',
+                    }}
+                    >
+                    {() => <GoalsStats balance={balance} />}
+                    </Tab.Screen>
+                    <Tab.Screen
+                    name="ExpensesStats"
                     options={{
-                        tabBarLabel:'Expenses'
-                    }} />
+                        tabBarLabel: 'Expenses',
+                    }}
+                    >
+                    {() => <ExpensesStats expense={filteredExpenseCategories} />}
+                    </Tab.Screen>
             </Tab.Navigator>
         </>
     )

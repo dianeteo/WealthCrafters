@@ -37,23 +37,25 @@ import { TouchableOpacity } from 'react-native';
 
 
 const RenderStats = ({data,type}) => {
-    const [selectedCategory,setSelectedCategory]=useState(null)
-    const setSelectedCategoryByName = ({name})=>{
-        let categoryy=data.filter(a=>a.category==name)
-        setSelectedCategory(categoryy[0])
-    }
+    // const [selectedCategory,setSelectedCategory]=useState(null)
+    // const setSelectedCategoryByName = ({name})=>{
+    //     let categoryy=data.filter(a=>a.category==name)
+    //     setSelectedCategory(categoryy[0])
+    // }
     //remove when connecting backend
     let chartData=data
     // let chartData=processCategoryDataToDisplay(data)
-    let largestTotal=chartData.reduce((a,b)=> a+ (b.y || 0),0)
+    let largestTotal=chartData.reduce((a,b)=> a+ (b.total || 0),0)
 
     return(
         <View style={{alignItems:'center',justifyContent:'center',top:270}}>
             <VictoryPie
                 data={chartData}
                 colorScale='warm'
-                labels={(datum) => `${datum.y}`}
-                radius={({datum}) => (selectedCategory && selectedCategory.category===datum.category) ? 140 : 120}
+                labels={(datum) => `${datum.total}`}
+                radius={
+                    // ({datum}) => (selectedCategory && selectedCategory.category===datum.category) ? 140 : 
+                120}
                 innerRadius={60}
                 labelRadius={({innerRadius})=>(140+innerRadius)/2.5}
                 width={280}
@@ -73,21 +75,21 @@ const RenderStats = ({data,type}) => {
                         shadowRadius:1,                
                     }
                 }}
-                events={[{
-                    target:'data',
-                    eventHandlers:{
-                        onPress: ()=>{
-                            return [{
-                                target:'labels',
-                                mutation: (props) => {
-                                    let categoryName=chartData[props.index].category
-                                    setSelectedCategoryByName(categoryName)
-                                }
-                            },
-                        ]
-                        }
-                    }
-                }]}
+                // events={[{
+                //     target:'data',
+                //     eventHandlers:{
+                //         onPress: ()=>{
+                //             return [{
+                //                 target:'labels',
+                //                 mutation: (props) => {
+                //                     let categoryName=chartData[props.index].category
+                //                     setSelectedCategoryByName(categoryName)
+                //                 }
+                //             },
+                //         ]
+                //         }
+                //     }
+                // }]}
                 />
             <View style={{position:'relative',bottom:155}}>
                 <Text style={{textAlign:'center',fontFamily:'LatoBold',fontSize:22}}>{largestTotal}</Text>
@@ -116,7 +118,7 @@ const RenderStats = ({data,type}) => {
                                 </View>
                                 <Spacer w='20%'/>
                                 <View style={{justifyContent:'center',alignItems:'center'}}>
-                                    <Text style={{fontFamily:'Poppins'}}>${item.y} - {item.label}</Text>
+                                    <Text style={{fontFamily:'Poppins'}}>${item.total} - {item.label}</Text>
                                 </View>
                             </TouchableOpacity>
                         )
