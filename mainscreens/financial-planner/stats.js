@@ -303,7 +303,7 @@ const Stats = () => {
                 let percentage=(item.total/totalAmount*100).toFixed(1)
                 return {
                     label:`${percentage}%`,
-                    total:Number(item.total),
+                    y:Number(item.total),
                     category:item.category
     
                 }
@@ -337,7 +337,7 @@ const Stats = () => {
     return (
             <>
             <Flex>
-            <Center style={styles.header} _text={{fontFamily:'PoppinsSemi',fontSize:20}}>Stats</Center>
+            <Center style={styles.header} _text={{fontFamily:'PoppinsSemi',fontSize:18}}>Stats for the Month </Center>
             <TouchableOpacity style={styles.filterbutton} onPress={()=>{navigation.navigate('StackedFilter')}}>
                 <Text>Filter</Text>
             </TouchableOpacity>
