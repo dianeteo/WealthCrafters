@@ -147,9 +147,7 @@ android {
             debuggable false
             shrinkResources true
             minifyEnabled true
-            //useProguard true
-            shrinkResources true
-            setProguardFiles([getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'])
+            // shrinkResources true
         }
     }
 
