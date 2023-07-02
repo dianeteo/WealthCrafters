@@ -53,7 +53,9 @@ const RenderStats = ({data,type}) => {
                 data={chartData}
                 colorScale='warm'
                 labels={(datum) => `${datum.y}`}
-                radius={({datum}) => (selectedCategory && selectedCategory.category===datum.category) ? 140 : 120}
+                radius={
+                    ({datum}) => (selectedCategory && selectedCategory.category===datum.category) ? 140 : 
+                120}
                 innerRadius={60}
                 labelRadius={({innerRadius})=>(140+innerRadius)/2.5}
                 width={280}
