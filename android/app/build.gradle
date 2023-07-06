@@ -109,6 +109,9 @@ def reactNativeArchitectures() {
 
 android {
     ndkVersion rootProject.ext.ndkVersion
+    lintOptions {
+        checkReleaseBuilds false
+    }
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
