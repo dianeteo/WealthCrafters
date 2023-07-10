@@ -118,8 +118,7 @@ const EntryIncome = () => {
 
 
     return (
-        <ScrollView>
-        <Flex direction='column' style={{ top: 150 }}>
+        <Flex direction='column' style={{top:80}}>
           <Flex direction='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <TouchableOpacity style={styles.currentDate} onPress={handleDatePress}>
@@ -147,14 +146,14 @@ const EntryIncome = () => {
             </Modal>
           )}
 
-        <Spacer h='16%' />
+        <Spacer h='8%' />
 
         <Flex direction='row'>
             <Text style={styles.titlecategory}>CATEGORY:</Text>
             <Box style={styles.select}>
             <Select
                 selectedValue={selectedCategory1}
-                minWidth="212"
+                minWidth="140"
                 accessibilityLabel="Choose a Category"
                 placeholder="Choose a category"
                 placeholderTextColor="black"
@@ -201,7 +200,7 @@ const EntryIncome = () => {
             </Modal>
         </Flex>
 
-        <Spacer height='16%' />
+        <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
@@ -221,7 +220,7 @@ const EntryIncome = () => {
                     value={numValue1} />
             </Flex>
 
-        <Spacer height='16%' />
+        <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titlenote}>NOTE:</Text>
@@ -230,14 +229,13 @@ const EntryIncome = () => {
                      borderWidth: 0 }} left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
             </Flex>
             
-        <Spacer h='12%' />
+        <Spacer h='10%' />
             
             <TouchableOpacity style={styles.button} onPress={()=>{submitIncome(); navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             
             </Flex>
-            </ScrollView>
     )
 }
 
@@ -338,8 +336,7 @@ const EntryExpenses = () => {
         };
 
         return (
-            <ScrollView>
-            <Flex direction='column' style={{ top: 150 }}>
+            <Flex direction='column' style={{top:80}}>
               <Flex direction='row'>
                 <Text style={styles.titledate}>DATE:</Text>
                 <TouchableOpacity style={styles.currentDate} onPress={handleDatePress}>
@@ -367,12 +364,13 @@ const EntryExpenses = () => {
                 </Modal>
               )}
 
-            <Spacer h='16%' /><Flex direction='row'>
+            <Spacer h='8%' />
+            <Flex direction='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
                 <Box style={styles.select}>
                 <Select
                     selectedValue={selectedCategory2}
-                    minWidth="212"
+                    minWidth="140"
                     accessibilityLabel="Choose a category"
                     placeholder="Choose a category"
                     placeholderTextColor="black"
@@ -394,7 +392,8 @@ const EntryExpenses = () => {
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
                     <Ionicons name='add-outline' size={40} color='white' />
                 </TouchableOpacity>
-                <Modal
+            </Flex>
+            <Modal
                     isOpen={modalVisible}
                     onClose={() => setModalVisible(false)}>
                     <Modal.Content maxWidth='400px'>
@@ -417,9 +416,8 @@ const EntryExpenses = () => {
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex>
-            
-            <Spacer height='16%' />
+
+            <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
@@ -440,7 +438,7 @@ const EntryExpenses = () => {
                     value={numValue2} />
             </Flex>
             
-            <Spacer height='16%' />
+            <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titlenote}>NOTE:</Text>
@@ -449,14 +447,13 @@ const EntryExpenses = () => {
                     borderWidth: 0 }} left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
             </Flex>
 
-            <Spacer h='12%' />
+            <Spacer h='10%' />
 
             <TouchableOpacity style={styles.button} onPress={()=>{submitExpenses(); navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
 
         </Flex>
-        </ScrollView>
 
     )
 }
