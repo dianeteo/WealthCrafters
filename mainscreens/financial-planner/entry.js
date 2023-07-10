@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Animated, StyleSheet, TouchableOpacity, View, KeyboardAvoidingView, TouchableHighlight } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View, KeyboardAvoidingView, TouchableHighlight, Dimensions } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
@@ -104,15 +104,15 @@ const EntryIncome = () => {
             };
     
     //for DateTimePicker
-    const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+    const [showDateTimePicker_income, setShowDateTimePicker_income] = useState(false);
 
     const handleDatePress = () => {
-        setShowDateTimePicker(true);
+        setShowDateTimePicker_income(true);
       };
     
     const handleDateTimePickerChange = (event, date) => {
     setDate(date);
-    setShowDateTimePicker(false);
+    setShowDateTimePicker_income(false);
     // Additional logic for handling the date change
     };
 
@@ -132,9 +132,9 @@ const EntryIncome = () => {
               </Text>
             </TouchableOpacity>
           </Flex>
-          {showDateTimePicker && (
+          {showDateTimePicker_income && (
             <Modal
-            isOpen={showDateTimePicker}
+            isOpen={showDateTimePicker_income}
             isKeyboardDismissable={true}
             >
             <DateTimePicker
@@ -142,7 +142,7 @@ const EntryIncome = () => {
               style={styles.picker}
               value={date1}
               onChange={handleDateTimePickerChange}
-              onTouchCancel={()=>setShowDateTimePicker(false)}
+              onTouchCancel={()=>setShowDateTimePicker_income(false)}
             />
             </Modal>
           )}
@@ -151,7 +151,6 @@ const EntryIncome = () => {
 
         <Flex direction='row'>
             <Text style={styles.titlecategory}>CATEGORY:</Text>
-            <Box style={styles.select}>
             <Select
                 selectedValue={selectedCategory1}
                 minWidth="212"
@@ -172,7 +171,6 @@ const EntryIncome = () => {
                     />
                 ))}
                 </Select>
-            </Box>
             <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
                 <Ionicons name='add-outline' size={40} color='white' />
             </TouchableOpacity>
@@ -325,15 +323,15 @@ const EntryExpenses = () => {
         };
 
     //for DateTimePicker
-    const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+    const [showDateTimePicker_expense, setShowDateTimePicker_expense] = useState(false);
 
     const handleDatePress = () => {
-        setShowDateTimePicker(true);
+        setShowDateTimePicker_expense(true);
         };
     
         const handleDateTimePickerChange = (event, date) => {
         setDate(date);
-        setShowDateTimePicker(false);
+        setShowDateTimePicker_expense(false);
         // Additional logic for handling the date change
         };
 
@@ -352,9 +350,9 @@ const EntryExpenses = () => {
                   </Text>
                 </TouchableOpacity>
               </Flex>
-              {showDateTimePicker && (
+              {showDateTimePicker_expense && (
                 <Modal
-                isOpen={showDateTimePicker}
+                isOpen={showDateTimePicker_expense}
                 isKeyboardDismissable={true}
                 >
                 <DateTimePicker
@@ -362,14 +360,13 @@ const EntryExpenses = () => {
                   style={styles.picker}
                   value={date2}
                   onChange={handleDateTimePickerChange}
-                  onTouchCancel={()=>setShowDateTimePicker(false)}
+                  onTouchCancel={()=>setShowDateTimePicker_expense(false)}
                 />
                 </Modal>
               )}
 
             <Spacer h='16%' /><Flex direction='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
-                <Box style={styles.select}>
                 <Select
                     selectedValue={selectedCategory2}
                     minWidth="212"
@@ -390,7 +387,6 @@ const EntryExpenses = () => {
                         />
                     ))}
                     </Select>
-                </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
                     <Ionicons name='add-outline' size={40} color='white' />
                 </TouchableOpacity>
@@ -468,10 +464,11 @@ const NewEntry = () => {
                 initialRouteName='EntryIncome'
                 sceneContainerStyle={{
                     position:'relative',
-                    top:100,
+                    top:100
                 }}
                 initialLayout={{
-                    height:300
+                    height:Dimensions.get('window').height,
+                    width:Dimensions.get('window').width
                 }}
                 screenOptions={{
                     tabBarActiveTintColor: '#fbd1a2',
@@ -482,7 +479,7 @@ const NewEntry = () => {
                         borderRadius:20,
                         width:350,
                         alignSelf:'center',
-                        top:50
+                        top:50,
                         },
                     tabBarIndicator: () =>{
                         null
@@ -495,7 +492,8 @@ const NewEntry = () => {
                     options={{
                         tabBarLabel:'Income'
 
-                    }}/>
+                    }}
+                    initialLayout={{height:1000}}/>
                 <Tab.Screen
                     name='EntryExpenses'
                     component={EntryExpenses}
