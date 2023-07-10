@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Animated, StyleSheet, TouchableOpacity, View, KeyboardAvoidingView, TouchableHighlight, Dimensions } from 'react-native';
+import { Animated, StyleSheet, TouchableOpacity, View, KeyboardAvoidingView, TouchableHighlight } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CalculatorInput,CalculatorInputProps } from 'react-native-calculator';
@@ -104,22 +104,21 @@ const EntryIncome = () => {
             };
     
     //for DateTimePicker
-    const [showDateTimePicker_income, setShowDateTimePicker_income] = useState(false);
+    const [showDateTimePicker, setShowDateTimePicker] = useState(false);
 
     const handleDatePress = () => {
-        setShowDateTimePicker_income(true);
+        setShowDateTimePicker(true);
       };
     
     const handleDateTimePickerChange = (event, date) => {
     setDate(date);
-    setShowDateTimePicker_income(false);
+    setShowDateTimePicker(false);
     // Additional logic for handling the date change
     };
 
 
     return (
-        <ScrollView>
-        <Flex direction='column' style={{ top: 150 }}>
+        <Flex direction='column' style={{top:80}}>
           <Flex direction='row'>
             <Text style={styles.titledate}>DATE:</Text>
             <TouchableOpacity style={styles.currentDate} onPress={handleDatePress}>
@@ -132,9 +131,9 @@ const EntryIncome = () => {
               </Text>
             </TouchableOpacity>
           </Flex>
-          {showDateTimePicker_income && (
+          {showDateTimePicker && (
             <Modal
-            isOpen={showDateTimePicker_income}
+            isOpen={showDateTimePicker}
             isKeyboardDismissable={true}
             >
             <DateTimePicker
@@ -142,18 +141,19 @@ const EntryIncome = () => {
               style={styles.picker}
               value={date1}
               onChange={handleDateTimePickerChange}
-              onTouchCancel={()=>setShowDateTimePicker_income(false)}
+              onTouchCancel={()=>setShowDateTimePicker(false)}
             />
             </Modal>
           )}
 
-        <Spacer h='16%' />
+        <Spacer h='8%' />
 
         <Flex direction='row'>
             <Text style={styles.titlecategory}>CATEGORY:</Text>
+            <Box style={styles.select}>
             <Select
                 selectedValue={selectedCategory1}
-                minWidth="212"
+                minWidth="140"
                 accessibilityLabel="Choose a Category"
                 placeholder="Choose a category"
                 placeholderTextColor="black"
@@ -171,6 +171,7 @@ const EntryIncome = () => {
                     />
                 ))}
                 </Select>
+            </Box>
             <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
                 <Ionicons name='add-outline' size={40} color='white' />
             </TouchableOpacity>
@@ -199,7 +200,7 @@ const EntryIncome = () => {
             </Modal>
         </Flex>
 
-        <Spacer height='16%' />
+        <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
@@ -219,7 +220,7 @@ const EntryIncome = () => {
                     value={numValue1} />
             </Flex>
 
-        <Spacer height='16%' />
+        <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titlenote}>NOTE:</Text>
@@ -228,14 +229,13 @@ const EntryIncome = () => {
                      borderWidth: 0 }} left='62' bottom='1' w='60%' maxW='300' value={text1} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
             </Flex>
             
-        <Spacer h='12%' />
+        <Spacer h='10%' />
             
             <TouchableOpacity style={styles.button} onPress={()=>{submitIncome(); navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
             
             </Flex>
-            </ScrollView>
     )
 }
 
@@ -323,21 +323,20 @@ const EntryExpenses = () => {
         };
 
     //for DateTimePicker
-    const [showDateTimePicker_expense, setShowDateTimePicker_expense] = useState(false);
+    const [showDateTimePicker, setShowDateTimePicker] = useState(false);
 
     const handleDatePress = () => {
-        setShowDateTimePicker_expense(true);
+        setShowDateTimePicker(true);
         };
     
         const handleDateTimePickerChange = (event, date) => {
         setDate(date);
-        setShowDateTimePicker_expense(false);
+        setShowDateTimePicker(false);
         // Additional logic for handling the date change
         };
 
         return (
-            <ScrollView>
-            <Flex direction='column' style={{ top: 150 }}>
+            <Flex direction='column' style={{top:80}}>
               <Flex direction='row'>
                 <Text style={styles.titledate}>DATE:</Text>
                 <TouchableOpacity style={styles.currentDate} onPress={handleDatePress}>
@@ -350,9 +349,9 @@ const EntryExpenses = () => {
                   </Text>
                 </TouchableOpacity>
               </Flex>
-              {showDateTimePicker_expense && (
+              {showDateTimePicker && (
                 <Modal
-                isOpen={showDateTimePicker_expense}
+                isOpen={showDateTimePicker}
                 isKeyboardDismissable={true}
                 >
                 <DateTimePicker
@@ -360,16 +359,18 @@ const EntryExpenses = () => {
                   style={styles.picker}
                   value={date2}
                   onChange={handleDateTimePickerChange}
-                  onTouchCancel={()=>setShowDateTimePicker_expense(false)}
+                  onTouchCancel={()=>setShowDateTimePicker(false)}
                 />
                 </Modal>
               )}
 
-            <Spacer h='16%' /><Flex direction='row'>
+            <Spacer h='8%' />
+            <Flex direction='row'>
                 <Text style={styles.titlecategory}>CATEGORY:</Text>
+                <Box style={styles.select}>
                 <Select
                     selectedValue={selectedCategory2}
-                    minWidth="212"
+                    minWidth="140"
                     accessibilityLabel="Choose a category"
                     placeholder="Choose a category"
                     placeholderTextColor="black"
@@ -387,10 +388,12 @@ const EntryExpenses = () => {
                         />
                     ))}
                     </Select>
+                </Box>
                 <TouchableOpacity style={styles.add} onPress={() => { setModalVisible(true); } }>
                     <Ionicons name='add-outline' size={40} color='white' />
                 </TouchableOpacity>
-                <Modal
+            </Flex>
+            <Modal
                     isOpen={modalVisible}
                     onClose={() => setModalVisible(false)}>
                     <Modal.Content maxWidth='400px'>
@@ -413,9 +416,8 @@ const EntryExpenses = () => {
                         </Modal.Footer>
                     </Modal.Content>
                 </Modal>
-            </Flex>
-            
-            <Spacer height='16%' />
+
+            <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titleamt}>AMOUNT:</Text>
@@ -436,7 +438,7 @@ const EntryExpenses = () => {
                     value={numValue2} />
             </Flex>
             
-            <Spacer height='16%' />
+            <Spacer height='8%' />
             
             <Flex direction='row'>
                 <Text style={styles.titlenote}>NOTE:</Text>
@@ -445,14 +447,13 @@ const EntryExpenses = () => {
                     borderWidth: 0 }} left='62' bottom='1' w='60%' maxW='300' value={text2} onChangeText={setText} blurOnSubmit={true} placeholder='Add a short note!' placeholderTextColor='black' variant='outline' />
             </Flex>
 
-            <Spacer h='12%' />
+            <Spacer h='10%' />
 
             <TouchableOpacity style={styles.button} onPress={()=>{submitExpenses(); navigation.navigate('Calendar'); }}>
                 <Text style={styles.submit}>Submit</Text>
             </TouchableOpacity>
 
         </Flex>
-        </ScrollView>
 
     )
 }
@@ -464,11 +465,10 @@ const NewEntry = () => {
                 initialRouteName='EntryIncome'
                 sceneContainerStyle={{
                     position:'relative',
-                    top:100
+                    top:100,
                 }}
                 initialLayout={{
-                    height:Dimensions.get('window').height,
-                    width:Dimensions.get('window').width
+                    height:300
                 }}
                 screenOptions={{
                     tabBarActiveTintColor: '#fbd1a2',
@@ -479,7 +479,7 @@ const NewEntry = () => {
                         borderRadius:20,
                         width:350,
                         alignSelf:'center',
-                        top:50,
+                        top:50
                         },
                     tabBarIndicator: () =>{
                         null
@@ -492,8 +492,7 @@ const NewEntry = () => {
                     options={{
                         tabBarLabel:'Income'
 
-                    }}
-                    initialLayout={{height:1000}}/>
+                    }}/>
                 <Tab.Screen
                     name='EntryExpenses'
                     component={EntryExpenses}
