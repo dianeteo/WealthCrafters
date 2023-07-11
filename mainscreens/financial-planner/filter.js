@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from "react";
-import {Box,Form,FormControl,Text,Select,View,Flex, HStack,Spacer} from 'native-base';
+import {Box, Form, FormControl, Text, Select, View, Flex, HStack, Spacer, Modal} from 'native-base';
 import { SafeAreaView, StyleSheet, Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -191,6 +191,30 @@ const Filter = () => {
         // };
     };
 
+    //for DateTimePicker
+    const [showDateTimePicker_initial, setShowDateTimePicker_initial] = useState(false);
+    const [showDateTimePicker_final, setShowDateTimePicker_final] = useState(false);
+
+    const handleDatePress_initial = () => {
+        setShowDateTimePicker_initial(true);
+    };
+
+    const handleDatePress_final = () => {
+        setShowDateTimePicker_final(true);
+    };
+    
+    const handleDateTimePickerChange_initial = (event, date1) => {
+    setDate1(date1);
+    setShowDateTimePicker_initial(false);
+    // Additional logic for handling the date change
+    };
+
+    const handleDateTimePickerChange_final = (event, date2) => {
+        setDate2(date2);
+        setShowDateTimePicker_final(false);
+        // Additional logic for handling the date change
+        };
+
     return (
         <SafeAreaView>
             <Flex direction="column">
@@ -199,14 +223,58 @@ const Filter = () => {
 
             <HStack alignSelf='center'>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Initial Date:</Text>
-                <DateTimePicker themeVariant='dark' value={date1} onChange={(event, date) => { setDate1(date); event = 'dismissed'; } } />
+                <TouchableOpacity style={styles.currentDate} onPress={handleDatePress_initial}>
+                  <Text style={styles.datePickerPlaceholder}>
+                    {date1.toLocaleDateString('en-GB', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    })}
+                  </Text>
+                </TouchableOpacity>
+              {showDateTimePicker_initial && (
+                <Modal
+                isOpen={showDateTimePicker_initial}
+                isKeyboardDismissable={true}
+                >
+                <DateTimePicker
+                  themeVariant='dark'
+                  style={styles.picker}
+                  value={date1}
+                  onChange={handleDateTimePickerChange_initial}
+                  onTouchCancel={()=>setShowDateTimePicker_initial(false)}
+                />
+                </Modal>
+              )}
             </HStack>
 
             <Spacer h='5%'/>
 
             <HStack alignSelf='center'>
                 <Text style={{fontFamily:'PoppinsSemi',fontSize:15, top:2}}>Final Date:</Text>
-                <DateTimePicker themeVariant='dark' value={date2} onChange={(event, date) => { setDate2(date); event = 'dismissed'; } } />
+                <TouchableOpacity style={styles.currentDate} onPress={handleDatePress_final}>
+                  <Text style={styles.datePickerPlaceholder}>
+                    {date2.toLocaleDateString('en-GB', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit'
+                    })}
+                  </Text>
+                </TouchableOpacity>
+              {showDateTimePicker_final && (
+                <Modal
+                isOpen={showDateTimePicker_final}
+                isKeyboardDismissable={true}
+                >
+                <DateTimePicker
+                  themeVariant='dark'
+                  style={styles.picker}
+                  value={date2}
+                  onChange={handleDateTimePickerChange_final}
+                  onTouchCancel={()=>setShowDateTimePicker_final(false)}
+                />
+                </Modal>
+              )}
             </HStack>
 
             <Spacer h='5%'/>
@@ -294,6 +362,18 @@ const styles=StyleSheet.create({
     selectedDateStyle: {
         fontWeight: "bold",
         color: "white",
+    },
+    currentDate:{
+        backgroundColor: '#DDDDDD',
+        left:10,
+        padding: 6,
+    },
+    datePickerPlaceholder:{
+        fontSize: 15,
+        fontFamily:'PoppinsSemi',
+        textShadowColor:'#000000',
+        textShadowRadius:0.1,
+        color:'#FFFFFF',
     },
     button:{
         width:250,

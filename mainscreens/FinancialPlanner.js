@@ -201,7 +201,7 @@ const FinancialPlanner = () => {
                     )}
                 </Box>
               </Flex>
-              <Flex direction='column'>
+              <Flex flexDirection='column'>
                 <Spacer h='4%' />
                 <Box alignItems='center' justifyContent='center'>
                   <Text style={{ fontFamily: 'Poppins', color: 'red', fontSize: 18 }}>Expenses (-)</Text>
