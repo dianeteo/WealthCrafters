@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, WebView } from 'react-native-webview';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Research = () => {
     const htmlContent = `
