@@ -1,25 +1,25 @@
-
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import React from 'react';
-import { Text } from 'react-native-paper';
+import { WebView } from 'react-native-webview';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import InvestmentSimulator_Tabs from '../navigation/investment-simulator-nav/BottomTabNavigator';
 
-class InvestmentSimulator extends React.Component {
-    render() {
-        return(
-            <View style={styles.container}>
-                <Text>Code for Investment Simulator</Text>
-            </View>
-        )
-    }
-}
+const InvestmentSimulator = () => {
+  return (
+    <SafeAreaView style={{ flex:1 }}>
+        <Text>Hello</Text>
+    </SafeAreaView>
+  );
+  ;
+};
 
 export default InvestmentSimulator;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

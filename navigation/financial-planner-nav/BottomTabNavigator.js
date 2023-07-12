@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Import your screens/components here
 import Navigator from './ButtonNavigationStats';
-import FinancialPlanner from './mainscreens/FinancialPlanner';
+import FinancialPlanner from '../../mainscreens/FinancialPlanner';
 
 const getCurrentDate=()=>{
   
@@ -18,7 +18,7 @@ const getCurrentDate=()=>{
   }
 //Screen Names
 const Home=getCurrentDate()
-const statsName='Stats'
+const statsName='My Dashboard'
 // const entryName='Entry'
 
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Results from "./mainscreens/financial-planner/stats/results";
+import Results from "../../mainscreens/financial-planner/stats/results";
 import Navigator from "./ButtonNavigationStats";
 
 
