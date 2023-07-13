@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Flex, Select } from 'native-base';
 import { WebView } from 'react-native-webview';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const Trade = () => {
   const htmlOverviewContent = `<!-- TradingView Widget BEGIN -->
@@ -30,17 +30,20 @@ const Trade = () => {
   const screenWidth = Dimensions.get('window').width;
 
   // Get current timing to check if market is open for buying/selling
-  const currentDateTime = new Date();
-  const currentTime = moment(currentDateTime.toLocaleDateString('en-US', {
-    hour: "2-digit",
-    minute: "2-digit",
-  }), 'hh:mm A');
-  const marketOpen = moment('9:30 PM', 'hh:mm A');
-  const marketClose = moment('4:00 AM', 'hh:mm A');
+  const currentDateTime = moment().tz('America/New_York');
+  const marketOpen = moment.tz('09:30', 'HH:mm', 'America/New_York');
+  const marketClose = moment.tz('04:00', 'HH:mm', 'America/New_York');
+
+  const isMarketOpen = currentDateTime.isAfter(marketOpen) && currentDateTime.isBefore(marketClose);
+
+  const hoursDiff = marketOpen.diff(currentDateTime, "hours")
+  const minsDiff = marketOpen.diff(currentDateTime, "minutes") - hoursDiff*60
+
 
   return (
     <View style={styles.container}>
       <WebView source={{ html: htmlOverviewContent }} />
+      { isMarketOpen ? (
         <View style={[styles.textContainer, { bottom: screenHeight * 0.20 }]}>
           <Flex direction='row'>
             <Text style={styles.header}>Your next action:</Text>
@@ -52,6 +55,11 @@ const Trade = () => {
             </Select>
           </Flex>
         </View>
+      ) : <View style={[styles.textContainer, { bottom: screenHeight * 0.13 }]}>
+        <Text style={styles.closed}>Market is now closed.</Text>
+        <Text style={styles.opensIn}>Opens in {`${hoursDiff}h ${minsDiff}min`}.</Text>
+      </View>
+      }
     </View>
   );
 };
@@ -74,4 +82,13 @@ const styles = StyleSheet.create({
     fontFamily: 'PoppinsSemi',
     fontSize: 15,
   },
+  closed: {
+    fontFamily: 'PoppinsSemi',
+    fontSize: 15,
+    color: '#FF0000',
+  },
+  opensIn: {
+    fontFamily: 'PoppinsSemi',
+    fontSize: 12,
+  }
 });
