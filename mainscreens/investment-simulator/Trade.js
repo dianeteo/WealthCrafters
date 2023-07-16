@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Flex, Select } from 'native-base';
+import { Flex, Select, Spacer } from 'native-base';
 import { WebView } from 'react-native-webview';
 import moment from 'moment-timezone';
+import axios from 'axios';
 
 const Trade = () => {
   const htmlOverviewContent = `<!-- TradingView Widget BEGIN -->
@@ -29,37 +30,86 @@ const Trade = () => {
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
 
-  // Get current timing to check if market is open for buying/selling
+  // utc-4 timezone
   const currentDateTime = moment().tz('America/New_York');
-  const marketOpen = moment.tz('09:30', 'HH:mm', 'America/New_York');
-  const marketClose = moment.tz('04:00', 'HH:mm', 'America/New_York');
 
-  const isMarketOpen = currentDateTime.isAfter(marketOpen) && currentDateTime.isBefore(marketClose);
+  // Adjust currentDateTime to the nearest Monday at 9:30 AM
+  const marketOpen = currentDateTime
+    .clone()
+    .startOf('isoWeek')
+    .add(1, 'week')
+    .day(1)
+    .hour(9)
+    .minute(30);
 
-  const hoursDiff = marketOpen.diff(currentDateTime, "hours")
-  const minsDiff = marketOpen.diff(currentDateTime, "minutes") - hoursDiff*60
+  const marketClose = moment.tz('16:00', 'HH:mm', 'America/New_York');
 
+  const hoursDiff = marketOpen.diff(currentDateTime, 'hours');
+  const minsDiff = marketOpen.diff(currentDateTime, 'minutes') - hoursDiff * 60;
+
+  // current day
+  const currentDay = currentDateTime.day();
+
+  // checking day
+  const isWeekday = currentDay >= 1 && currentDay <= 5;
+
+  // market is open/closed for buying/selling
+  const isMarketOpen =
+    isWeekday &&
+    currentDateTime.isAfter(marketOpen) &&
+    currentDateTime.isBefore(marketClose);
+
+  //for searching of stock price
+  const [input, setInput] = useState('AAPL')
+
+//limit to fetching of data: 100,000 per month
+useEffect(() => {
+    const fetchData = async () => {
+        const options = {
+          method: 'GET',
+          url: 'https://realstonks.p.rapidapi.com/'+input,
+          headers: {
+            'X-RapidAPI-Key': '3ad1624aefmsha92181de7226a34p176b9djsna0cd97eaf489',
+            'X-RapidAPI-Host': 'realstonks.p.rapidapi.com'
+          }
+        };
+      
+        try {
+          const response = await axios.request(options);
+          console.log(response.data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      
+      // fetchData(); uncomment this during actual implementation      
+    }, []);
 
   return (
     <View style={styles.container}>
       <WebView source={{ html: htmlOverviewContent }} />
-      { isMarketOpen ? (
-        <View style={[styles.textContainer, { bottom: screenHeight * 0.20 }]}>
-          <Flex direction='row'>
-            <Text style={styles.header}>Your next action:</Text>
-            <Select
-              placeholder="Buy/Sell"
-              width={150}>
-              <Select.Item label="Buy" value="Buy" />
-              <Select.Item label="Sell" value="Sell" />
-            </Select>
+      {true ? (
+        <View style={[styles.textContainer, { bottom: screenHeight * 0.18 }]}>
+          <Flex direction="column">
+            <Text style={styles.headingOpen}>
+              Market is <Text style={{ color: 'green' }}>open.</Text>
+            </Text>
+            <Spacer h="25%" />
+            <Flex direction="row">
+              <Text style={styles.header}>Your next action:</Text>
+              <Select placeholder="Buy/Sell" width={150}>
+                <Select.Item label="Buy" value="Buy" />
+                <Select.Item label="Sell" value="Sell" />
+              </Select>
+            </Flex>
           </Flex>
         </View>
-      ) : <View style={[styles.textContainer, { bottom: screenHeight * 0.13 }]}>
-        <Text style={styles.closed}>Market is now closed.</Text>
-        <Text style={styles.opensIn}>Opens in {`${hoursDiff}h ${minsDiff}min`}.</Text>
-      </View>
-      }
+      ) : (
+        <View style={[styles.textContainer, { bottom: screenHeight * 0.13 }]}>
+          <Text style={styles.closed}>Market is now closed.</Text>
+          <Text style={styles.opensIn}>Opens in {`${hoursDiff}h ${minsDiff}min`}.</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -77,6 +127,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
   },
+  headingOpen: {
+    fontFamily: 'PoppinsSemi',
+    fontSize: 15,
+    alignSelf: 'center',
+  },
   header: {
     right: 10,
     fontFamily: 'PoppinsSemi',
@@ -90,5 +145,5 @@ const styles = StyleSheet.create({
   opensIn: {
     fontFamily: 'PoppinsSemi',
     fontSize: 12,
-  }
+  },
 });
