@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Flex, Select, Spacer } from 'native-base';
+import { Flex, Select, Spacer, Input, Icon, Button, Modal, FormControl } from 'native-base';
 import { WebView } from 'react-native-webview';
 import moment from 'moment-timezone';
 import axios from 'axios';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const Trade = () => {
   const htmlOverviewContent = `<!-- TradingView Widget BEGIN -->
@@ -60,57 +61,125 @@ const Trade = () => {
     currentDateTime.isBefore(marketClose);
 
   //for searching of stock price
-  const [input, setInput] = useState('AAPL')
+  const [input, setInput] = useState('AAPL');
+
+  const [selectedAction, setSelectedAction] = useState('');
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [price, setPrice] = useState(0);
 
 //limit to fetching of data: 100,000 per month, latency is 3642ms vs latency of trading view 15min
-useEffect(() => {
-    const fetchData = async () => {
-        const options = {
-          method: 'GET',
-          url: 'https://realstonks.p.rapidapi.com/'+input,
-          headers: {
-            'X-RapidAPI-Key': '3ad1624aefmsha92181de7226a34p176b9djsna0cd97eaf489',
-            'X-RapidAPI-Host': 'realstonks.p.rapidapi.com'
-          }
-        };
-      
-        try {
-          const response = await axios.request(options);
-          console.log(response.data.price);
-        } catch (error) {
-          console.error(error);
+  const fetchData = async () => {
+      const options = {
+        method: 'GET',
+        url: 'https://realstonks.p.rapidapi.com/'+input.toUpperCase(),
+        headers: {
+          'X-RapidAPI-Key': '3ad1624aefmsha92181de7226a34p176b9djsna0cd97eaf489',
+          'X-RapidAPI-Host': 'realstonks.p.rapidapi.com'
         }
       };
-      
-      //fetchData();     
-    }, []);
+    
+      try {
+        const response = await axios.request(options);
+        console.log(response.data.price);
+        setPrice(response.data.price);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior='padding'>
       <WebView source={{ html: htmlOverviewContent }} />
-      {true ? (
-        <View style={[styles.textContainer, { bottom: screenHeight * 0.18 }]}>
-          <Flex direction="column">
-            <Text style={styles.headingOpen}>
-              Market is <Text style={{ color: 'green' }}>open.</Text>
-            </Text>
-            <Spacer h="25%" />
-            <Flex direction="row">
-              <Text style={styles.header}>Your next action:</Text>
-              <Select placeholder="Buy/Sell" width={150}>
+      <Modal size='xl' isOpen={modalVisible} onClose={() => setModalVisible(false)}>
+        <Modal.Content>
+          <Modal.CloseButton />
+          <Modal.Header>{input}</Modal.Header>
+          <Modal.Body flexGrow={1}>
+            <Flex direction="column" alignItems='center'>
+            <Text> <Text style={styles.currentPrice}> Current stock price:  </Text>{price} USD </Text>
+            
+            <FormControl mt='5'/>
+
+            <Flex direction="row" alignItems={'center'}>
+              <Text style={styles.modalNextAction}>Your next action:</Text>
+              <Select 
+              marginLeft={2}
+              selectedValue={selectedAction}
+              onValueChange={(action) => setSelectedAction(action)}
+              placeholder="Buy/Sell" 
+              width={150}>
                 <Select.Item label="Buy" value="Buy" />
                 <Select.Item label="Sell" value="Sell" />
               </Select>
             </Flex>
+
+            <FormControl mt='5'/>
+
+            <Flex direction="row" alignItems={'center'}>
+              <Text style={styles.modalNextAction}>Quantity: </Text>
+              <Input placeholder='Enter a numeric quantity'
+              marginLeft={3}
+              width="50%" ></Input>
+            </Flex>
+
+            </Flex>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+              setModalVisible(false);
+            }}>
+                Cancel
+              </Button>
+              <Button bgColor='#f79256' onPress={() => {
+              setModalVisible(false);
+            }}>
+                Confirm
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+      {true ? (
+        <KeyboardAvoidingView style={[styles.textContainer, { bottom: screenHeight * 0.10 }]} behavior='padding'>
+          <Flex direction="column" alignItems={'center'}>
+            <Text style={styles.headingOpen}>
+              Market is <Text style={{ color: 'green' }}>open.</Text>
+            </Text>
+
+            <Spacer h='10%'/>
+
+            <Flex direction="row" alignItems={'center'}>
+              <Text style={styles.header}>Search: </Text>
+              <Input
+              autoCapitalize={'characters'}
+              value={input} 
+              onChangeText={(text) => setInput(text.toUpperCase())} 
+              onSubmitEditing={fetchData}
+              placeholder="Search your desired holdings" 
+              width="45%" 
+              borderRadius="4" py="2.5" px="1" fontSize="10"
+              InputLeftElement={<Icon m="2" ml="3" size="3" color="gray.400" as={<MaterialIcons name="search" />} />}/>
+            </Flex>
+
+            <Spacer h='10%'/>
+
+            <Button bgColor='#f79256' onPress={() => {
+              setModalVisible(!modalVisible);
+              }}>
+              Buy/Sell
+              </Button>
           </Flex>
-        </View>
+        </KeyboardAvoidingView>
       ) : (
-        <View style={[styles.textContainer, { bottom: screenHeight * 0.13 }]}>
+        <KeyboardAvoidingView style={[styles.textContainer, { bottom: screenHeight * 0.13 }]}>
           <Text style={styles.closed}>Market is now closed.</Text>
           <Text style={styles.opensIn}>Opens in {`${hoursDiff}h ${minsDiff}min`}.</Text>
-        </View>
+        </KeyboardAvoidingView>
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -126,10 +195,11 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: 'white',
     alignItems: 'center',
+    alignContent: 'center',
   },
   headingOpen: {
     fontFamily: 'PoppinsSemi',
-    fontSize: 15,
+    fontSize: 18,
     alignSelf: 'center',
   },
   header: {
@@ -146,4 +216,12 @@ const styles = StyleSheet.create({
     fontFamily: 'PoppinsSemi',
     fontSize: 12,
   },
+  currentPrice: {
+    fontFamily: 'PoppinsSemi',
+    fontSize: 13,
+  },
+  modalNextAction: {
+    fontFamily: 'PoppinsSemi',
+    fontSize: 13,
+  }
 });
