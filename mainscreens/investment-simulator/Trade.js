@@ -62,7 +62,7 @@ const Trade = () => {
   //for searching of stock price
   const [input, setInput] = useState('AAPL')
 
-//limit to fetching of data: 100,000 per month
+//limit to fetching of data: 100,000 per month, latency is 3642ms vs latency of trading view 15min
 useEffect(() => {
     const fetchData = async () => {
         const options = {
@@ -76,13 +76,13 @@ useEffect(() => {
       
         try {
           const response = await axios.request(options);
-          console.log(response.data);
+          console.log(response.data.price);
         } catch (error) {
           console.error(error);
         }
       };
       
-      // fetchData(); uncomment this during actual implementation      
+      //fetchData();     
     }, []);
 
   return (
