@@ -2,15 +2,12 @@
 import { StyleSheet, View} from 'react-native';
 import React from 'react';
 import { Text } from 'react-native-paper';
+import ChatBot from './financial-literacy/chatbot';
 
-class FinancialLiteracy extends React.Component {
-    render() {
-        return(
-            <View style={styles.container}>
-                <Text>Code for Financial Literacy</Text>
-            </View>
-        )
-    }
+const FinancialLiteracy = () => {
+      return (
+        <ChatBot />
+      )
 }
 
 export default FinancialLiteracy;
