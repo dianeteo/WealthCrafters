@@ -90,7 +90,7 @@ const Trade = () => {
         console.log(response.data.price);
         setPrice(response.data.price);
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     };
 
