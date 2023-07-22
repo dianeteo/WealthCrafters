@@ -6,6 +6,9 @@ import { WebView } from 'react-native-webview';
 import moment from 'moment-timezone';
 import axios from 'axios';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { firebase_auth } from '../../config/firebase.js';
+import { db } from '../../config/firebase.js';
+import { doc, collection, setDoc, increment, FieldValue } from '@firebase/firestore';
 
 const Trade = () => {
   const htmlOverviewContent = `<!-- TradingView Widget BEGIN -->
@@ -69,6 +72,8 @@ const Trade = () => {
 
   const [price, setPrice] = useState(0);
 
+  const [quantity, setQuantity] = useState(0);
+
 //limit to fetching of data: 100,000 per month, latency is 3642ms vs latency of trading view 15min
   const fetchData = async () => {
       const options = {
@@ -89,6 +94,58 @@ const Trade = () => {
       }
     };
 
+  // references to firebase functions
+    const usersCollectionRef = collection(db, 'users');
+    const user = firebase_auth.currentUser;
+    const userEmail = user.email;
+    const userDocRef = doc(usersCollectionRef, userEmail);
+    const userHoldingsCollectionRef = collection(userDocRef, 'holdings');
+    const [userIndivHoldingRef, setUserIndivHoldingRef] = useState(null);
+
+    useEffect(() => {
+      if (input) {
+        setUserIndivHoldingRef(doc(userHoldingsCollectionRef, input));
+      }
+    }, [input]);
+
+  //settling trading options & storing in firebase
+    const confirmAction = async () => {
+
+      const parsedQuantity = parseFloat(quantity);
+      if (!input || !selectedAction || !quantity) {
+        alert('Please fill in all required fields before clicking confirm!');
+        return;
+      } else if (isNaN(parsedQuantity)) {
+        alert('Please enter a numeric quantity!');
+        return;
+      }
+
+      if (selectedAction=="Buy") {
+        try { 
+          await setDoc(userIndivHoldingRef, {
+              bid_price: price,
+              quantity: increment(parseFloat(quantity))
+          }, {merge: true});
+          alert('Bought at: ' + price + ' USD');
+      } catch (error) {
+          console.log(error);
+          alert('Failed to add to holdings: ' + error.message);
+      }
+      } else if (selectedAction=="Sell") {
+        try { 
+          await setDoc(userIndivHoldingRef, {
+              ask_price: price,
+              quantity: increment(-parseFloat(quantity))
+          }, {merge: true});
+          alert('Sold at: ' + price + ' USD');
+      } catch (error) {
+          console.log(error);
+          alert('Failed to add to holdings: ' + error.message);
+      }
+      }
+    }
+
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior='padding'>
       <WebView source={{ html: htmlOverviewContent }} />
@@ -98,7 +155,25 @@ const Trade = () => {
           <Modal.Header>{input}</Modal.Header>
           <Modal.Body flexGrow={1}>
             <Flex direction="column" alignItems='center'>
-            <Text> <Text style={styles.currentPrice}> Current stock price:  </Text>{price} USD </Text>
+
+            <Flex direction="row" alignItems={'center'}>
+              <Text style={styles.header}>Search: </Text>
+              <Input
+              autoCapitalize={'characters'}
+              value={input} 
+              onChangeText={(text) => setInput(text.toUpperCase())} 
+              onSubmitEditing={fetchData}
+              placeholder="Search your desired holdings" 
+              width="55%" 
+              borderRadius="4" py="2.5" px="1" fontSize="10"
+              InputLeftElement={<Icon m="2" ml="3" size="3" color="gray.400" as={<MaterialIcons name="search" />} />}/>
+            </Flex>
+
+            <FormControl mt='5'/>
+
+            { input ? (<Text> <Text style={styles.currentPrice}> Current stock price:  </Text>{price} USD </Text>) : 
+            (<Text style={styles.emptyField}>Please key in a ticker symbol to proceed!</Text>) }
+
             
             <FormControl mt='5'/>
 
@@ -119,7 +194,10 @@ const Trade = () => {
 
             <Flex direction="row" alignItems={'center'}>
               <Text style={styles.modalNextAction}>Quantity: </Text>
-              <Input placeholder='Enter a numeric quantity'
+              <Input 
+              value={quantity} 
+              onChangeText={(number) => setQuantity(number)} 
+              placeholder='Enter a numeric quantity'
               marginLeft={3}
               width="50%" ></Input>
             </Flex>
@@ -134,7 +212,7 @@ const Trade = () => {
                 Cancel
               </Button>
               <Button bgColor='#f79256' onPress={() => {
-              setModalVisible(false);
+              setModalVisible(false); confirmAction()
             }}>
                 Confirm
               </Button>
@@ -151,22 +229,7 @@ const Trade = () => {
 
             <Spacer h='10%'/>
 
-            <Flex direction="row" alignItems={'center'}>
-              <Text style={styles.header}>Search: </Text>
-              <Input
-              autoCapitalize={'characters'}
-              value={input} 
-              onChangeText={(text) => setInput(text.toUpperCase())} 
-              onSubmitEditing={fetchData}
-              placeholder="Search your desired holdings" 
-              width="45%" 
-              borderRadius="4" py="2.5" px="1" fontSize="10"
-              InputLeftElement={<Icon m="2" ml="3" size="3" color="gray.400" as={<MaterialIcons name="search" />} />}/>
-            </Flex>
-
-            <Spacer h='10%'/>
-
-            <Button bgColor='#f79256' onPress={() => {
+            <Button marginTop={3} bgColor='#f79256' onPress={() => {
               setModalVisible(!modalVisible);
               }}>
               Buy/Sell
@@ -223,5 +286,10 @@ const styles = StyleSheet.create({
   modalNextAction: {
     fontFamily: 'PoppinsSemi',
     fontSize: 13,
+  }, 
+  emptyField: {
+    fontFamily: 'PoppinsSemi',
+    fontSize: 13,
+    color: '#FF0000',
   }
 });
