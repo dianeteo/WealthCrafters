@@ -10,7 +10,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { firebase_auth } from './config/firebase.js';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
-import Navigation from './ButtonNavigationFP';
+import Navigation from './navigation/financial-planner-nav/ButtonNavigationFP';
+import InvestmentSimulator_Tabs from './navigation/investment-simulator-nav/BottomTabNavigator';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +25,7 @@ const LoggedIn = () => {
         <LoggedInStack.Screen name="MainMenu" component={MainMenu} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Financial Planner" component={Navigation}/>
         <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
-        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator_Tabs}/>
       </LoggedInStack.Navigator>
     </NativeBaseProvider>
   );

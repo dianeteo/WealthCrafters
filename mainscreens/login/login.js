@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "fire
 import { Input, Stack, Center, NativeBaseProvider,Text } from 'native-base';
 import { Button } from 'react-native-paper';
 import { doc, setDoc } from '@firebase/firestore';
+import { db } from '../../config/firebase.js';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -27,14 +28,10 @@ const Login = () => {
 
   const signUp = async () => {
     setLoading(true);
-    if (username.length == 0) {
-      alert("Enter a username!");
-    }   
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       console.log(response);
       await setDoc(doc(db, 'users', email), {
-        username: username,
         email: email
       });
     } catch (error) {
@@ -74,7 +71,7 @@ const Login = () => {
           <>
             <Button mode="contained" onPress={signIn} buttonColor="#f79256">Login</Button>
             <View style={{top:60}}>
-            <Text style={{alignSelf:'center',fontSize:10,textAlign:'center',fontFamily:'Poppins'}}>Don't have an account? Key in your username, email and password and press the button below!</Text>
+            <Text style={{alignSelf:'center',fontSize:10,textAlign:'center',fontFamily:'Poppins'}}>Don't have an account? Key in your email and password and press the button below!</Text>
             <Button mode="contained" onPress={signUp} buttonColor="#f79256" style={{width:175,alignSelf:'center',top:10}}>Create account</Button>
             </View>
           </>

@@ -1,7 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import NavigatorResults from "./ButtonNavigationResults";
-import Filter from "./mainscreens/financial-planner/filter";
+import Filter from "../../mainscreens/financial-planner/filter";
 
 
 const Stack = createNativeStackNavigator()
