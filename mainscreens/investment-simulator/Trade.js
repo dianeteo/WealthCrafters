@@ -173,7 +173,7 @@ const Trade = () => {
           const maxHoldings = Math.floor(parseFloat(userCash/price))
 
           if (parseFloat(quantity) > maxHoldings) {
-            alert(`You can only buy a maximum of ${maxHoldings} holdings.`);
+            alert(`You can only buy a maximum of ${maxHoldings} ${input} holdings.`);
             return;
           }
 
@@ -186,7 +186,7 @@ const Trade = () => {
             email: userEmail,
             cash: increment((-parseFloat(quantity)*price).toFixed(2))
           }, {merge: true});
-          alert('Bought at: ' + price + ' USD');
+          alert('Bought ' + quantity + ' holdings of ' + input + ' at ' + price + ' USD');
           } catch (error) {
               console.log(error);
               alert('Failed to add to holdings: ' + error.message);
@@ -203,7 +203,7 @@ const Trade = () => {
         const maxSellQuantity = Math.max(0, indivHoldingsQuantity);
 
         if ( parseFloat(quantity) > maxSellQuantity) {
-          alert(`You can only sell a maximum of ${maxSellQuantity} holdings.`);
+          alert(`You can sell a maximum of ${maxSellQuantity} ${input} holdings.`);
           return;
         };
 
@@ -216,7 +216,7 @@ const Trade = () => {
             email: userEmail,
             cash: increment((parseFloat(quantity)*price).toFixed(2))
           }, {merge: true});
-          alert('Sold at: ' + price + ' USD');
+          alert('Sold ' + quantity + ' holdings of ' + input + ' at ' + price + ' USD');
       } catch (error) {
           console.log(error);
           alert('Failed to add to holdings: ' + error.message);
