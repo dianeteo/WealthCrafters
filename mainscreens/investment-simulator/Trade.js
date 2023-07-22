@@ -8,7 +8,7 @@ import axios from 'axios';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
-import { doc, collection, setDoc, increment, FieldValue } from '@firebase/firestore';
+import { doc, collection, setDoc, increment, limit, onSnapshot, query } from '@firebase/firestore';
 
 const Trade = () => {
   const htmlOverviewContent = `<!-- TradingView Widget BEGIN -->
@@ -102,11 +102,53 @@ const Trade = () => {
     const userHoldingsCollectionRef = collection(userDocRef, 'holdings');
     const [userIndivHoldingRef, setUserIndivHoldingRef] = useState(null);
 
+    //other required useStates
+    const [holdings, setHoldings] = useState([]);
+    const [indivHoldingsQuantity, setIndivHoldingsQuantity] = useState(0);
+    const [userDetails, setUserDetails] = useState([]);
+    const [userCash, setUserCash] = useState(0);
+
     useEffect(() => {
       if (input) {
         setUserIndivHoldingRef(doc(userHoldingsCollectionRef, input));
       }
     }, [input]);
+
+    useEffect(() => {
+      const unsubscribe = onSnapshot(query(userHoldingsCollectionRef, limit(20)), (snapshot) => {
+        const holdingsData = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+  
+        // const indivHoldingsQuantityData = holdingsData.map((doc) => ({
+        //   quantity: doc.quantity,
+        // }));
+  
+        setHoldings(holdingsData);
+        // setIndivHoldingsQuantity(indivHoldingsQuantityData);
+      });
+  
+      return () => unsubscribe();
+    }, []);
+
+      useEffect(() => {
+      const unsubscribe = onSnapshot(query(usersCollectionRef, limit(20)), (snapshot) => {
+        const userData = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+  
+        // const indivHoldingsQuantityData = holdingsData.map((doc) => ({
+        //   quantity: doc.quantity,
+        // }));
+  
+        setUserDetails(userData);
+        // setIndivHoldingsQuantity(indivHoldingsQuantityData);
+      });
+  
+      return () => unsubscribe();
+    }, []);
 
   //settling trading options & storing in firebase
     const confirmAction = async () => {
@@ -121,21 +163,58 @@ const Trade = () => {
       }
 
       if (selectedAction=="Buy") {
+        for (let i = 0; i < userDetails.length; i++) {
+          if (userDetails[i].email == userEmail) {
+            setUserCash(userDetails[i].cash);
+            console.log(userCash)
+          }
+          }
+
+          const maxHoldings = Math.floor(parseFloat(userCash/price))
+
+          if (parseFloat(quantity) > maxHoldings) {
+            alert(`You can only buy a maximum of ${maxHoldings} holdings.`);
+            return;
+          }
+
         try { 
           await setDoc(userIndivHoldingRef, {
-              bid_price: price,
+              price: price,
               quantity: increment(parseFloat(quantity))
           }, {merge: true});
+          await setDoc(userDocRef, {
+            email: userEmail,
+            cash: increment((-parseFloat(quantity)*price).toFixed(2))
+          }, {merge: true});
           alert('Bought at: ' + price + ' USD');
-      } catch (error) {
-          console.log(error);
-          alert('Failed to add to holdings: ' + error.message);
-      }
+          } catch (error) {
+              console.log(error);
+              alert('Failed to add to holdings: ' + error.message);
+          }
+
       } else if (selectedAction=="Sell") {
+        // calculate the maximum quantity they can sell, prevents user from selling more than they have
+        for (let i = 0; i < holdings.length; i++) {
+          if (holdings[i].id == input) {
+            setIndivHoldingsQuantity(holdings[i].quantity);
+          }
+          }
+
+        const maxSellQuantity = Math.max(0, indivHoldingsQuantity);
+
+        if ( parseFloat(quantity) > maxSellQuantity) {
+          alert(`You can only sell a maximum of ${maxSellQuantity} holdings.`);
+          return;
+        };
+
         try { 
           await setDoc(userIndivHoldingRef, {
-              ask_price: price,
+              price: price,
               quantity: increment(-parseFloat(quantity))
+          }, {merge: true});
+          await setDoc(userDocRef, {
+            email: userEmail,
+            cash: increment((parseFloat(quantity)*price).toFixed(2))
           }, {merge: true});
           alert('Sold at: ' + price + ' USD');
       } catch (error) {
@@ -143,7 +222,8 @@ const Trade = () => {
           alert('Failed to add to holdings: ' + error.message);
       }
       }
-    }
+    
+  }
 
 
   return (
