@@ -166,7 +166,6 @@ const Trade = () => {
         for (let i = 0; i < userDetails.length; i++) {
           if (userDetails[i].email == userEmail) {
             setUserCash(userDetails[i].cash);
-            console.log(userCash)
           }
           }
 
