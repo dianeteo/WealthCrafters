@@ -26,10 +26,10 @@ const ChatBot = () => {
       {...props}
         timeTextStyle={{
           left: {
-            color: 'black',
+            color: 'white',
           },
           right: {
-            color: 'white',
+            color: 'black',
           },
         }}
       />
@@ -131,20 +131,20 @@ const ChatBot = () => {
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: '#4c7dfe',
+            backgroundColor: '#fafaf9',
           },
           left:{
-            backgroundColor:'#fafaf9'
+            backgroundColor:'#4c7dfe'
           }
         }}
         textStyle={{
           right: {
             fontFamily:'Lato',
-            color:'white'
+            color:'black'
           },
           left:{
             fontFamily:'Lato',
-            color:'black'
+            color:'white'
           }
         }}
       />
@@ -375,6 +375,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   inputToolbarContainer:{
-    marginTop:40
+    marginTop:48
   },
 });
