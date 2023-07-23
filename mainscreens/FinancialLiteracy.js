@@ -1,8 +1,9 @@
 
-import { StyleSheet, View} from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView} from 'react-native';
 import React from 'react';
 import { Text } from 'react-native-paper';
 import ChatBot from './financial-literacy/chatbot';
+
 
 const FinancialLiteracy = () => {
       return (

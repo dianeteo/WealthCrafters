@@ -23,7 +23,7 @@ const MainMenu = () => {
         mode="contained"
         style={{ marginBottom: 10 }}
         buttonColor="#1d4e89"
-        onPress={() => navigation.navigate("Financial Literacy")}
+        onPress={() => navigation.navigate("Chatbot")}
       >
         Financial Literacy
       </Button>

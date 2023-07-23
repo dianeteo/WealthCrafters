@@ -1,9 +1,10 @@
-import { View, VStack, Heading } from 'native-base';
-import React, { useState, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { FontAwesome, MaterialCommunityIcons, } from '@expo/vector-icons';
+import React, { useState, useEffect,useRef } from 'react';
+import { StyleSheet,View, Image,Text,Platform} from 'react-native';
+import {KeyboardSpacer} from 'react-native-keyboard-spacer';
+import { GiftedChat ,Send,Bubble,InputToolbar,Time} from 'react-native-gifted-chat';
 import axios from 'axios';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Spinner } from 'native-base';
 
 
 const avatar = require('../../assets/chatbot.png');
@@ -17,7 +18,138 @@ const version = '2023-02-15';
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
+  const searchResults=useRef([]);
+  const shownResults = useRef(0);
+  const renderTime = (props) => {
+    return (
+      <Time
+      {...props}
+        timeTextStyle={{
+          left: {
+            color: 'black',
+          },
+          right: {
+            color: 'white',
+          },
+        }}
+      />
+    );
+  };
+  // handles quick reply
+  const handleQuickReply = (quickReply) => {
+    const  value  = quickReply[0].value;
+      if (value === 'Yes') {
+        const nextResults = searchResults.current.slice(shownResults.current, (shownResults.current + 5));
+        if (nextResults.length === 0) {
+          // If there are no more search results, send a message saying so
+          const noMoreResultsMessage = 'Sorry, there are no more search results to display. Please ask another question.';
+          setMessages((prevMessages) =>
+            GiftedChat.append(prevMessages, {
+              _id: Math.round(Math.random() * 1000000),
+              text: noMoreResultsMessage,
+              createdAt: new Date(),
+              user: BOT,
+            })
+          )}
+        else {
+        const nextResultsMessage = `Here are the next 5 search results:\n\n${nextResults
+          .map((result) => `${result.name} - ${result.url}`)
+          .join('\n')}`;
+          setMessages((prevMessages) =>
+          GiftedChat.append(prevMessages, {
+            _id: Math.round(Math.random() * 1000000),
+            text: nextResultsMessage,
+            createdAt: new Date(),
+            user: BOT,
+          }))
+          const moreResultsMessage = `Would you still like to view more results?`;
+          setMessages((prevMessages) =>
+            GiftedChat.append(prevMessages, {
+              _id: Math.round(Math.random() * 1000000),
+              text: moreResultsMessage,
+              createdAt: new Date(),
+              user: BOT,
+              quickReplies: {
+                type: 'radio',
+                keepIt: true,
+                values: [
+                  { title: 'Yes', value: 'Yes' },
+                  { title: 'No', value: 'No' },
+                ],
+              },}))
+              shownResults.current = shownResults.current + 5; // Update the shownResultsRef value
+              console.log(shownResults.current);
+        }}
+          else if (value === 'No') {
+            // User does not want to see more results
+            const noResultsMessage =
+              'Okay, no problem! If you have any other questions, feel free to ask.';
+            setMessages((prevMessages) =>
+              GiftedChat.append(prevMessages, {
+                _id: Math.round(Math.random() * 1000000),
+                text: noResultsMessage,
+                createdAt: new Date(),
+                user: BOT,
+              })
+            );
+          }}
+  //scrollToBottom component
+  const scrollToBottomComponent = () => {
+    return(
+      <FontAwesome name='angle-double-down' size={22} color='#333' />
+    )
+  }
 
+
+  //input toolbar
+  const renderInputToolbar = (props) => {
+    return (
+      <View style={styles.inputToolbarContainer}>
+        <InputToolbar {...props} 
+        containerStyle={{
+          borderRadius:50,
+          marginLeft:17,
+          marginRight:17,
+          
+        }}/>
+      </View>
+    );
+  };
+  //send button
+  const renderSend = (props) => {
+    return (
+      <Send {...props}>
+          <MaterialCommunityIcons name='send-circle' size={32} color='#229ED9' style={{marginBottom: 5, marginRight: 5}}/>
+      </Send>
+    )
+  }
+
+  //bubble
+  const renderBubble = (props) => {
+    return (
+      <Bubble
+        {...props}
+        wrapperStyle={{
+          right: {
+            backgroundColor: '#4c7dfe',
+          },
+          left:{
+            backgroundColor:'#fafaf9'
+          }
+        }}
+        textStyle={{
+          right: {
+            fontFamily:'Lato',
+            color:'white'
+          },
+          left:{
+            fontFamily:'Lato',
+            color:'black'
+          }
+        }}
+      />
+    );
+  };
   //for search query
   const apiKey = 'c0b4578851e148138c6a5951929b5ed9';
   const endpoint = 'https://api.bing.microsoft.com/v7.0/search';
@@ -31,9 +163,10 @@ const ChatBot = () => {
       });
       console.log(response.data);
       const webpages = response.data.webPages.value;
-      console.log(webpages)
+      searchResults.current=webpages;
       // Create a message with the top 5 search results and send it from the bot
       if (webpages.length > 0) {
+        shownResults.current=0;
         const top5Results = webpages.slice(0, 5); // Extract the first 5 results
         const searchResultsMessage = `Here are the top 5 search results:\n\n${top5Results
           .map((result) => `${result.name} - ${result.url}`)
@@ -41,23 +174,42 @@ const ChatBot = () => {
 
         setMessages((prevMessages) =>
           GiftedChat.append(prevMessages, {
-            _id: messages.length + 1,
+            _id: Math.round(Math.random() * 1000000),
             text: searchResultsMessage,
             createdAt: new Date(),
             user: BOT,
           })
-        );
-      } else {
+        )
+        const moreResultsMessage = `Would you like to view more results?`;
         setMessages((prevMessages) =>
           GiftedChat.append(prevMessages, {
-            _id: messages.length + 1,
+            _id: Math.round(Math.random() * 1000000),
+            text: moreResultsMessage,
+            createdAt: new Date(),
+            user: BOT,
+            quickReplies: {
+              type: 'radio',
+              keepIt: true,
+              values: [
+                { title: 'Yes', value: 'Yes' },
+                { title: 'No', value: 'No' },
+              ],
+            },}))
+            shownResults.current = shownResults.current + 5;
+            console.log(shownResults.current);
+      }
+          else {
+        setMessages((prevMessages) =>
+          GiftedChat.append(prevMessages, {
+            _id: Math.round(Math.random() * 1000000),
             text: 'No search results found. Please try another question!',
             createdAt: new Date(),
             user: BOT,
           })
         );
-      }
-    } catch (error) {
+
+      }}
+     catch (error) {
       console.error('Error fetching search results:', error);
     }
   };
@@ -68,7 +220,7 @@ const ChatBot = () => {
     const url = `https://api.wit.ai/message`;
     setMessages((prevMessages) =>
       GiftedChat.append(prevMessages, {
-        _id: messages.length + 1,
+        _id: Math.round(Math.random() * 1000000),
         text,
         createdAt: new Date(),
         user: {
@@ -89,14 +241,15 @@ const ChatBot = () => {
       });
 
       const witResponse = response.data;
+      const intents=witResponse.intents;
       const entities = witResponse.entities;
       // Check if the 'search_query' entity is present and not empty
-      if (entities && entities['wit$search_query:search_query']) {
+      if (entities && entities['wit$search_query:search_query'] && entities['wit$search_query:search_query'][0]['confidence'] >= 0.90) {
         // Extract search query from the entity
         // Send "Searching in progress..." message
         setMessages((prevMessages) =>
           GiftedChat.append(prevMessages, {
-            _id: messages.length + 1,
+            _id: Math.round(Math.random() * 1000000),
             text: 'Searching in progress...',
             createdAt: new Date(),
             user: BOT,
@@ -108,15 +261,39 @@ const ChatBot = () => {
         console.log(searchQueryValues)
         const searchQueryStr = searchQueryValues.join(' ');
         console.log(searchQueryStr);
-        performSearch(searchQueryStr);
+        // performSearch(searchQueryStr);
         // and send a reply message with the search results or any response from the bot.
-      } else {
+      }
+      
+      else if (intents && intents.some((intent) => intent.name === 'hello')) {
+        // Send back a response
+        setMessages((prevMessages) =>
+          GiftedChat.append(prevMessages, {
+            _id: Math.round(Math.random() * 1000000),
+            text: 'Hello there!!!',
+            createdAt: new Date(),
+            user: BOT,
+          })
+        )}
+      
+      else if (intents && intents.some((intent) => intent.name === 'thanks')) {
+          // Send back a response
+          setMessages((prevMessages) =>
+            GiftedChat.append(prevMessages, {
+              _id: Math.round(Math.random() * 1000000),
+              text: 'Welcome!',
+              createdAt: new Date(),
+              user: BOT,
+            })
+          )}
+        
+      else {
         // Handle the case when no search_query entity is found in the response.
         // You might want to send a default response in such cases.
         setMessages((prevMessages) =>
         GiftedChat.append(prevMessages, {
-          _id: messages.length + 1,
-          text: 'Sorry, that was not a valid question! Can you try rephrasing and sending again?',
+          _id: Math.round(Math.random() * 1000000),
+          text: 'Sorry, I did not understand that! Can you try rephrasing and sending a relevant question again?',
           createdAt: new Date(),
           user: BOT,
         })
@@ -130,33 +307,74 @@ const ChatBot = () => {
 
 
   useEffect(() => {
-    // Initial message to start the conversation
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello! Key in any questions you might have!!',
-        createdAt: new Date(),
-        user: BOT,
-      },
-    ]);
+    // Delay the initial message by 1 second (2000 milliseconds)
+    const initialMessageTimer = setTimeout(() => {
+      setMessages([
+        {
+          _id: 1,
+          text: 'Hello! Key in any questions you might have!!',
+          createdAt: new Date(),
+          user: BOT,
+        },
+      ]);
+    }, 1000);
+
+    // Clear the timer when the component unmounts
+    return () => clearTimeout(initialMessageTimer);
   }, []);
 
-  return (
-    <>
-      <Heading style={{ alignSelf: 'center', fontFamily: 'Lato' }}>Ask Me Anything!</Heading>
-      <GiftedChat
-        messages={messages}
-        onSend={(message)=>{handleSend(message)}}
-        user={{
-          _id: 1,
-        }}
-      />
-    </>
+    return (
+      <>
+        <GiftedChat
+          messages={messages}
+          onSend={(message) => {
+            handleSend(message);
+          }}
+          user={{
+            _id: 1,
+          }}
+          textInputStyle={{
+            borderRadius: 30,
+            
+          }}
+          placeholder="Ask away!"
+          isTyping={true}
+          alwaysShowSend={true}
+          renderSend={renderSend}
+          renderBubble={renderBubble}
+          renderAvatarOnTop={true}
+          renderInputToolbar={renderInputToolbar}
+          scrollToBottom
+          scrollToBottomComponent={scrollToBottomComponent}
+          renderTime={renderTime}
+          messagesContainerStyle={{
+            backgroundColor:'#fff',
+            height:780
+          }}
+          onQuickReply={handleQuickReply}
+        />
+        {Platform.OS === 'android' ? <KeyboardSpacer /> : null }
+      </>
   );
 };
 
 export default ChatBot;
 
 const styles = StyleSheet.create({
-  container: {},
+  loadingContainer: {
+    alignItems:'center',
+    justifyContent:'center',
+    flex:1
+  },
+  avatarContainer: {
+    margin: 8,
+  },
+  avatarImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  inputToolbarContainer:{
+    marginTop:40
+  },
 });
