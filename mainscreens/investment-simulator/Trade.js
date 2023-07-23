@@ -8,7 +8,7 @@ import axios from 'axios';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { firebase_auth } from '../../config/firebase.js';
 import { db } from '../../config/firebase.js';
-import { doc, collection, setDoc, increment, limit, onSnapshot, query } from '@firebase/firestore';
+import { doc, collection, getDocs, setDoc, increment, limit, onSnapshot, query } from '@firebase/firestore';
 
 const Trade = () => {
   const htmlOverviewContent = `<!-- TradingView Widget BEGIN -->
@@ -107,6 +107,8 @@ const Trade = () => {
     const [indivHoldingsQuantity, setIndivHoldingsQuantity] = useState(0);
     const [userDetails, setUserDetails] = useState([]);
     const [userCash, setUserCash] = useState(0);
+    const [isFetchingUserCash, setIsFetchingUserCash] = useState(false);
+    const [isFetchingIndivHoldingsQuantity, setIsFetchingIndivHoldingsQuantity] = useState(false);
 
     useEffect(() => {
       if (input) {
@@ -150,6 +152,55 @@ const Trade = () => {
       return () => unsubscribe();
     }, []);
 
+    useEffect(() => {
+      const fetchUserCashData = async () => {
+        setIsFetchingUserCash(true); // Set a flag to indicate that the data is being fetched
+        try {
+          const querySnapshot = await getDocs(query(usersCollectionRef, limit(20)));
+          const usersData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+          for (let i = 0; i < usersData.length; i++) {
+            if (usersData[i].email === userEmail) {
+              setUserCash(usersData[i].cash);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching user cash data: ', error);
+        } finally {
+          setIsFetchingUserCash(false); // Reset the flag after data fetching is done
+        }
+      };
+    
+      // Fetch user cash only when "Buy" is selected
+      if (selectedAction === "Buy" && !isFetchingUserCash) {
+        fetchUserCashData();
+      }
+    }, [selectedAction, userEmail, usersCollectionRef, isFetchingUserCash]);
+
+    useEffect(() => {
+      // Function to fetch individual holdings quantity
+      const fetchIndivHoldingsQuantity = async () => {
+        setIsFetchingIndivHoldingsQuantity(true);
+        try {
+          const querySnapshot = await getDocs(query(userHoldingsCollectionRef, limit(20)));
+          const userHoldingsData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+          for (let i = 0; i < userHoldingsData.length; i++) {
+            if (userHoldingsData[i].id == input) {
+              setIndivHoldingsQuantity(userHoldingsData[i].quantity);
+            };
+        }
+       } catch (error) {
+          console.error('Error fetching individual holdings quantity: ', error);
+        } finally {
+          setIsFetchingIndivHoldingsQuantity(false);
+        }
+      };
+    
+      // Fetch individual holdings quantity when the selected action is "Sell"
+      if (selectedAction === 'Sell' && userIndivHoldingRef && !isFetchingIndivHoldingsQuantity) {
+        fetchIndivHoldingsQuantity();
+      }
+    }, [selectedAction, userIndivHoldingRef, isFetchingIndivHoldingsQuantity]);
+
   //settling trading options & storing in firebase
     const confirmAction = async () => {
 
@@ -163,12 +214,6 @@ const Trade = () => {
       }
 
       if (selectedAction=="Buy") {
-        for (let i = 0; i < userDetails.length; i++) {
-          if (userDetails[i].email == userEmail) {
-            setUserCash(userDetails[i].cash);
-          }
-          }
-
           const maxHoldings = Math.floor(parseFloat(userCash/price))
 
           if (parseFloat(quantity) > maxHoldings) {
@@ -192,12 +237,6 @@ const Trade = () => {
           }
 
       } else if (selectedAction=="Sell") {
-        // calculate the maximum quantity they can sell, prevents user from selling more than they have
-        for (let i = 0; i < holdings.length; i++) {
-          if (holdings[i].id == input) {
-            setIndivHoldingsQuantity(holdings[i].quantity);
-          }
-          }
 
         const maxSellQuantity = Math.max(0, indivHoldingsQuantity);
 
