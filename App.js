@@ -25,7 +25,7 @@ const LoggedIn = () => {
         <LoggedInStack.Screen name="MainMenu" component={MainMenu} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Financial Planner" component={Navigation}/>
         <LoggedInStack.Screen name="Chatbot" component={FinancialLiteracy} />
-        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator_Tabs} options={{ headerShown: true }}/>
 
       </LoggedInStack.Navigator>
     </NativeBaseProvider>
