@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import NewEntry from "./mainscreens/financial-planner/entry";
+import NewEntry from "../../mainscreens/financial-planner/entry";
 
 import MyTabs from "./BottomTabNavigator";
 
