@@ -24,8 +24,9 @@ const LoggedIn = () => {
       <LoggedInStack.Navigator>
         <LoggedInStack.Screen name="MainMenu" component={MainMenu} options={{ headerShown: false }}/>
         <LoggedInStack.Screen name="Financial Planner" component={Navigation}/>
-        <LoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
-        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator_Tabs}/>
+        <LoggedInStack.Screen name="Chatbot" component={FinancialLiteracy} />
+        <LoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
+
       </LoggedInStack.Navigator>
     </NativeBaseProvider>
   );
@@ -40,7 +41,7 @@ const NotLoggedIn = () => {
         <NotLoggedInStack.Screen name="Log In" component={Login} options={{ headerShown: false }}/>
         <NotLoggedInStack.Screen name="MainMenu" component={MainMenu}/>
         <NotLoggedInStack.Screen name="Financial Planner" component={Navigation} options={{ headerShown: false }}/>
-        <NotLoggedInStack.Screen name="Financial Literacy" component={FinancialLiteracy} options={{ headerShown: false }}/>
+        <NotLoggedInStack.Screen name="Chatbot" component={FinancialLiteracy} />
         <NotLoggedInStack.Screen name="Investment Simulator" component={InvestmentSimulator} options={{ headerShown: false }}/>
       </NotLoggedInStack.Navigator>
     </NativeBaseProvider>
