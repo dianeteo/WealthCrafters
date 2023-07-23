@@ -261,7 +261,7 @@ const ChatBot = () => {
         console.log(searchQueryValues)
         const searchQueryStr = searchQueryValues.join(' ');
         console.log(searchQueryStr);
-        // performSearch(searchQueryStr);
+        performSearch(searchQueryStr);
         // and send a reply message with the search results or any response from the bot.
       }
       
