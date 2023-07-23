@@ -32,7 +32,8 @@ const Login = () => {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       console.log(response);
       await setDoc(doc(db, 'users', email), {
-        email: email
+        email: email,
+        cash: 1000000
       });
     } catch (error) {
       console.log(error);
