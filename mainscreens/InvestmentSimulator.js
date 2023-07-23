@@ -1,4 +1,4 @@
-import { StyleSheet, View, Dimensions, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Dimensions, Text, ScrollView, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { WebView } from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -24,6 +24,12 @@ const InvestmentSimulator = () => {
   const [userCash, setUserCash] = useState(0);
   const [userHoldingsValue, setUserHoldingsValue] = useState(0);
   const [price, setPrice] = useState(0);
+  const [totalAccountValue, setTotalAccountValue] = useState(0);
+  const [percentageChange, setPercentageChange] = useState(0);
+
+  //loading activity indicator
+  const [loading, setLoading] = useState(true);
+
 
   //limit to fetching of data: 100,000 per month, latency is 3642ms vs latency of trading view 15min
   const fetchAPIData = async (specificHolding) => {
@@ -59,7 +65,39 @@ const InvestmentSimulator = () => {
     };
 
     fetchHoldingsData();
+    console.log('Holdings data fetched')
+  }, []);
 
+  useEffect(() => {
+    const fetchHoldingsValue = async () => {
+      setLoading(true);
+      try {
+        // Create an array of promises for all the API calls
+        const fetchPromises = holdings.map((holding) => fetchAPIData(holding.id));
+  
+        // Wait for all API calls to finish
+        const holdingPrices = await Promise.all(fetchPromises);
+  
+        // Calculate the total holdings value
+        let holdingsValueData = 0;
+        for (let i = 0; i < holdings.length; i++) {
+          holdingsValueData += holdingPrices[i] * holdings[i].quantity;
+        }
+  
+        setUserHoldingsValue(holdingsValueData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching holdings value: ', error);
+        setLoading(false);
+      }
+    };
+  
+    fetchHoldingsValue();
+    console.log('Holdings value fetched')
+  }, [holdings]); 
+  
+
+  useEffect(() => {
     const fetchUserCashData = async () => {
       try {
         const querySnapshot = await getDocs(query(usersCollectionRef, limit(20)));
@@ -75,25 +113,21 @@ const InvestmentSimulator = () => {
   };
 
     fetchUserCashData();
+    console.log('User cash data fetched')
+  }, []);
 
-    const fetchHoldingsValue = async () => {
-      try {
-        let holdingsValueData = 0;
-
-        for (let i = 0; i < holdings.length; i++) {
-          const holdingPrice = await fetchAPIData(holdings[i].id);
-          holdingsValueData += holdingPrice * holdings[i].quantity;
-        }
-
-        setUserHoldingsValue(holdingsValueData);
-      } catch (error) {
-        console.error('Error fetching holdings value: ', error);
-      }
+  useEffect(() => {
+    // Calculate total account value and percentage change
+    const calculate = () => {
+      const totalValue = userCash + userHoldingsValue;
+      setTotalAccountValue(totalValue);
+      setPercentageChange(((totalValue - 1000000) / 1000000 * 100).toFixed(2));
     };
 
-    fetchHoldingsValue();
+    calculate();
+    console.log('Successful calculation')
 
-  }, []);
+  }, [userCash, userHoldingsValue]);
 
   const myRef = React.useRef({});
   React.useEffect(() => {
@@ -106,9 +140,6 @@ const InvestmentSimulator = () => {
       style: styleObj
     });
   }, [myRef]);
-
-  const totalAccountValue = userCash + userHoldingsValue
-  const percentageChange = ((totalAccountValue - 1000000) / 1000000 * 100).toFixed(2);
 
   const CustomRow = ({ symbol, price, quantity, total }) => {
     return (
@@ -127,30 +158,42 @@ const InvestmentSimulator = () => {
       <Text style={styles.welcome}>Welcome to</Text>
       <Text style={styles.title1}>WealthCrafter's</Text>
       <Text style={styles.title2}>Investment Simulator</Text>
-      <Spacer h='1%'/>
+      <Spacer h='0%'/>
       <Text style={styles.comeback}>Come back daily to check your account's growth.</Text>
 
-      <Spacer h='3%'/>
+      <Spacer h='2%'/>
 
       <Center>
+      {loading ? (
       <Box width="90%" bg="#1d4e89" p="4" shadow={2} _text={{
-      fontFamily: 'Poppins',
-      fontSize: "sm",
-      fontWeight: "bold",
-      color: "#fbd1a2"
-    }} ref={myRef}>
+        fontFamily: 'Poppins',
+        fontSize: "xs",
+        fontWeight: "bold",
+        color: "#fbd1a2"
+      }} ref={myRef}>
         CURRENT ACCOUNT VALUE:
-        <Text style={styles.accountValue}>${totalAccountValue}<Text style={styles.usd}> USD</Text></Text>
-        <Text style={styles.percentage}>{percentageChange} %</Text>
+        <ActivityIndicator size="small" color="#FFFFFF" />
       </Box>
-      </Center>
+      ) : (
+        <Box width="90%" bg="#1d4e89" p="4" shadow={2} _text={{
+          fontFamily: 'Poppins',
+          fontSize: "xs",
+          fontWeight: "bold",
+          color: "#fbd1a2"
+        }} ref={myRef}>
+          CURRENT ACCOUNT VALUE:
+          <Text style={styles.accountValue}>${totalAccountValue}<Text style={styles.usd}> USD</Text></Text>
+          <Text style={styles.percentage}>{percentageChange} %</Text>
+        </Box>
+      )}
+    </Center>
 
-      <Spacer h='3%'/>
+      <Spacer h='2%'/>
 
       <Center>
       <Box width="90%" bg="#1d4e89" p="4" shadow={2} _text={{
       fontFamily: 'Poppins',
-      fontSize: "sm",
+      fontSize: "xs",
       fontWeight: "bold",
       color: "#fbd1a2"
     }} ref={myRef}>
@@ -159,7 +202,7 @@ const InvestmentSimulator = () => {
       </Box>
       </Center>
 
-      <Spacer h='1%'/>
+      <Spacer h='0%'/>
 
       <ScrollView>
       <DataTable style={styles.tableContainer}>
@@ -209,7 +252,7 @@ const styles = StyleSheet.create({
   },
   title2: {
     fontFamily: 'PoppinsSemi',
-    fontSize: 30,
+    fontSize: 28,
     marginLeft: 20
   },
   comeback: {
@@ -219,7 +262,7 @@ const styles = StyleSheet.create({
   },
   accountValue: {
     fontFamily: 'PoppinsSemi',
-    fontSize: 45,
+    fontSize: 35,
     color:'#FFFFFF'
   },
   usd: {
