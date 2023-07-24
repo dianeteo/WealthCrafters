@@ -349,7 +349,7 @@ const ChatBot = () => {
           renderTime={renderTime}
           messagesContainerStyle={{
             backgroundColor:'#fff',
-            height:780
+            height:'96%'
           }}
           onQuickReply={handleQuickReply}
         />
@@ -375,6 +375,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   inputToolbarContainer:{
-    marginTop:48
+    marginTop:'5%'
   },
 });
