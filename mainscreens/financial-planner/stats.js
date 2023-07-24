@@ -1,7 +1,7 @@
 
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import React,{useEffect, useState} from 'react';
-import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon,HStack } from 'native-base';
+import { View,Box,Flex,Center,Button,Text,Spacer,Modal, FormControl, Input, WarningOutlineIcon,HStack,Spinner } from 'native-base';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Donut from './stats/DonutChart';
 import RenderStats from './stats/piechart';
@@ -226,8 +226,9 @@ const GoalsStats = ({balance}) => {
   };
 
 const Stats = () => {
-    const navigation = useNavigation()
-    const [inputValue,setInputValue] = useState('')
+    const navigation = useNavigation();
+    const [loading, setLoading] = useState(true);
+    const [inputValue,setInputValue] = useState('');
     const [filteredExpenseCategories, setFilteredExpenseCategories] = useState([]);
     const [filteredIncomeCategories,setFilteredIncomeCategories]=useState([]);
     const [balance,setBalance]=useState(0);
@@ -246,92 +247,93 @@ const Stats = () => {
         const [incomes, setIncomes] = useState([]);
         //expenses
         const [expenses, setExpenses] = useState([]);
-        const fetchIncomeData = async () => {
-        try {
-            const querySnapshot = await getDocs(userIncomesRef);
-            const incomeData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-            setIncomes(incomeData);
-        } catch (error) {
-            console.error('Error fetching income data:', error);
-        }
-        };
 
-        const fetchExpenseData = async () => {
-            try {
-                const querySnapshot = await getDocs(userExpensesRef);
-                const expenseData = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-                setExpenses(expenseData);
-            } catch (error) {
-                console.error('Error fetching expense data:', error);
-            }
-        }
 
-        const filterDataByMonth= (data) => {
-            const convertMonth=(str)=>{
-                const parts=str.split('/')
-                console.log(parseInt(parts[1]))
-                return parseInt(parts[1])
-            }
-            const currentMonth=new Date().getMonth() +1;
-            const filteredData=[];
-            if (data){
-                for (let i=0; i<data.length;i++){
-                    if (convertMonth(data[i].created_at)===currentMonth) {
-                        console.log(data[i])
-                        filteredData.push(data[i])
+        useEffect(() => {
+            const filterDataByMonth= (data) => {
+                const convertMonth=(str)=>{
+                    const parts=str.split('/')
+                    console.log(parseInt(parts[1]))
+                    return parseInt(parts[1])
+                }
+                const currentMonth=new Date().getMonth() +1;
+                const filteredData=[];
+                if (data){
+                    for (let i=0; i<data.length;i++){
+                        if (convertMonth(data[i].created_at)===currentMonth) {
+                            console.log(data[i])
+                            filteredData.push(data[i])
+                        }
                     }
                 }
+                return filteredData
             }
-            return filteredData
-        }
-
-        const filterDatabyCategories = (monthData) =>{
-            const newData = monthData.reduce((result, data) => {
-                const existingData = result.find(item => item.category === data.category);
-              
-                if (existingData) {
-                  existingData.total += data.amount;
-                } else {
-                  result.push({ category: data.category, total: data.amount });
-                }
-              
-                return result;
-              }, []);
-            const totalAmount=newData.reduce((sum,data)=> sum+data.total,0)
     
-            let finalData=newData.map((item)=>{
-                let percentage=(item.total/totalAmount*100).toFixed(1)
-                return {
-                    label:`${percentage}%`,
-                    y:Number(item.total),
-                    category:item.category
-    
-                }
-            })
-            return finalData
-        }
-        const findingTotal = (data) =>{
-            return data.reduce((a,b)=> a+(b.total || 0),0)
-        }
-        useEffect(() => {
-            const fetchAndFilterData = () => {
-              fetchExpenseData();
-              fetchIncomeData();
-              // Filter the data by month
-              const filteredExpenseData = filterDataByMonth(expenses);
-              const filteredIncomeData = filterDataByMonth(incomes);
-
-              // Filter the data by categories
-              const ExpenseCategories = filterDatabyCategories(filteredExpenseData);
-              const IncomeCategories = filterDatabyCategories(filteredIncomeData);
-              setFilteredExpenseCategories(ExpenseCategories);
-              setFilteredIncomeCategories(IncomeCategories);
-              setBalance(findingTotal(filteredIncomeData)-findingTotal(filteredExpenseData))
-            
-            };
+            const filterDatabyCategories = (monthData) =>{
+                const newData = monthData.reduce((result, data) => {
+                    const existingData = result.find(item => item.category === data.category);
+                  
+                    if (existingData) {
+                      existingData.total += data.amount;
+                    } else {
+                      result.push({ category: data.category, total: data.amount });
+                    }
+                  
+                    return result;
+                  }, []);
+                const totalAmount=newData.reduce((sum,data)=> sum+data.total,0)
         
-            fetchAndFilterData();
-          }, []);
+                let finalData=newData.map((item)=>{
+                    let percentage=(item.total/totalAmount*100).toFixed(1)
+                    return {
+                        label:`${percentage}%`,
+                        y:Number(item.total),
+                        category:item.category
+        
+                    }
+                })
+                return finalData
+            }
+            const findingTotal = (data) =>{
+                return data.reduce((a,b)=> a+(b.total || 0),0)
+            };
+            const fetchDataAndFilter = async () => {
+                try {
+                  // Fetch income data
+                  const querySnapshotIncome = await getDocs(userIncomesRef);
+                  const incomeData = querySnapshotIncome.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                  setIncomes(incomeData);
+            
+                  // Fetch expense data
+                  const querySnapshotExpense = await getDocs(userExpensesRef);
+                  const expenseData = querySnapshotExpense.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                  setExpenses(expenseData);
+            
+                  console.log('Data fetched');
+            
+                  // Filter the data by month
+                  const filteredExpenseData = filterDataByMonth(expenseData);
+                  const filteredIncomeData = filterDataByMonth(incomeData);
+            
+                  // Filter the data by categories
+                  const ExpenseCategories = filterDatabyCategories(filteredExpenseData);
+                  const IncomeCategories = filterDatabyCategories(filteredIncomeData);
+                  setFilteredExpenseCategories(ExpenseCategories);
+                  setFilteredIncomeCategories(IncomeCategories);
+                  setBalance(findingTotal(filteredIncomeData) - findingTotal(filteredExpenseData));
+                    console.log('done')
+                  setLoading(false); // Set loading to false after fetching and filtering data
+                } catch (error) {
+                  console.error('Error fetching data:', error);
+                }
+              };
+            
+              setLoading(true);
+              fetchDataAndFilter();
+            }, []);
+     if (loading) {
+        return <Spinner color='cyan.500' size='lg' style={{flex:1,alignSelf:'center',justifyContent:'center'}}/>;
+    }
 
 
     return (
@@ -341,7 +343,7 @@ const Stats = () => {
             <TouchableOpacity style={styles.filterbutton} onPress={()=>{navigation.navigate('StackedFilter')}}>
                 <Text>Filter</Text>
             </TouchableOpacity>
-            </Flex>
+            </Flex> 
             <Tab.Navigator
                 initialRouteName='GoalsStats'
                 sceneContainerStyle={{ flex: 1 }}
@@ -352,7 +354,7 @@ const Stats = () => {
                     backgroundColor: '#1d4e89',
                     borderTopLeftRadius: 20,
                     borderTopRightRadius: 20,
-                    width:350,
+                    width:'80%',
                     alignSelf:'center'
                 },
                 tabBarIndicatorStyle: {
@@ -364,6 +366,7 @@ const Stats = () => {
                     name="IncomeStats"
                     options={{
                         tabBarLabel: 'Income',
+                        lazy:true
                     }}
                     >
                     {() => <IncomeStats income={filteredIncomeCategories} />}
@@ -380,6 +383,7 @@ const Stats = () => {
                     name="ExpensesStats"
                     options={{
                         tabBarLabel: 'Expenses',
+                        lazy:true
                     }}
                     >
                     {() => <ExpensesStats expense={filteredExpenseCategories} />}
