@@ -77,10 +77,10 @@ const WarningMessage = (showComponent,diff) =>{
 };
 
 //Goal Page
-const GoalsStats = ({balance}) => {
+const GoalsStats = () => {
     const percentage=balance/goal*100
     const new_data=[{
-        label: `${percentage}%`,
+        label: `${percentage}`,
         color:'orange',
         max:goal
     }]
@@ -110,10 +110,11 @@ const GoalsStats = ({balance}) => {
             const userData = userDocSnapshot.data();
             if (userData.hasOwnProperty('goal')) {
               // 'goal' field exists in the document, update it
-              await updateDoc(userDocRef, { goal: goal });
-            } else {
+                await updateDoc(userDocRef, { goal: parseFloat(goalText).toFixed(2) });
+            }
+            else {
               // 'goal' field does not exist, create it
-              await setDoc(userDocRef, { goal: goal }, { merge: true });
+              await setDoc(userDocRef, { goal: parseFloat(goalText).toFixed(2) }, { merge: true });
             }
           }
         } catch (error) {
@@ -141,14 +142,113 @@ const GoalsStats = ({balance}) => {
       //upon rendering page
       useEffect(()=>{
         //to recognise user
-        retrieveGoal()
+        retrieveGoal();
       },[]);
+
+      const navigation = useNavigation();
+      const [loading, setLoading] = useState(true);
+      const [inputValue,setInputValue] = useState('');
+      const [filteredExpenseCategories, setFilteredExpenseCategories] = useState([]);
+      const [filteredIncomeCategories,setFilteredIncomeCategories]=useState([]);
+      const [balance,setBalance]=useState(0);
+  
+          const userIncomesRef = collection(userDocRef, 'income');
+          const userExpensesRef=collection(userDocRef,'expenses')
+          //income
+          const [incomes, setIncomes] = useState([]);
+          //expenses
+          const [expenses, setExpenses] = useState([]);
+  
+          useEffect(() => {
+              const filterDataByMonth= (data) => {
+                  const convertMonth=(str)=>{
+                      const parts=str.split('/')
+                      return parseInt(parts[1])
+                  }
+                  const currentMonth=new Date().getMonth() +1;
+                  const filteredData=[];
+                  if (data){
+                      for (let i=0; i<data.length;i++){
+                          if (convertMonth(data[i].created_at)===currentMonth) {
+                              filteredData.push(data[i])
+                          }
+                      }
+                  }
+                  return filteredData
+              }
+      
+              const filterDatabyCategories = (monthData) =>{
+                  const newData = monthData.reduce((result, data) => {
+                      const existingData = result.find(item => item.category === data.category);
+                    
+                      if (existingData) {
+                        existingData.total += data.amount;
+                      } else {
+                        result.push({ category: data.category, total: data.amount });
+                      }
+                    
+                      return result;
+                    }, []);
+                  const totalAmount=newData.reduce((sum,data)=> sum+data.total,0)
+          
+                  let finalData=newData.map((item)=>{
+                      let percentage=(item.total/totalAmount*100).toFixed(1)
+                      return {
+                          label:`${percentage}%`,
+                          y:Number(item.total),
+                          category:item.category
+          
+                      }
+                  })
+                  return finalData
+              }
+              const findingTotal = (data) => {
+                  let totalAmount = 0;
+                
+                  for (let i = 0; i < data.length; i++) {
+                    totalAmount += data[i].amount;
+                  }
+                  return totalAmount;
+                };
+                
+              const fetchDataAndFilter = async () => {
+                  try {
+                    // Fetch income data
+                    const querySnapshotIncome = await getDocs(userIncomesRef);
+                    const incomeData = querySnapshotIncome.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                    setIncomes(incomeData);
+              
+                    // Fetch expense data
+                    const querySnapshotExpense = await getDocs(userExpensesRef);
+                    const expenseData = querySnapshotExpense.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                    setExpenses(expenseData);
+              
+                    console.log('Data fetched');
+              
+                    // Filter the data by month
+                    const filteredExpenseData = filterDataByMonth(expenseData);
+                    const filteredIncomeData = filterDataByMonth(incomeData);
+  
+                    // Filter the data by categories
+                    const ExpenseCategories = filterDatabyCategories(filteredExpenseData);
+                    const IncomeCategories = filterDatabyCategories(filteredIncomeData);
+                    setFilteredExpenseCategories(ExpenseCategories);
+                    setFilteredIncomeCategories(IncomeCategories);
+                    setBalance(findingTotal(filteredIncomeData) - findingTotal(filteredExpenseData));
+                    setLoading(false); // Set loading to false after fetching and filtering data
+                  } catch (error) {
+                    console.error('Error fetching data:', error);
+                  }
+                };
+                setLoading(true);
+                fetchDataAndFilter();
+              }, []);
       
     return (<>
-    <Flex direction='column'style={{alignItems:'center',bottom:50}}>
+    <Flex direction='column'style={{alignItems:'center',bottom:100}}>
     <Box style={styles.goal}>
         {new_data.map((p, i) => {
-          return <Donut key={i} percentage={p.percentage} color={p.color} delay={500 + 100 * i} max={p.max}/> 
+          return <Donut percentage={p.percentage} color={p.color} delay={500 + 100 * i} max={p.max}/> 
         })}
     </Box>
     <Spacer h='50%'/>
@@ -194,12 +294,14 @@ const GoalsStats = ({balance}) => {
             <Modal.Footer>
             <Button.Group space={2}>
                 <Button
-                variant="ghost"
-                colorScheme="blueGray"
                 onPress={() => {
+                if (inputError === '') {
                     setModalVisible(false);
+                    setGoal(parseFloat(goalText).toFixed(2));
                     setGoalText('');
-                    setInputError('');
+                    // Call the submitGoal function here to update the goal in the database
+                    submitGoal();
+                }
                 }}
                 >
                 Cancel
@@ -253,7 +355,6 @@ const Stats = () => {
             const filterDataByMonth= (data) => {
                 const convertMonth=(str)=>{
                     const parts=str.split('/')
-                    console.log(parseInt(parts[1]))
                     return parseInt(parts[1])
                 }
                 const currentMonth=new Date().getMonth() +1;
@@ -261,7 +362,6 @@ const Stats = () => {
                 if (data){
                     for (let i=0; i<data.length;i++){
                         if (convertMonth(data[i].created_at)===currentMonth) {
-                            console.log(data[i])
                             filteredData.push(data[i])
                         }
                     }
@@ -294,9 +394,15 @@ const Stats = () => {
                 })
                 return finalData
             }
-            const findingTotal = (data) =>{
-                return data.reduce((a,b)=> a+(b.total || 0),0)
-            };
+            const findingTotal = (data) => {
+                let totalAmount = 0;
+              
+                for (let i = 0; i < data.length; i++) {
+                  totalAmount += data[i].amount;
+                }
+                return totalAmount;
+              };
+              
             const fetchDataAndFilter = async () => {
                 try {
                   // Fetch income data
@@ -314,20 +420,18 @@ const Stats = () => {
                   // Filter the data by month
                   const filteredExpenseData = filterDataByMonth(expenseData);
                   const filteredIncomeData = filterDataByMonth(incomeData);
-            
+
                   // Filter the data by categories
                   const ExpenseCategories = filterDatabyCategories(filteredExpenseData);
                   const IncomeCategories = filterDatabyCategories(filteredIncomeData);
                   setFilteredExpenseCategories(ExpenseCategories);
                   setFilteredIncomeCategories(IncomeCategories);
                   setBalance(findingTotal(filteredIncomeData) - findingTotal(filteredExpenseData));
-                    console.log('done')
                   setLoading(false); // Set loading to false after fetching and filtering data
                 } catch (error) {
                   console.error('Error fetching data:', error);
                 }
               };
-            
               setLoading(true);
               fetchDataAndFilter();
             }, []);
@@ -369,7 +473,7 @@ const Stats = () => {
                         lazy:true
                     }}
                     >
-                    {() => <IncomeStats income={filteredIncomeCategories} />}
+                    {() => <IncomeStats income={Object.values(filteredIncomeCategories)} />}
                     </Tab.Screen>
                     <Tab.Screen
                     name="GoalsStats"
@@ -386,7 +490,7 @@ const Stats = () => {
                         lazy:true
                     }}
                     >
-                    {() => <ExpensesStats expense={filteredExpenseCategories} />}
+                    {() => <ExpensesStats expense={Object.values(filteredExpenseCategories)} />}
                     </Tab.Screen>
             </Tab.Navigator>
         </>
