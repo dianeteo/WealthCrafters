@@ -117,17 +117,22 @@ const InvestmentSimulator = () => {
   }, []);
 
   useEffect(() => {
-    // Calculate total account value and percentage change
-    const calculate = () => {
-      const totalValue = userCash + userHoldingsValue;
-      setTotalAccountValue(totalValue);
-      setPercentageChange(((totalValue - 1000000) / 1000000 * 100).toFixed(2));
-    };
-
-    calculate();
-    console.log('Successful calculation')
-
+    // Calculate total account value
+    const totalValue = userCash + userHoldingsValue;
+    setTotalAccountValue(totalValue);
+  
+    console.log(totalAccountValue);
+    console.log('Successful calculation');
+  
   }, [userCash, userHoldingsValue]);
+  
+  // Calculate percentage change whenever totalAccountValue changes
+  useEffect(() => {
+    // Calculate percentage change
+    const percentageChange = ((totalAccountValue - 1000000) / 1000000 * 100).toFixed(2);
+    setPercentageChange(percentageChange);
+  
+  }, [totalAccountValue]);  
 
   const myRef = React.useRef({});
   React.useEffect(() => {
@@ -141,13 +146,39 @@ const InvestmentSimulator = () => {
     });
   }, [myRef]);
 
-  const CustomRow = ({ symbol, price, quantity, total }) => {
+  const CustomRow = ({ symbol, quantity }) => {
+    const [price, setPrice] = useState(null);
+    const [total, setTotal] = useState(null);
+  
+    useEffect(() => {
+      // Fetch the current price for the symbol
+      const fetchPrice = async () => {
+        try {
+          const price = await fetchAPIData(symbol);
+          setPrice(price);
+        } catch (error) {
+          console.log('Error fetching price for symbol', symbol, error);
+          setPrice(null);
+        }
+      };
+  
+      fetchPrice();
+    }, [symbol]);
+  
+    // Recalculate total whenever the price or quantity changes
+    useEffect(() => {
+      if (price !== null) {
+        const updatedTotal = price * quantity;
+        setTotal(updatedTotal);
+      }
+    }, [price, quantity]);
+  
     return (
       <DataTable.Row>
         <DataTable.Cell>{symbol}</DataTable.Cell>
-        <DataTable.Cell>{price}</DataTable.Cell>
+        <DataTable.Cell>{price !== null ? `$${price}` : 'Loading...'}</DataTable.Cell>
         <DataTable.Cell>{quantity}</DataTable.Cell>
-        <DataTable.Cell>{total}</DataTable.Cell>
+        <DataTable.Cell>{total !== null ? `$${total}` : 'Calculating...'}</DataTable.Cell>
       </DataTable.Row>
     );
   };
