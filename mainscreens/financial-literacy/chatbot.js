@@ -353,7 +353,6 @@ const ChatBot = () => {
           }}
           onQuickReply={handleQuickReply}
         />
-        {Platform.OS === 'android' ? <KeyboardSpacer /> : null }
       </>
   );
 };

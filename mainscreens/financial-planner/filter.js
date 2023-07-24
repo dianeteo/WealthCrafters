@@ -89,35 +89,42 @@ const Filter = () => {
         fetchExpenseData();
       }, []);
 
-    const filterByDate = (date1, date2) => {
+
+      const filterByDate = (date1, date2) => {
         const secondFilter = (date1, date2, data) => {
-            const filtData = [];
-            const convertToDateObject = (string) => {
-                const dateParts = string.split('/');
-                const day = dateParts[0];
-                const month = dateParts[1];
-                const year = dateParts[2];
-                return new Date(year+'-'+month+'-'+day);
-            };
+          const filtData = [];
+          const convertToDateObject = (string) => {
+            const dateParts = string.split('/');
+            const day = dateParts[0];
+            const month = dateParts[1];
+            const year = dateParts[2];
+            return new Date(year + '-' + month + '-' + day);
+          };
     
-            if (date1 && date2 && data) {
-                for (let i = 0; i < data.length; i++) {
-                    if (convertToDateObject(data[i].created_at) >= date1 && convertToDateObject(data[i].created_at) <= date2) {
-                        filtData.push(data[i])
-                    }
-                }
+          if (date1 && date2 && data) {
+            for (let i = 0; i < data.length; i++) {
+              if (convertToDateObject(data[i].created_at) >= date1 && convertToDateObject(data[i].created_at) <= date2) {
+                filtData.push(data[i]);
+              }
             }
-            return filtData;
+          }
+    
+          // Sort the filtered data by date in ascending order before returning
+          filtData.sort((a, b) => {
+            const dateA = convertToDateObject(a.created_at);
+            const dateB = convertToDateObject(b.created_at);
+            return dateA - dateB;
+          });
+    
+          return filtData;
         };
     
-        if (selectedType == "Income") {
-            const data = incomes;
-            return secondFilter(date1, date2, data);
+        if (selectedType === "Income") {
+          return secondFilter(date1, date2, incomes);
         } else {
-            const data = expenses;
-            return secondFilter(date1, date2, data);
+          return secondFilter(date1, date2, expenses);
         }
-    };
+      };
     
 
     const getCategories = (data) => {
@@ -167,16 +174,16 @@ const Filter = () => {
               }
               finalDataArray.push({ Day: list[i], Amount: dailyTotal });
             }
-          
+            console.log(finalDataArray);
             return finalDataArray;
           };
 
           if (selectedType == "Income") {
-            const data = incomes;
-            setDummyData(getAmount(data));
+            const data = getAmount(filterByDate(date1, date2));
+            setDummyData((data));
         } else {
-            const data = expenses;
-            setDummyData(getAmount(data));
+            const data = getAmount(filterByDate(date1, date2));
+            setDummyData(data);
         };
           
         // const getAmount = (date1, date2, data) => {
