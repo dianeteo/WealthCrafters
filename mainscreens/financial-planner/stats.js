@@ -88,7 +88,7 @@ const GoalsStats = ({balance}) => {
         if (diff < 0) {
             return (
                 <HStack alignSelf='center'>
-                <WarningOutlineIcon />
+                <WarningOutlineIcon color='red'/>
                 <Text style={{fontFamily:'Poppins',fontSize:12}}>You have exceeded your savings this month by ${Math.abs(diff)}!</Text>
             </HStack>
             );

@@ -18,6 +18,7 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^18.0.1",
+    "@react-native-community/cli-platform-android": "^11.3.6",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/material-top-tabs": "^6.6.2",
@@ -31,6 +32,7 @@
     "expo-constants": "~14.2.1",
     "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
+    "expo-modules-core": "~1.2.7",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.4",
@@ -46,6 +48,7 @@
     "react-native-calendars": "^1.1297.0",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gifted-chat": "^2.4.0",
+    "react-native-gradle-plugin": "^0.71.19",
     "react-native-keyboard-spacer": "^0.4.1",
     "react-native-pager-view": "^6.1.2",
     "react-native-paper": "^5.8.0",
@@ -61,7 +64,6 @@
     "react-native-web": "~0.18.11",
     "react-native-webview": "^11.26.0",
     "react-navigation": "^4.4.4",
-    "serpapi": "^1.1.1",
     "typescript": "^4.9.4",
     "victory-native": "^36.6.11"
   },
