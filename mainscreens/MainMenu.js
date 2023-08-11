@@ -16,6 +16,7 @@ const MainMenu = () => {
         buttonColor="#1d4e89"
         style={{ marginBottom: 10 }}
         onPress={() => navigation.navigate("Financial Planner")} // Use the navigation object to navigate
+        testID='financialPlannerButton'
       >
         Financial Planner
       </Button>
@@ -24,6 +25,7 @@ const MainMenu = () => {
         style={{ marginBottom: 10 }}
         buttonColor="#1d4e89"
         onPress={() => navigation.navigate("Chatbot")}
+        testID="chatbotButton"
       >
         Financial Literacy
       </Button>
@@ -32,6 +34,7 @@ const MainMenu = () => {
         style={{ marginBottom: 10 }}
         buttonColor="#1d4e89"
         onPress={() => navigation.navigate("Investment Simulator")}
+        testID="investmentSimulatorButton"
       >
         Investment Simulator
       </Button>
